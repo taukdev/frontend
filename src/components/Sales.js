@@ -6,7 +6,10 @@ import { ReactComponent as Eye } from "../Assets/Eye.svg";
 import { ReactComponent as CalendarIcon } from "../Assets/calendar.svg";
 import { ReactComponent as Search } from "../Assets/Search.svg";
 import { ReactComponent as UpDown } from "../Assets/UpDown.svg";
-import { GoArrowLeft } from "react-icons/go";
+import { ReactComponent as BackArrow } from "../Assets/BackArrow.svg";
+import { ReactComponent as Cross } from "../Assets/cross.svg";
+import { ReactComponent as BlackLeft } from "../Assets/black-left.svg";
+import { ReactComponent as BlackRight } from "../Assets/black-right.svg";
 
 const LeadsTable = () => {
   const allLeads = Array.from({ length: 51 }, (_, i) => ({
@@ -48,7 +51,7 @@ const LeadsTable = () => {
   };
 
   return (
-    <div className="p-6 bg-gray-100 h-screen">
+    <div className="px-[40px] py-[20px] bg-gray-100 h-screen">
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-start gap-2">
           {/* Left arrow only on small screens */}
@@ -59,32 +62,32 @@ const LeadsTable = () => {
 
           {/* Heading and subheading stacked vertically */}
           <div className="flex flex-row gap-3">
-            <GoArrowLeft className="mt-2" />
+                <BackArrow className="w-[24px] h-[24px] mr-[5px]" />
             <div className="flex flex-col">
-              <h2 className="text-xl font-bold text-gray-900">Total Sales</h2>
+              <h2 className="text-[20px] leading-[20px] font-semibold text-[#071437] mb-[6px]">Total Sales</h2>
 
-              <p className="text-sm text-gray-500">
+              <p className="text-[14px] leading-[14px] text-[#4B5675] font-normal">
                 Central Hub for Personal Customization
               </p>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center border rounded-lg px-3 py-2 md:gap-2">
-          <CalendarIcon className="h-5 w-5 text-gray-500" />
+        <div className="flex items-center border border-[#DBDFE9] rounded-[6px] px-[10px] py-[8px]  md:gap-2">
+          <CalendarIcon className="h-[16px] w-[16px] text-gray-500" />
           <DatePicker
             selected={selectedDate}
             onChange={(date) => setSelectedDate(date)}
             dateFormat="MMMM, yyyy"
             showMonthYearPicker
-            className="hidden md:block w-40 focus:outline-none"
+            className="md:block focus:outline-none w-40 bg-[#F5F5F5] text-[#252F4A] font-normal text-[12px] leading-[12px]"
           />
         </div>
       </div>
 
-      <div className=" flex items-center justify-center  mt-4">
-        <div className="bg-white w-full rounded-xl shadow-md overflow-x-auto">
-          <div className="flex justify-between items-center m-4 mb-6">
+      <div className="bg-white flex items-center justify-center rounded-xl">
+        <div className="w-full rounded-[18px] border border-[#F1F1F4] overflow-x-auto">
+          <div className="flex justify-between items-center p-[26px] border-[#F1F1F4] border-b">
             <div className="relative w-64">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <Search className="h-4 w-4 text-gray-400" />
@@ -94,26 +97,26 @@ const LeadsTable = () => {
                 placeholder="Search leads..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="border rounded pl-10 pr-3 py-2 w-full text-sm focus:outline-none"
+                className="border rounded pl-10 pr-3 py-2 w-full text-[11px] leading-[12px] font-normal focus:outline-none text-[#FCFCFC]"
               />
             </div>
 
-            <div className="flex items-center border rounded-lg px-3 py-2">
-              <CalendarIcon className="h-5 w-5 text-gray-500" />
+            <div className="flex items-center border rounded-lg px-3 py-2 bg-[#FCFCFC]">
+              <CalendarIcon className="h-[16px] w-[16px] text-gray-500 cursor-pointer mr-[9px]" />
               <DatePicker
                 selected={selectedDate}
                 onChange={(date) => setSelectedDate(date)}
                 dateFormat="MMMM, yyyy"
                 showMonthYearPicker
-                className="w-40 focus:outline-none"
+                className="hidden md:block w-40 focus:outline-none bg-[#FCFCFC] text-[#252F4A] font-normal text-[12px] leading-[12px]"
               />
             </div>
           </div>
 
-          <table className="w-full border-separate border-spacing-0">
+          <table className="w-full border-separate border-[#F1F1F4] border-spacing-0 mb-[30px]">
             <thead className="bg-gray-100">
               <tr>
-                <th className="px-4 py-3 text-center border border-white-500">
+                <th className="px-4 py-3 text-center border border-[#F1F1F4] bg-[#FCFCFC]">
                   <input
                     type="checkbox"
                     checked={paginatedLeads.every((lead) =>
@@ -133,11 +136,11 @@ const LeadsTable = () => {
                   (h) => (
                     <th
                       key={h}
-                      className="px-4 py-3 text-center font-medium text-gray-700 border border-white-500"
+                      className="px-[20px] text-left bg-[#FCFCFC] font-normal text-[#4B5675] border border-[#F1F1F4] text-[13px] leading-[14px]"
                     >
-                      <div className="flex items-center justify-center gap-1">
+                      <div className="flex items-center gap-1">
                         {h}
-                        {<UpDown className="h-4 w-4 text-gray-500" />}
+                        {<UpDown className="h-[14px] w-[14px]" />}
                       </div>
                     </th>
                   )
@@ -148,38 +151,38 @@ const LeadsTable = () => {
               {paginatedLeads.map((row, i) => {
                 const isSelected = selectedLeads.includes(row.id);
                 const cellStyle = isSelected
-                  ? "bg-[#F9FAFB]"
-                  : "bg-white border border-gray-300";
+                   ? "bg-[#F5F5F5] border-[#F1F1F4] border"
+                  : "bg-white border border-[#F1F1F4]";
 
                 return (
                   <tr key={row.id}>
-                    <td className={`p-3 text-black text-center ${cellStyle}`}>
+                  <td className={`p-3 text-black text-center ${cellStyle}`}>
                       <input
                         type="checkbox"
                         checked={isSelected}
                         onChange={() => toggleSelect(row.id)}
                       />
                     </td>
-                    <td className={`p-3 text-black text-center ${cellStyle}`}>
+                   <td className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}>
                       {row.id}
                     </td>
-                    <td className={`p-3 text-black text-center ${cellStyle}`}>
+                    <td className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}>
                       {row.firstName}
                     </td>
-                    <td className={`p-3 text-black text-center ${cellStyle}`}>
+                    <td className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}>
                       {row.lastName}
                     </td>
-                    <td className={`p-3 text-black text-center ${cellStyle}`}>
+                    <td className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}>
                       {row.created}
                     </td>
-                    <td className={`p-3 text-black text-center ${cellStyle}`}>
+                    <td className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}>
                       <button
                         onClick={() => {
                           setSelectedLead(row);
                           setIsModalOpen(true);
                         }}
                       >
-                        <Eye className="h-6 w-6 text-blue-600 hover:text-blue-800 p-1 bg-[#32ADE60F] rounded-full" />
+                        <Eye className="h-[30px] w-[30px]" />
                       </button>
                     </td>
                   </tr>
@@ -190,14 +193,14 @@ const LeadsTable = () => {
 
           <div className="mt-4 flex justify-between items-center m-4">
             <div className="flex items-center gap-2">
-              <label className="text-sm text-gray-600">Show</label>
+              <label className="text-[13px] leading-[14px] font-normal text-[#4B5675]">Show</label>
               <select
                 value={perPage}
                 onChange={(e) => {
                   setPerPage(+e.target.value);
                   setPage(1);
                 }}
-                className="border rounded px-2 py-1 text-sm"
+                className="border border-[#DBDFE9] rounded-[6px] px-[10px] py-[8px] text-[11px] leading-[12px] font-normal bg-[#FCFCFC]"
               >
                 {[2, 3, 4, 5, 10, 25, 50].map((n) => (
                   <option key={n} value={n}>
@@ -205,16 +208,17 @@ const LeadsTable = () => {
                   </option>
                 ))}
               </select>
-              <span className="text-sm text-gray-600">per page</span>
+              <span className="text-[13px] leading-[14px] font-normal text-[#4B5675]">per page</span>
             </div>
             <div className="hidden md:flex items-center space-x-2">
-              <button
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                className="p-1 text-gray-700 hover:text-black disabled:text-gray-300"
-                disabled={page === 1}
-              >
-                &larr;
-              </button>
+               <span className="text-[#4B5675] text-[13px] leading-[14px] font-normal ">
+                  1-10 of 52
+              </span>
+            <BlackLeft
+                         onClick={() => setPage((p) => Math.max(1, p - 1))}
+                           className=" w-6 h-6 hover:text-[black] disabled:text-gray-300 cursor-pointer"
+                           disabled={page === 1}
+                          />
               {(() => {
                 const maxVisible = 5;
                 let start = Math.max(1, page - Math.floor(maxVisible / 2));
@@ -231,10 +235,10 @@ const LeadsTable = () => {
                     <button
                       key={pageNum}
                       onClick={() => setPage(pageNum)}
-                      className={`px-2 py-1 rounded text-sm ${
+                      className={`px-[12px] py-[8px] rounded-[6px] text-[#4B5675] font-normal text-[14px] leading-[14px]${
                         page === pageNum
-                          ? "bg-gray-200 text-black font-semibold w-[25px] h-[25px] flex justify-center items-center"
-                          : "text-gray-700 hover:bg-gray-100"
+                          ? "bg-[#F1F1F4] rounded-[6px] text-[#252F4A] px-[12px] py-[8px] font-semibold flex justify-center items-center"
+                          : "text-[#4B5675] hover:bg-[#F1F1F4] font-normal"
                       }`}
                     >
                       {pageNum}
@@ -242,13 +246,11 @@ const LeadsTable = () => {
                   );
                 });
               })()}
-              <button
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                className="p-1 text-gray-700 hover:text-black disabled:text-gray-300"
-                disabled={page === totalPages}
-              >
-                &rarr;
-              </button>
+               <BlackRight
+                            onClick={() => setPage((p) => Math.max(1, p - 1))}
+                              className=" w-6 h-6 hover:text-[black] disabled:text-gray-300 cursor-pointer"
+                              disabled={page === 1}
+                             />
             </div>
           </div>
         </div>
@@ -256,19 +258,14 @@ const LeadsTable = () => {
 
       {isModalOpen && selectedLead && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 px-4">
-          <div className="bg-white rounded-2xl shadow-lg w-full max-w-md overflow-hidden p-4">
-            <div className="bg-blue-50 flex justify-between items-center px-4 py-2 rounded-[10px]">
-              <h2 className="text-lg font-semibold text-black">
+          <div className="bg-white rounded-[26px] w-[646px] max-w-md overflow-hidden px-[22px] pt-[28px] pb-[40px]">
+            <div className="bg-[linear-gradient(121.72deg,_rgba(0,174,239,0.06)_0%,_rgba(0,127,196,0.06)_100%)] flex justify-between items-center p-[20px] rounded-[12px]">
+              <h2 className="text-[18px] leading-[20px] font-medium text-[#071437]">
                 Total Sales ({selectedLead.id})
               </h2>
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="text-gray-500 hover:text-gray-700 text-xl font-bold"
-              >
-                &times;
-              </button>
+              <Cross onClick={() => setIsModalOpen(false)}  className="cursor-pointer"/>
             </div>
-            <div className="divide-y divide-gray-200 px-6 py-4 text-sm text-gray-700 space-y-3">
+            <div className="divide-y divide-gray-200 px-[20px]">
               {[
                 ["Sale Id", selectedLead.id],
                 ["First Name", selectedLead.firstName],
@@ -276,7 +273,7 @@ const LeadsTable = () => {
                 ["Product", selectedLead.Product],
                 ["Amount", selectedLead.Amount],
               ].map(([label, value]) => (
-                <div key={label} className="flex">
+                <div key={label} className="flex align-center py-[15px]">
                   <div className="w-1/3 text-gray-500 pr-4">{label}</div>
                   <div className="w-2/3 border-gray-200 pl-4 overflow-x-auto max-w-full whitespace-nowrap">
                     {label === "Offer_url" ? (
@@ -284,7 +281,7 @@ const LeadsTable = () => {
                         href={value}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-600 underline block"
+                        className="text-[#252F4A] underline block"
                       >
                         {value}
                       </a>

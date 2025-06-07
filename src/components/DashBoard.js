@@ -278,7 +278,7 @@ const Dashboard = () => {
               <option value="yearly">Yearly</option>
             </select> 
           </div>
-          <ResponsiveContainer width="100%" height={266} className="px-[26px] pb-[26px]">
+          <ResponsiveContainer width="100%" height={266 } className="px-[26px] pb-[26px]">
             <LineChart data={dataCVR}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" tick={false} axisLine={false} />

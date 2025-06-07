@@ -16,7 +16,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/Login" element={<Login />} />
-        <Route path="/ResetPassWord" element={<ResetPassWord />} />
+        <Route path="/Resetpassword" element={<ResetPassWord />} />
 
         <Route
           path="/"

@@ -7,6 +7,8 @@ import { ReactComponent as CalendarIcon } from "../Assets/calendar.svg";
 import { ReactComponent as Search } from "../Assets/Search.svg";
 import { ReactComponent as UpDown } from "../Assets/UpDown.svg";
 import { ReactComponent as Cross } from "../Assets/cross.svg";
+import { ReactComponent as BlackLeft } from "../Assets/black-left.svg";
+import { ReactComponent as BlackRight } from "../Assets/black-right.svg";
 
 const LeadsTable = () => {
   const allLeads = Array.from({ length: 51 }, (_, i) => ({
@@ -83,7 +85,7 @@ const LeadsTable = () => {
             dateFormat="MMMM, yyyy"
             showMonthYearPicker
             className=" md:block focus:outline-none w-40 bg-[#F5F5F5] text-[#252F4A] font-normal text-[12px] leading-[12px]"
-          />  
+          />
         </div>
       </div>
 
@@ -117,8 +119,8 @@ const LeadsTable = () => {
             </div>
           </div>
 
-          <table className="w-full border-separate border-[#F1F1F4] border-spacing-0">
-            <thead className="bg-gray-100">   
+          <table className="w-full border-separate border-[#F1F1F4] border-spacing-0 mb-[30px]">
+            <thead className="bg-gray-100">
               <tr>
                 <th className="px-4 py-3 text-center border border-[#F1F1F4] bg-[#FCFCFC] ">
                   <input
@@ -126,7 +128,6 @@ const LeadsTable = () => {
                     disabled={false}
                     checked={paginatedLeads.every((lead) =>
                       selectedLeads.includes(lead.id)
-                      
                     )}
                     onChange={(e) => {
                       const ids = paginatedLeads.map((lead) => lead.id);
@@ -173,19 +174,29 @@ const LeadsTable = () => {
                         onChange={() => toggleSelect(row.id)}
                       />
                     </td>
-                    <td className={`px-[20px] font-medium text-[14px] leading-[14px]  text-[#071437] text-left ${cellStyle}`}>
+                    <td
+                      className={`px-[20px] font-medium text-[14px] leading-[14px]  text-[#071437] text-left ${cellStyle}`}
+                    >
                       {row.id}
                     </td>
-                    <td className={`px-[20px] font-medium text-[14px] leading-[14px]  text-[#071437] text-left ${cellStyle}`}>
+                    <td
+                      className={`px-[20px] font-medium text-[14px] leading-[14px]  text-[#071437] text-left ${cellStyle}`}
+                    >
                       {row.firstName}
                     </td>
-                    <td className={`px-[20px] font-medium text-[14px] leading-[14px]  text-[#071437] text-left ${cellStyle}`}>
+                    <td
+                      className={`px-[20px] font-medium text-[14px] leading-[14px]  text-[#071437] text-left ${cellStyle}`}
+                    >
                       {row.lastName}
                     </td>
-                    <td className={`px-[20px] font-medium text-[14px] leading-[14px]  text-[#071437] text-left ${cellStyle}`}>
+                    <td
+                      className={`px-[20px] font-medium text-[14px] leading-[14px]  text-[#071437] text-left ${cellStyle}`}
+                    >
                       {row.created}
                     </td>
-                    <td className={`px-[20px] font-medium text-[14px] leading-[14px]  text-[#071437] text-left ${cellStyle}`}>
+                    <td
+                      className={`px-[20px] font-medium text-[14px] leading-[14px]  text-[#071437] text-left ${cellStyle}`}
+                    >
                       <button
                         onClick={() => {
                           setSelectedLead(row);
@@ -203,7 +214,9 @@ const LeadsTable = () => {
 
           <div className="mt-4 flex justify-between items-center m-4">
             <div className="flex items-center gap-2">
-              <label className="text-[13px] leading-[14px] font-normal text-[#4B5675]">Show</label>
+              <label className="text-[13px] leading-[14px] font-normal text-[#4B5675]">
+                Show
+              </label>
               <select
                 value={perPage}
                 onChange={(e) => {
@@ -218,19 +231,19 @@ const LeadsTable = () => {
                   </option>
                 ))}
               </select>
-              <span className="text-[13px] leading-[14px] font-normal text-[#4B5675]">per page</span>
+              <span className="text-[13px] leading-[14px] font-normal text-[#4B5675]">
+                per page
+              </span>
             </div>
             <div className="hidden md:flex items-center space-x-2">
               <span className="text-[#4B5675] text-[13px] leading-[14px] font-normal ">
-                  1-10 of 52
+                1-10 of 52
               </span>
-              <button
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                className="p-1 hover:text-[black] disabled:text-gray-300"
+              <BlackLeft
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+                className=" w-6 h-6 hover:text-[black] disabled:text-gray-300 cursor-pointer"
                 disabled={page === 1}
-              >
-                &larr;
-              </button>
+               />
               {(() => {
                 const maxVisible = 5;
                 let start = Math.max(1, page - Math.floor(maxVisible / 2));
@@ -241,7 +254,6 @@ const LeadsTable = () => {
                   start = Math.max(1, end - maxVisible + 1);
                 }
 
-                
                 return Array.from({ length: end - start + 1 }, (_, idx) => {
                   const pageNum = start + idx;
                   return (
@@ -259,13 +271,12 @@ const LeadsTable = () => {
                   );
                 });
               })()}
-              <button
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                className="p-1 text-gray-700 hover:text-black disabled:text-gray-300"
+
+              <BlackRight 
+               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                className="w-6 h-6 text-[13px] text-[#4B5675] hover:text-[#4B5675] disabled:text-gray-300 cursor-pointer" 
                 disabled={page === totalPages}
-              >
-                &rarr;
-              </button>
+              />
             </div>
           </div>
         </div>
@@ -278,7 +289,7 @@ const LeadsTable = () => {
               <h2 className="text-[18px] leading-[20px] font-medium text-[#071437]">
                 Lead ID ({selectedLead.id})
               </h2>
-                <Cross onClick={() => setIsModalOpen(false)}  className="cursor-pointer"/>
+              <Cross onClick={() => setIsModalOpen(false)}  className="cursor-pointer"/>
             </div>
             <div className="divide-y divide-gray-200 px-[20px]">
               {[
@@ -292,7 +303,9 @@ const LeadsTable = () => {
                 ["Offer_url", selectedLead.offerUrl],
               ].map(([label, value]) => (
                 <div key={label} className="flex align-center py-[15px]">
-                  <div className="w-1/3 text-[#252F4A] text-[14px] leading-[14px] font-meduim">{label}</div>
+                  <div className="w-1/3 text-[#252F4A] text-[14px] leading-[14px] font-meduim">
+                    {label}
+                  </div>
                   <div className="w-2/3 border-gray-200 pl-4 overflow-x-auto max-w-full whitespace-nowrap text-[#252F4A] font-medium text-[14px] leading-[14px]">
                     {label === "Offer_url" ? (
                       <a
