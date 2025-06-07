@@ -54,8 +54,8 @@ const LeadsTable = () => {
   };
 
   return (
-    <div className="md:p-6 p-4 bg-gray-100 h-screen">
-      <div className="flex justify-between items-center md:p-4 p-0">
+    <div className="md:px-[40px] bg-gray-100 h-screen">
+      <div className="flex justify-between items-center py-[20px]">
         <div className="flex items-start gap-2">
           {/* Left arrow only on small screens */}
           <button className="md:hidden text-gray-600 hover:text-black text-lg mt-1">
@@ -65,30 +65,30 @@ const LeadsTable = () => {
 
           {/* Heading and subheading stacked vertically */}
           <div>
-            <h2 className="md:text-xl text-md font-bold text-gray-900">
+            <h2 className="md:text-xl  text-[20px] leading-[20px] font-semibold text-[#071437] mb-[3px]">
               Lead ID
             </h2>
-            <p className="text-sm text-gray-500 font-normal">
+            <p className="text-[14px] leading-[14px] text-[#4B5675] font-normal">
               Central Hub for Personal Customization
             </p>
           </div>
         </div>
 
-        <div className="flex items-center border rounded-lg px-3 py-2 md:gap-2">
-          <CalendarIcon className="h-5 w-5 text-gray-500" />
+        <div className="flex items-center border border-[#DBDFE9] rounded-[6px] px-[10px] py-[8px]  md:gap-2">
+          <CalendarIcon className="h-[16px] w-[16px] text-gray-500" />
           <DatePicker
             selected={selectedDate}
             onChange={(date) => setSelectedDate(date)}
             dateFormat="MMMM, yyyy"
             showMonthYearPicker
-            className="hidden md:block w-40 focus:outline-none"
-          />
+            className=" md:block focus:outline-none w-40 bg-[#F5F5F5] text-[#252F4A] font-normal text-[12px] leading-[12px]"
+          />  
         </div>
       </div>
 
       <div className="bg-white flex items-center justify-center rounded-xl">
-        <div className=" w-full rounded-xl shadow-md overflow-x-auto">
-          <div className="flex justify-between items-center m-4 mb-6">
+        <div className=" w-full rounded-[18px] border border-[#F1F1F4] overflow-x-auto">
+          <div className="flex justify-between items-center p-[26px] border-[#F1F1F4] border-b">
             <div className="relative w-64">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <Search className="h-4 w-4 text-gray-400" />
@@ -98,12 +98,12 @@ const LeadsTable = () => {
                 placeholder="Search leads..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="border rounded pl-10 pr-3 py-2 w-full text-sm focus:outline-none"
+                className="border rounded pl-10 pr-3 py-2 w-full text-[11px] leading-[12px] font-normal focus:outline-none text-[#FCFCFC] "
               />
             </div>
-            <div className="flex items-center border rounded-lg px-3 py-2">
+            <div className="flex items-center border rounded-lg px-3 py-2 bg-[#FCFCFC]">
               <CalendarIcon
-                className="h-5 w-5 text-gray-500 cursor-pointer"
+                className="h-[16px] w-[16px] text-gray-500 cursor-pointer mr-[9px]"
                 onClick={handleIconClick}
               />
               <DatePicker
@@ -111,19 +111,21 @@ const LeadsTable = () => {
                 onChange={(date) => setSelectedDate(date)}
                 dateFormat="MMMM, yyyy"
                 showMonthYearPicker
-                className="hidden md:block w-40 focus:outline-none text-black"
+                className="hidden md:block w-40 focus:outline-none bg-[#FCFCFC] text-[#252F4A] font-normal text-[12px] leading-[12px]"
               />
             </div>
           </div>
 
-          <table className="w-full border-separate border-spacing-0">
-            <thead className="bg-gray-100">
+          <table className="w-full border-separate border-[#F1F1F4] border-spacing-0">
+            <thead className="bg-gray-100">   
               <tr>
-                <th className="px-4 py-3 text-center border border-white-500">
+                <th className="px-4 py-3 text-center border border-[#F1F1F4] bg-[#FCFCFC] ">
                   <input
                     type="checkbox"
+                    disabled={false}
                     checked={paginatedLeads.every((lead) =>
                       selectedLeads.includes(lead.id)
+                      
                     )}
                     onChange={(e) => {
                       const ids = paginatedLeads.map((lead) => lead.id);
@@ -144,11 +146,11 @@ const LeadsTable = () => {
                 ].map((h) => (
                   <th
                     key={h}
-                    className="px-4 py-3 text-center font-medium text-gray-700 border border-white-500"
+                    className="px-[20px] text-left bg-[#FCFCFC] font-normal text-[#4B5675] border border-[#F1F1F4] text-[13px] leading-[14px]"
                   >
-                    <div className="flex items-center justify-center gap-1">
+                    <div className="flex items-center gap-1">
                       {h}
-                      {<UpDown className="h-4 w-4 text-gray-500" />}
+                      {<UpDown className="h-[14px] w-[14px]" />}
                     </div>
                   </th>
                 ))}
@@ -158,8 +160,8 @@ const LeadsTable = () => {
               {paginatedLeads.map((row, i) => {
                 const isSelected = selectedLeads.includes(row.id);
                 const cellStyle = isSelected
-                  ? "bg-[#F9FAFB]"
-                  : "bg-white border border-gray-300";
+                  ? "bg-[#F5F5F5] border-[#F1F1F4]"
+                  : "bg-white border border-[#F1F1F4]";
 
                 return (
                   <tr key={row.id}>
@@ -170,26 +172,26 @@ const LeadsTable = () => {
                         onChange={() => toggleSelect(row.id)}
                       />
                     </td>
-                    <td className={`p-3 text-black text-center ${cellStyle}`}>
+                    <td className={`px-[20px] font-medium text-[14px] leading-[14px]  text-[#071437] text-left ${cellStyle}`}>
                       {row.id}
                     </td>
-                    <td className={`p-3 text-black text-center ${cellStyle}`}>
+                    <td className={`px-[20px] font-medium text-[14px] leading-[14px]  text-[#071437] text-left ${cellStyle}`}>
                       {row.firstName}
                     </td>
-                    <td className={`p-3 text-black text-center ${cellStyle}`}>
+                    <td className={`px-[20px] font-medium text-[14px] leading-[14px]  text-[#071437] text-left ${cellStyle}`}>
                       {row.lastName}
                     </td>
-                    <td className={`p-3 text-black text-center ${cellStyle}`}>
+                    <td className={`px-[20px] font-medium text-[14px] leading-[14px]  text-[#071437] text-left ${cellStyle}`}>
                       {row.created}
                     </td>
-                    <td className={`p-3 text-black text-center ${cellStyle}`}>
+                    <td className={`px-[20px] font-medium text-[14px] leading-[14px]  text-[#071437] text-left ${cellStyle}`}>
                       <button
                         onClick={() => {
                           setSelectedLead(row);
                           setIsModalOpen(true);
                         }}
                       >
-                        <Eye className="h-6 w-6 text-blue-600 hover:text-blue-800 p-1 bg-[#32ADE60F] rounded-full" />
+                        <Eye className="h-[30px] w-[30px]" />
                       </button>
                     </td>
                   </tr>
@@ -265,20 +267,21 @@ const LeadsTable = () => {
       </div>
 
       {isModalOpen && selectedLead && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 px-4">
-          <div className="bg-white rounded-2xl shadow-lg w-full max-w-md overflow-hidden p-4">
-            <div className="bg-blue-50 flex justify-between items-center px-6 py-4 rounded-[10px]">
-              <h2 className="text-lg font-semibold text-blue-900">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#071437] bg-opacity-50 ">
+          <div className="bg-white rounded-[26px] w-[646px] max-w-md overflow-hidden px-[22px] pt-[28px] pb-[40px]">
+            <div className="bg-[linear-gradient(121.72deg,_rgba(0,174,239,0.06)_0%,_rgba(0,127,196,0.06)_100%)] flex justify-between items-center p-[20px] rounded-[12px]">
+              <h2 className="text-[18px] leading-[20px] font-medium text-[#071437]">
                 Lead ID ({selectedLead.id})
               </h2>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="text-gray-500 hover:text-gray-700 text-xl font-bold"
               >
-                &times;
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M17.8995 4.56747C18.3229 4.14422 19.0094 4.14414 19.4327 4.56747C19.856 4.9908 19.8559 5.67729 19.4327 6.10067L13.5333 12.0001L19.4327 17.8995C19.8559 18.3229 19.856 19.0094 19.4327 19.4327C19.0094 19.856 18.3229 19.8559 17.8995 19.4327L12.0001 13.5333L6.10067 19.4327C5.67729 19.8559 4.9908 19.856 4.56747 19.4327C4.14414 19.0094 4.14422 18.3229 4.56747 17.8995L10.4669 12.0001L4.56747 6.10067C4.14422 5.67729 4.14414 4.9908 4.56747 4.56747C4.9908 4.14414 5.67729 4.14422 6.10067 4.56747L12.0001 10.4669L17.8995 4.56747Z" fill="#071437"/>
+              </svg>
               </button>
             </div>
-            <div className="divide-y divide-gray-200 px-6 py-4 text-sm text-gray-700 space-y-3">
+            <div className="divide-y divide-gray-200 px-[20px] space-y-3">
               {[
                 ["Id", selectedLead.id],
                 ["First Name", selectedLead.firstName],
@@ -289,8 +292,8 @@ const LeadsTable = () => {
                 ["Country", selectedLead.country],
                 ["Offer_url", selectedLead.offerUrl],
               ].map(([label, value]) => (
-                <div key={label} className="flex">
-                  <div className="w-1/3 text-gray-500 pr-4">{label}</div>
+                <div key={label} className="flex align-center py-[10px]">
+                  <div className="w-1/3 text-[#252F4A] text-[14px] leading-[14px] font-meduim">{label}</div>
                   <div className="w-2/3 border-gray-200 pl-4 overflow-x-auto max-w-full whitespace-nowrap">
                     {label === "Offer_url" ? (
                       <a
