@@ -43,23 +43,20 @@ export default function CreateNewPassword({ setSubmitted }) {
         backgroundImage: `url(${BackGroundImage})`,
       }}
     >
-      <div className="flex flex-col bg-white text-center w-[319px] md:w-[610px] h-[520px] md:h-[602px] rounded-[16px] md:rounded-[30px] border p-[20px] md:pt-[50px] md:px-[60px] md:pb-[60px] shadow-custom-glow gap-[40px] md:gap-[16px]">
+      <div className="border border-[#F3F4F6] bg-white w-[610px] md:w-[610px] h-[364px] md:h-[446px] rounded-[30px] md:rounded-[30px] md:gap-[52px] px-[60px] pb-[60px] pt-[50px] md:pt-[50px] md:px-[60px] md:pb-[60px] shadow-[5px_17px_38px_0px_#E6E6E61A,19px_66px_69px_0px_#E6E6E617,44px_149px_93px_0px_#E6E6E60D,78px_265px_111px_0px_#E6E6E603,121px_414px_121px_0px_#E6E6E600]">
         <div>
           <div className="mb-6">
-            <button
-              className="text-gray-600 hover:text-blue-600 text-xl"
-              aria-label="Go back"
-              onClick={() => setSubmitted(false)}
-            >
-              <BackArrow />
-            </button>
+              <BackArrow
+                      className="w-9 h-9 mb-4 cursor-pointer"
+                      aria-label="Go back"
+                       onClick={() => setSubmitted(false)}
+                    />
           </div>
-
           {/* Title and description */}
-          <h2 className="text-[20px] leading-[36px] tracking-[-0.5px] font-bold text-gray-800 mb-1">
+          <h2 className="text-[#111827] text-[30px] leading-[36px] tracking-[-0.5%] font-bold mb-[8px]">
             ResetPassWord
           </h2>
-          <p className="text-gray-500 text-sm mb-6 font-normal leading-5 tracking-normal">
+          <p className="text-[#4B5563] font-normal text-[16px] leading-[20px] w-full">
             Create A New PassWord For Your Account
           </p>
         </div>
@@ -70,7 +67,7 @@ export default function CreateNewPassword({ setSubmitted }) {
           <div className="mb-2 relative">
             <label
               htmlFor="password"
-              className="block text-[16px] font-medium text-gray-700 mb-1 leading-[20px] tracking-[0]"
+              className="block text-[16px] font-medium text-[#1F2937] mb-1 leading-[20px]"
             >
               Reset Password
             </label>
@@ -78,14 +75,12 @@ export default function CreateNewPassword({ setSubmitted }) {
               <input
                 type={showPassword ? "text" : "password"}
                 id="password"
-                className="w-full px-4 py-3 pr-10 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 font-normal text-base leading-6 tracking-normal placeholder:font-normal placeholder:text-base placeholder:leading-6 placeholder:tracking-normal"
+                className="bg-[#F9FAFB] w-full h-[52px] py-[6px] px-[14px] rounded-[12px] text-[#6B7280] text-[16px] leading-[24px] font-normal mb-[30px]"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                placeholder="Enter Password"
               />
               <span
-                // className="absolute right-4 top-10 transform -translate-y-1/2 text-gray-500 cursor-pointer"
                 className="absolute right-4 top-1/2 transform -translate-y-1/2 cursor-pointer "
                 onClick={() => setShowPassword(!showPassword)}
               >
@@ -99,7 +94,7 @@ export default function CreateNewPassword({ setSubmitted }) {
           <div className="mb-2 relative">
             <label
               htmlFor="password"
-              className="block text-[16px] font-medium text-gray-700 mb-1 leading-[20px] tracking-[0]"
+              className="block text-[16px] font-medium text-[#1F2937] mb-1 leading-[20px]"
             >
               Confirm Password
             </label>
@@ -107,14 +102,12 @@ export default function CreateNewPassword({ setSubmitted }) {
               <input
                 type={showConfirmPassword ? "text" : "password"}
                 id="password"
-                className="w-full px-4 py-3 pr-10 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 font-normal text-base leading-6 tracking-normal placeholder:font-normal placeholder:text-base placeholder:leading-6 placeholder:tracking-normal"
+                className="bg-[#F9FAFB] w-full h-[52px] py-[6px] px-[14px] rounded-[12px] text-[#6B7280] text-[16px] leading-[24px] font-normal"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
-                placeholder="Enter Confirm Password"
               />
               <span
-                // className="absolute right-4 top-10 transform -translate-y-1/2 text-gray-500 cursor-pointer"
                 className="absolute right-4 top-1/2 transform -translate-y-1/2 cursor-pointer"
                 onClick={() => setshowConfirmPassword(!showConfirmPassword)}
               >
@@ -130,7 +123,7 @@ export default function CreateNewPassword({ setSubmitted }) {
             <label className="flex items-center text-gray-600 font-normal text-base leading-6 tracking-normal">
               <input
                 type="checkbox"
-                className="mr-2"
+                className="mr-2 cursor-pointer"
                 checked={remember}
                 onChange={(e) => setRemember(e.target.checked)}
               />

@@ -8,7 +8,7 @@ import Lead from "./components/Lead";
 import CollapsibleLead from "./components/CollapsibleLead";
 import Sales from "./components/Sales";
 import Setting from "./components/Setting";
-
+import Screen2 from './components/ForgotPassWord/Screen2';
 import Layout from "./components/Layout";
 
 function App() {
@@ -17,7 +17,7 @@ function App() {
       <Routes>
         <Route path="/Login" element={<Login />} />
         <Route path="/Forgotpassword" element={<ResetPassWord />} />
-
+<Route path="/reset-password" element={<Screen2 />} />
         <Route
           path="/"
           element={

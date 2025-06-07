@@ -25,7 +25,6 @@ const ForgotPassword = ({ handleBack, handleSubmit }) => {
     >
       <div className="border border-[#F3F4F6] bg-white w-[610px] md:w-[610px] h-[364px] md:h-[446px] rounded-[30px] md:rounded-[30px] md:gap-[52px] px-[60px] pb-[60px] pt-[50px] md:pt-[50px] md:px-[60px] md:pb-[60px] shadow-[5px_17px_38px_0px_#E6E6E61A,19px_66px_69px_0px_#E6E6E617,44px_149px_93px_0px_#E6E6E60D,78px_265px_111px_0px_#E6E6E603,121px_414px_121px_0px_#E6E6E600]">
         <BackArrow
-          onClick={handleBack}
           className="w-9 h-9 mb-4 cursor-pointer"
           aria-label="Go back"
         />
