@@ -3,12 +3,20 @@ import React, { useState } from "react";
 import BackGroundImage from "../../Assets/BackGroundImage.png";
 
 import { ReactComponent as BackArrow } from "../../Assets/BackArrow.svg";
+const TaukLogo = process.env.PUBLIC_URL + '/Logo.png';  
 
 const ForgotPassword = ({ handleBack, handleSubmit }) => {
   const [email, setEmail] = useState("");
 
   return (
-    
+    <>
+        <div className="border border-[#F3F4F6]">
+            <img
+              src={TaukLogo}
+              alt="logo"
+              className="h-[80px] pl-[40px] py-[10px]" 
+            />
+        </div>
     <div
       className="p-[1px] min-h-screen bg-cover bg-center flex items-center justify-center font-['Inter']"
       style={{
@@ -55,6 +63,9 @@ const ForgotPassword = ({ handleBack, handleSubmit }) => {
         </form>
       </div>
     </div>
+
+    </>
+
   );
 };
 

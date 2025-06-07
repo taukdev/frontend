@@ -5,6 +5,7 @@ import BackGroundImage from "../Assets/BackGroundImage.png";
 
 import { ReactComponent as LoginEye } from "../Assets/LoginEye.svg";
 import { ReactComponent as Checkbox } from "../Assets/Checkbox.svg";
+import { ReactComponent as Checkbox2 } from "../Assets/Checkbox2.svg";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -30,15 +31,15 @@ export default function Login() {
         <img
           src={logo}
           alt="Tauk Logo"
-          className="m-auto object-contain w-[82px] h-[44px] md:w-[118px] md:h-[64px]"
+          className="m-auto object-contain w-[64px] h-[44px] md:w-[118px] md:h-[64px]"
         />
 
-        <div className="flex flex-col mt-[16px] w-[278px] h-[446px] md:w-[490px] md:h-[434px] gap-[52px]">
+        <div className="flex flex-col w-[278px] h-[446px] md:w-[490px] md:h-[434px] gap-[52px]">
           <div className="h-[76px] md:h-[64px]">
-            <h2 className="leading-[36px] tracking-[-0.5px] text-center text-gray-800 mb-1 text-[20px] md:text-[30px] font-bold">
+            <h2 className="leading-[36px] tracking-[-0.5px] text-center text-[#111827] mb-1 text-[20px] md:text-[30px] font-bold">
               Login To Tauk
             </h2>
-            <p className="text-gray-500 mb-6 text-center leading-5 text-[14px] md:text-[16px] font-normal">
+            <p className="text-[#4B5563] mb-6 text-center leading-5 text-[14px] md:text-[16px] font-normal">
               Please fill in your details to access your dashboard.
             </p>
           </div>
@@ -52,7 +53,7 @@ export default function Login() {
                 <div className="h-[78px] gap-[6px]">
                   <label
                     htmlFor="email"
-                    className="block text-gray-700 mb-[6px] leading-[20px] tracking-[0] h-[20px] text-[16px] font-medium"
+                    className="block text-[#1F2937] mb-[6px] leading-[20px] h-[20px] text-[16px] font-medium"
                   >
                     Email Address
                   </label>
@@ -60,7 +61,7 @@ export default function Login() {
                   <input
                     type="email"
                     id="email"
-                    className="w-[calc(100%-0px)] bg-[#F9FAFB] p-[14px] border rounded-[12px] font-normal text-base leading-6 text-gray-500 border-gray-300 focus:outline-none leading-6 tracking-normal placeholder:font-normal placeholder:text-base placeholder:leading-6 placeholder:text-gray-500 font-normal text-base leading-6 text-gray-500"
+                    className="w-full px-[14px] py-[6px] h-[52px] bg-[#F9FAFB] p-[14px] rounded-[12px] focus:outline-none leading-[24px] tracking-normal placeholder:font-normaln placeholder:leading-6 placeholder:text-gray-500 font-normal text-[16px]  text-[#6B7280]"
                     placeholder="Enter email address"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -71,7 +72,7 @@ export default function Login() {
                 <div className="relative h-[78px] gap-[6px] mt-[30px] ">
                   <label
                     htmlFor="password"
-                    className="block text-gray-700 mb-[6px] leading-[20px] tracking-[0] h-[20px] text-[16px] font-medium"
+                    className="block text-[#1F2937] mb-[6px] leading-[20px] h-[20px] text-[16px] font-medium"
                   >
                     Password
                   </label>
@@ -79,14 +80,13 @@ export default function Login() {
                     <input
                       type={showPassword ? "text" : "password"}
                       id="password"
-                      className="w-[calc(100%-0px)] bg-[#F9FAFB] p-[14px] border rounded-[12px] h-[52px] font-normal text-base leading-6 text-gray-500 focus:outline-none placeholder:font-normal placeholder:text-base placeholder:leading-6 placeholder:text-gray-500"
+                      className="w-[calc(100%-0px)] bg-[#F9FAFB] p-[14px] border border-[#F9FAFB] rounded-[12px] h-[52px] font-normal text-base leading-6 text-[#6B7280] focus:outline-none"
                       value={password}
-                      onange={(e) => setPassword(e.target.value)}
+                      onChange={(e) => setPassword(e.target.value)}
                       required
-                      placeholder="Enter Password"
                     />
                     <span
-                      className="absolute right-4 top-1/2 transform -translate-y-1/2 cursor-pointer cursor-pointer"
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2 cursor-pointer"
                       onClick={() => setShowPassword(!showPassword)}
                     >
                       {showPassword ? <LoginEye /> : <LoginEye />}
@@ -95,13 +95,13 @@ export default function Login() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between mb-6  h-[24px] mb-[0px] mt-[24px]">
+              <div className="flex items-center justify-between mb-6  h-[24px] mt-[24px]">
                 <label className="flex items-center text-gray-600 leading-6 tracking-normal w-[140px] text-[16px] font-normal">
                   <button onClick={() => setRemember((prev) => !prev)}>
                     {remember ? (
                       <Checkbox className="w-[24px] h-[24px] rounded-[6px] mr-[6px] border border-gray-300" />
                     ) : (
-                      <Checkbox className="w-[24px] h-[24px] rounded-[6px] mr-[6px] border border-gray-300" />
+                      <Checkbox2 className="w-[24px] h-[24px] rounded-[6px] mr-[6px] " /> 
                     )}
                   </button>
                   Remember me
@@ -117,7 +117,7 @@ export default function Login() {
 
             <button
               type="submit"
-              className="w-[calc(100%-0px)] bg-gradient-to-r from-[#00AEEF] to-[#007FC4] hover:from-[#00A0DC] hover:to-[#006EB4] text-white rounded-xl tracking-wide transition duration-200 m-auto h-[44px] rounded-[10px] gap-[8px] py-2 px-9 text-[16px] font-bold"
+              className="w-[calc(100%-0px)] bg-gradient-to-r from-[#00AEEF] to-[#007FC4] hover:from-[#00A0DC] hover:to-[#006EB4] text-white tracking-wide transition duration-200 m-auto h-[44px] rounded-[10px] gap-[8px] py-2 px-9 text-[16px] font-bold"
             >
               Log In
             </button>

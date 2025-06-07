@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-
-import BackGroundImage from "../../Assets/BackGroundImage.png"; // Adjust if path differs
-
+import BackGroundImage from "../../Assets/BackGroundImage.png";
 import { ReactComponent as BackArrow } from "../../Assets/BackArrow.svg";
+
+const TaukLogo = process.env.PUBLIC_URL + '/Logo.png';  
 
 export default function CreateNewPassword({ setSubmitted }) {
   const [password, setPassword] = useState("");
@@ -29,6 +29,14 @@ export default function CreateNewPassword({ setSubmitted }) {
   };
 
   return (
+    <>
+      <div className="border border-[#F3F4F6]">
+            <img
+              src={TaukLogo}
+              alt="logo"
+              className="h-[80px] pl-[40px] py-[10px]" 
+            />
+        </div>
     <div
       className="p-[1px] min-h-screen bg-cover bg-center flex items-center justify-center font-['Inter']"
       style={{
@@ -78,7 +86,7 @@ export default function CreateNewPassword({ setSubmitted }) {
               />
               <span
                 // className="absolute right-4 top-10 transform -translate-y-1/2 text-gray-500 cursor-pointer"
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 cursor-pointer cursor-pointer"
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 cursor-pointer "
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
@@ -107,7 +115,7 @@ export default function CreateNewPassword({ setSubmitted }) {
               />
               <span
                 // className="absolute right-4 top-10 transform -translate-y-1/2 text-gray-500 cursor-pointer"
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 cursor-pointer cursor-pointer"
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 cursor-pointer"
                 onClick={() => setshowConfirmPassword(!showConfirmPassword)}
               >
                 {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
@@ -140,5 +148,7 @@ export default function CreateNewPassword({ setSubmitted }) {
         </form>
       </div>
     </div>
+    </>
+
   );
 }
