@@ -6,6 +6,7 @@ import { ReactComponent as Eye } from "../Assets/Eye.svg";
 import { ReactComponent as CalendarIcon } from "../Assets/calendar.svg";
 import { ReactComponent as Search } from "../Assets/Search.svg";
 import { ReactComponent as UpDown } from "../Assets/UpDown.svg";
+import { ReactComponent as Cross } from "../Assets/cross.svg";
 
 const LeadsTable = () => {
   const allLeads = Array.from({ length: 51 }, (_, i) => ({
@@ -160,7 +161,7 @@ const LeadsTable = () => {
               {paginatedLeads.map((row, i) => {
                 const isSelected = selectedLeads.includes(row.id);
                 const cellStyle = isSelected
-                  ? "bg-[#F5F5F5] border-[#F1F1F4]"
+                  ? "bg-[#F5F5F5] border-[#F1F1F4] border"
                   : "bg-white border border-[#F1F1F4]";
 
                 return (
@@ -202,14 +203,14 @@ const LeadsTable = () => {
 
           <div className="mt-4 flex justify-between items-center m-4">
             <div className="flex items-center gap-2">
-              <label className="text-sm text-gray-600">Show</label>
+              <label className="text-[13px] leading-[14px] font-normal text-[#4B5675]">Show</label>
               <select
                 value={perPage}
                 onChange={(e) => {
                   setPerPage(+e.target.value);
                   setPage(1);
                 }}
-                className="border rounded px-2 py-1 text-sm"
+                className="border border-[#DBDFE9] rounded-[6px] px-[10px] py-[8px] text-[11px] leading-[12px] font-normal bg-[#FCFCFC]"
               >
                 {[2, 3, 4, 5, 10, 25, 50].map((n) => (
                   <option key={n} value={n}>
@@ -217,12 +218,15 @@ const LeadsTable = () => {
                   </option>
                 ))}
               </select>
-              <span className="text-sm text-gray-600">per page</span>
+              <span className="text-[13px] leading-[14px] font-normal text-[#4B5675]">per page</span>
             </div>
             <div className="hidden md:flex items-center space-x-2">
+              <span className="text-[#4B5675] text-[13px] leading-[14px] font-normal ">
+                  1-10 of 52
+              </span>
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
-                className="p-1 text-gray-700 hover:text-black disabled:text-gray-300"
+                className="p-1 hover:text-[black] disabled:text-gray-300"
                 disabled={page === 1}
               >
                 &larr;
@@ -237,16 +241,17 @@ const LeadsTable = () => {
                   start = Math.max(1, end - maxVisible + 1);
                 }
 
+                
                 return Array.from({ length: end - start + 1 }, (_, idx) => {
                   const pageNum = start + idx;
                   return (
                     <button
                       key={pageNum}
                       onClick={() => setPage(pageNum)}
-                      className={`px-2 py-1 rounded text-sm ${
+                      className={`px-[12px] py-[8px] rounded-[6px] text-[#4B5675] font-normal text-[14px] leading-[14px] ${
                         page === pageNum
-                          ? "bg-gray-200 text-black font-semibold w-[25px] h-[25px] flex justify-center items-center"
-                          : "text-gray-700 hover:bg-gray-100"
+                          ? "bg-[#F1F1F4] rounded-[6px] text-[#252F4A] px-[12px] py-[8px] font-semibold flex justify-center items-center"
+                          : "text-[#4B5675] hover:bg-[#F1F1F4] font-normal"
                       }`}
                     >
                       {pageNum}
@@ -273,15 +278,9 @@ const LeadsTable = () => {
               <h2 className="text-[18px] leading-[20px] font-medium text-[#071437]">
                 Lead ID ({selectedLead.id})
               </h2>
-              <button
-                onClick={() => setIsModalOpen(false)}
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M17.8995 4.56747C18.3229 4.14422 19.0094 4.14414 19.4327 4.56747C19.856 4.9908 19.8559 5.67729 19.4327 6.10067L13.5333 12.0001L19.4327 17.8995C19.8559 18.3229 19.856 19.0094 19.4327 19.4327C19.0094 19.856 18.3229 19.8559 17.8995 19.4327L12.0001 13.5333L6.10067 19.4327C5.67729 19.8559 4.9908 19.856 4.56747 19.4327C4.14414 19.0094 4.14422 18.3229 4.56747 17.8995L10.4669 12.0001L4.56747 6.10067C4.14422 5.67729 4.14414 4.9908 4.56747 4.56747C4.9908 4.14414 5.67729 4.14422 6.10067 4.56747L12.0001 10.4669L17.8995 4.56747Z" fill="#071437"/>
-              </svg>
-              </button>
+                <Cross onClick={() => setIsModalOpen(false)}  className="cursor-pointer"/>
             </div>
-            <div className="divide-y divide-gray-200 px-[20px] space-y-3">
+            <div className="divide-y divide-gray-200 px-[20px]">
               {[
                 ["Id", selectedLead.id],
                 ["First Name", selectedLead.firstName],
@@ -292,15 +291,15 @@ const LeadsTable = () => {
                 ["Country", selectedLead.country],
                 ["Offer_url", selectedLead.offerUrl],
               ].map(([label, value]) => (
-                <div key={label} className="flex align-center py-[10px]">
+                <div key={label} className="flex align-center py-[15px]">
                   <div className="w-1/3 text-[#252F4A] text-[14px] leading-[14px] font-meduim">{label}</div>
-                  <div className="w-2/3 border-gray-200 pl-4 overflow-x-auto max-w-full whitespace-nowrap">
+                  <div className="w-2/3 border-gray-200 pl-4 overflow-x-auto max-w-full whitespace-nowrap text-[#252F4A] font-medium text-[14px] leading-[14px]">
                     {label === "Offer_url" ? (
                       <a
                         href={value}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-600 underline block"
+                        className="text-[#252F4A] underline block"
                       >
                         {value}
                       </a>

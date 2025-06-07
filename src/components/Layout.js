@@ -8,7 +8,7 @@ import { ReactComponent as SalesIcon } from "../Assets/Sales.svg";
 import { ReactComponent as SettingIcon } from "../Assets/Setting.svg";
 import { ReactComponent as LogOutIcon } from "../Assets/LogOut.svg";
 import { ReactComponent as NotificationIcon } from "../Assets/Notification.svg";
-import { CgArrowLeftR } from "react-icons/cg";
+import { ReactComponent as HeaderArrow } from "../Assets/black-left-line.svg";
 
 import logo from "../Assets/Logo.png";
 import SortLogo from "../Assets/SortLogo.svg";
@@ -58,7 +58,7 @@ const SidebarWithHeader = ({ children }) => {
       >
         <div className="grid grid-rows-[auto_1fr_auto] h-full">
           {/* Logo + Close button */}
-          <div className="p-[26px] grid grid-cols-[1fr_auto] items-center h-full relative">
+          <div className="p-[26px] grid grid-cols-[1fr_auto] items-center h-full">
             <div
               className={`text-lg font-bold ${
                 isOpen ? "block" : "hidden"
@@ -70,9 +70,7 @@ const SidebarWithHeader = ({ children }) => {
                   alt="Logo"
                   className="w-[124px] h-[67px] object-contain"
                 />
-                <div className="bg-[#FFFFFF] border border-[#F1F1F4] p-[6px] rounded-[8px] absolute z-1000 top-[50%] right-[-10px] transform -translate-y-1/2">
-                  <CgArrowLeftR className="w-[30px] h-[30px] text-[#99A1B7]" />
-                </div>
+                
               </div>
             </div>
 
@@ -231,8 +229,11 @@ const SidebarWithHeader = ({ children }) => {
             </button>
 
             {/* Page Title */}
-            <div className="text-[14px] font-medium text-[#071437] leading-[14px]">
+            <div className="text-[14px] font-medium text-[#071437] leading-[14px] relative">
               {pageTitle}
+              <div className="bg-[#FFFFFF] border border-[#F1F1F4] p-[6px] rounded-[8px] absolute z-1000 top-[50%] left-[-64px] transform -translate-y-1/2">
+                  <HeaderArrow className="w-[30px] h-[30px] text-[#99A1B7]" />
+                </div>
             </div>
           </div>
 
