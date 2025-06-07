@@ -58,7 +58,7 @@ const SidebarWithHeader = ({ children }) => {
       >
         <div className="grid grid-rows-[auto_1fr_auto] h-full">
           {/* Logo + Close button */}
-          <div className="p-4 grid grid-cols-[1fr_auto] items-center h-full">
+          <div className="p-[26px] grid grid-cols-[1fr_auto] items-center h-full relative">
             <div
               className={`text-lg font-bold ${
                 isOpen ? "block" : "hidden"
@@ -68,10 +68,10 @@ const SidebarWithHeader = ({ children }) => {
                 <img
                   src={logo}
                   alt="Logo"
-                  className="w-[168px] h-[90px] object-contain"
+                  className="w-[124px] h-[67px] object-contain"
                 />
-                <div className="text-gray-400">
-                  <CgArrowLeftR className="w-8 h-8" />
+                <div className="bg-[#FFFFFF] border border-[#F1F1F4] p-[6px] rounded-[8px] absolute z-1000 top-[50%] right-[-10px] transform -translate-y-1/2">
+                  <CgArrowLeftR className="w-[30px] h-[30px] text-[#99A1B7]" />
                 </div>
               </div>
             </div>
@@ -97,56 +97,77 @@ const SidebarWithHeader = ({ children }) => {
           </div>
 
           {/* Navigation Links */}
-          <div className={`px-4 ${isOpen ? "block" : "hidden"} md:block`}>
+          <div className={`px-[26px] ${isOpen ? "block" : "hidden"} md:block`}>
             <ul>
               {[
                 {
                   key: "dashboard",
                   label: "Dashboard",
-                  icon: <DashBoardIcon className="w-6 h-6 text-[#94A3B8]" />,
+                  icon: (
+                    <DashBoardIcon className="w-[20px] h-[20px] text-[#99A1B7]" />
+                  ),
                   to: "/",
                 },
                 {
                   key: "lead",
                   label: "Lead ID",
-                  icon: <LeadIcon className="w-6 h-6" />,
+                  icon: (
+                    <LeadIcon className="w-[20px] h-[20px] text-[#99A1B7]" />
+                  ),
                   to: "/Lead",
                 },
                 {
                   key: "collapsible",
                   label: "Collapsible Lead ID",
-                  icon: <CallableLeadIcon className="w-6 h-6" />,
+                  icon: (
+                    <CallableLeadIcon className="w-[20px] h-[20px] text-[#99A1B7]" />
+                  ),
                   to: "/CollapsibleLead",
                 },
                 {
                   key: "sales",
                   label: "Total Sales",
-                  icon: <SalesIcon className="w-6 h-6" />,
+                  icon: (
+                    <SalesIcon className="w-[20px] h-[20px] text-[#99A1B7]" />
+                  ),
                   to: "/Sales",
                 },
                 {
                   key: "settings",
                   label: "Settings",
-                  icon: <SettingIcon className="w-6 h-6" />,
+                  icon: (
+                    <SettingIcon className="w-[20px] h-[20px] text-[#99A1B7]" />
+                  ),
                   to: "/Setting",
                 },
               ].map(({ key, label, icon, to }) => (
                 <Link to={to} className="block">
                   <li
                     key={key}
-                    className={`relative flex items-center cursor-pointer py-4 pl-6 pr-4 rounded-xl transition-all duration-200 ${
-                      selectedItem === key
-                        ? "bg-gray-100 text-black"
-                        : " hover:bg-gray-100"
-                    }`}
-                    onClick={() => handleSelect(key)}
+                    className={`relative flex items-center cursor-pointer py-[16px] rounded-xl transition-all duration-200
+                      ${
+                        selectedItem === key
+                          ? "bg-gray-100 text-black font-medium"
+                          : "hover:bg-gray-100"
+                      }
+                      group
+                    `}
                   >
                     {selectedItem === key && (
                       <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-[#009DFF] rounded-full" />
                     )}
-                    <div className="flex items-center space-x-3 w-full">
+                    <div
+                      className={`
+                        flex items-center space-x-3 w-full
+                        ${selectedItem === key ? "pl-4" : ""}
+                        group-hover:pl-4 transition-all duration-200
+                      `}
+                      onClick={() => handleSelect(key)}
+                    >
                       {icon}
-                      <span>{label}</span>
+                      <span className="text-[#111827] text-[14px]">
+                        {label}
+                      </span>
                     </div>
                   </li>
                 </Link>
@@ -157,8 +178,10 @@ const SidebarWithHeader = ({ children }) => {
           {/* Logout Button */}
           <footer className="p-4">
             <button className="w-full py-4 px-4 rounded text-black hover:bg-[#F5F5F5] flex items-center space-x-2">
-              <LogOutIcon className="w-6 h-6" />
-              <span>Logout Account</span>
+              <LogOutIcon className="w-[20px] h-[20px]" />
+              <span className="text-[14px] text-[#111827] font-medium">
+                Logout Account
+              </span>
             </button>
           </footer>
         </div>
@@ -171,7 +194,7 @@ const SidebarWithHeader = ({ children }) => {
         }`}
       >
         {/* Header */}
-        <header className="h-[80px] sticky top-0 bg-gray-50 text-white p-4 flex items-center justify-between">
+        <header className="h-[80px] bg-[#FFFFFF] text-white py-[20px] px-[40px] flex items-center justify-between">
           {/* Left Section: Logo + Toggle + Page Title */}
           <div className="flex items-center gap-4">
             {/* Logo */}
@@ -208,20 +231,20 @@ const SidebarWithHeader = ({ children }) => {
             </button>
 
             {/* Page Title */}
-            <div className="text-[17px] font-semibold text-black">
+            <div className="text-[14px] font-medium text-[#071437] leading-[14px]">
               {pageTitle}
             </div>
           </div>
 
           {/* Right Section: Notification + Profile */}
           <div className="flex items-center space-x-4">
-            <NotificationIcon className="w-7 h-7 text-white" />
-            <ProfileIcon className="w-10 h-10 text-white border rounded-full border-blue-500" />
+            <NotificationIcon className="w-[40px] h-[40px] text-white" />
+            <ProfileIcon className="w-[40px] h-[40px] text-white border rounded-full border-[#007FC4]" />
           </div>
         </header>
 
         {/* Main Content */}
-        <main className="overflow-auto bg-[#F9FAFB]">{children}</main>
+        <main className="overflow-auto bg-[#F5F5F5]">{children}</main>
       </div>
     </div>
   );

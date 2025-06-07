@@ -43,7 +43,7 @@ const CustomTooltip = ({ active, payload, label, labelFormatter }) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-white border shadow-md rounded-lg p-2 text-sm text-gray-700">
-        <p className="font-semibold font-['Inter'] font-semibold tracking-normal">
+        <p className="font-semibold font-['Inter'] tracking-normal">
           {labelFormatter ? labelFormatter(label) : label}
         </p>
         {payload.map((entry, index) => (
@@ -60,16 +60,24 @@ const CustomTooltip = ({ active, payload, label, labelFormatter }) => {
   return null;
 };
 
-const StatCard = ({ icon: Icon, title, value }) => (
-  <div className="flex items-center gap-4 p-4 bg-white rounded-2xl shadow-md">
-    <div className="p-3 rounded-xl">
-      <Icon className="text-gray-700" />
+const StatCard = ({ icon: Icon, title, value, arrow, showArrow = true }) => (
+  <div className="flex items-center justify-between gap-4 p-[26px] bg-white shadow-[0px_3px_4px_0px_#00000008] border border-[#F1F1F4] rounded-[18px]">
+    <div className="flex items-center">
+      <div className="mr-[20px] h-[44px] w-[44px]">
+        <Icon />
+      </div>
+      <div>
+        <h4 className="text-[30px] font-semi-bold leading-[30px] tracking-[-2%] mb-[6px]">
+          {value}
+        </h4>
+        <p className="text-[14px] leading-[14px] text-[#4B5675] font-normal">
+          {title}
+        </p>
+      </div>
     </div>
-    <div>
-      <h4 className="text-lg font-bold">{value}</h4>
-      <p className="text-sm text-gray-500">{title}</p>
-    </div>
-    <div className="ml-auto cursor-pointer text-gray-400 p-3">{">"}</div>
+    {showArrow && (
+      <div className="cursor-pointer w-[24px] h-[24px] text-right">{arrow}</div>
+    )}
   </div>
 );
 
@@ -91,23 +99,23 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen space-y-6">
+    <div className="px-[40px] py-[20px] bg-gray-100 min-h-screen space-y-6">
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-start gap-2">
           {/* Heading and subheading stacked vertically */}
           <div>
-            <h2 className="text-xl font-bold text-gray-900">
+            <h2 className="text-[20px] leading-[20px] mb-[5px] font-medium text-[#071437]">
               Tauk Client Dashboard
             </h2>
-            <p className="text-sm text-gray-500">
+            <p className="text-[14px] leading-[14px] text-[#4B5675] font-normal">
               Central Hub for Personal Customization
             </p>
           </div>
         </div>
 
-        <div className="flex items-center border rounded-lg px-3 py-2 md:gap-2">
+        <div className="flex items-center border rounded-[6px] border-[#DBDFE9] px-[10px] py-[8px] md:gap-2">
           <CalendarIcon
-            className="h-5 w-5 text-gray-500 cursor-pointer"
+            className="h-[16px] w-[16px] text-gray-500 cursor-pointer"
             onClick={handleIconClick}
           />
           <DatePicker
@@ -117,7 +125,7 @@ const Dashboard = () => {
             endDate={endDate}
             selectsRange
             dateFormat="MMM dd, yyyy"
-            className="hidden md:block w-40 focus:outline-none text-black"
+            className="hidden md:block text-[#252F4A] bg-[#F5F5F5] text-[12px] leading-[12px] font-normal"
             open={isOpen}
             onInputClick={handleIconClick}
           />
@@ -125,20 +133,90 @@ const Dashboard = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
-        <StatCard icon={TotalLead} title="Total Leads" value="253" />
+        <StatCard
+          icon={TotalLead}
+          title="Total Leads"
+          value="253"
+          arrow={
+            <svg
+              width="25"
+              height="24"
+              viewBox="0 0 25 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M9.66675 5L15.6667 12L9.66675 19"
+                stroke="#99A1B7"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          }
+        />
         <StatCard
           icon={CallableLeadWithBackground}
           title="Callable Leads"
           value="178"
+          arrow={
+            <svg
+              width="25"
+              height="24"
+              viewBox="0 0 25 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M9.66675 5L15.6667 12L9.66675 19"
+                stroke="#99A1B7"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          }
         />
-        <StatCard icon={TotalSale} title="Total Sales" value="42" />
-        <StatCard icon={SaleRevenue} title="Sales Revenue" value="$72,450" />
+        <StatCard
+          icon={TotalSale}
+          title="Total Sales"
+          value="42"
+          arrow={
+            <svg
+              width="25"
+              height="24"
+              viewBox="0 0 25 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M9.66675 5L15.6667 12L9.66675 19"
+                stroke="#99A1B7"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          }
+        />
+        <StatCard
+          icon={SaleRevenue}
+          title="Sales Revenue"
+          value="$72,450"
+          showArrow={false}
+        />
         <StatCard
           icon={ConversionRate}
           title="Conversion Rate (CVR)"
           value="16.6%"
+          showArrow={false}
         />
-        <StatCard icon={AOV} title="Average Order Value (AOV)" value="$1,725" />
+        <StatCard
+          icon={AOV}
+          title="Average Order Value (AOV)"
+          value="$1,725"
+          showArrow={false}
+        />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
