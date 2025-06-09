@@ -1,8 +1,7 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./components/Login";
 import ResetPassWord from "./components/ResetPassWord";
-
 import DashBoard from "./components/DashBoard";
 import Lead from "./components/Lead";
 import CollapsibleLead from "./components/CollapsibleLead";
@@ -15,53 +14,40 @@ function App() {
   return (
     <Router>
       <Routes>
+        <Route path="/" element={<Navigate to="/Login" replace />} />
         <Route path="/Login" element={<Login />} />
         <Route path="/Forgotpassword" element={<ResetPassWord />} />
-<Route path="/reset-password" element={<Screen2 />} />
-        <Route
-          path="/"
-          element={
-            <Layout>
-              <DashBoard />
-            </Layout>
-          }
-        />
+        <Route path="/reset-password" element={<Screen2 />} />
 
-        <Route
-          path="/Lead"
-          element={
-            <Layout>
-              <Lead />
-            </Layout>
-          }
-        />
+        <Route path="/dashboard" element={
+          <Layout>
+            <DashBoard />
+          </Layout>
+        } />
 
-        <Route
-          path="/CollapsibleLead"
-          element={
-            <Layout>
-              <CollapsibleLead />
-            </Layout>
-          }
-        />
+        <Route path="/Lead" element={
+          <Layout>
+            <Lead />
+          </Layout>
+        } />
 
-        <Route
-          path="/Sales"
-          element={
-            <Layout>
-              <Sales />
-            </Layout>
-          }
-        />
+        <Route path="/CollapsibleLead" element={
+          <Layout>
+            <CollapsibleLead />
+          </Layout>
+        } />
 
-        <Route
-          path="/Setting"
-          element={
-            <Layout>
-              <Setting />
-            </Layout>
-          }
-        />
+        <Route path="/Sales" element={
+          <Layout>
+            <Sales />
+          </Layout>
+        } />
+
+        <Route path="/Setting" element={
+          <Layout>
+            <Setting />
+          </Layout>
+        } />
       </Routes>
     </Router>
   );

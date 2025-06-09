@@ -1,31 +1,42 @@
+// === src/pages/Login.js ===
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import logo from "../Assets/Logo.png";
-
 import BackGroundImage from "../Assets/BackGroundImage.png";
-
 import { ReactComponent as LoginEye } from "../Assets/LoginEye.svg";
 import { ReactComponent as Checkbox } from "../Assets/Checkbox.svg";
 import { ReactComponent as Checkbox2 } from "../Assets/Checkbox2.svg";
+import axios from "axios";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Email:", email);
-    console.log("Password:", password);
-    console.log("Remember Me:", remember);
+    try {
+      const response = await axios.post("http://192.168.1.80:5000/api/auth/login", {
+        email,
+        password,
+      });
+
+      const { token } = response.data;
+      localStorage.setItem("token", token);
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Login failed:", error.response?.data || error.message);
+      alert("Login failed. Please check your credentials.");
+    }
   };
 
   return (
     <div
       className="p-[1px] min-h-screen bg-cover bg-center flex items-center justify-center font-['Inter']"
-      style={{
-        backgroundImage: `url(${BackGroundImage})`,
-      }}
+      style={{ backgroundImage: `url(${BackGroundImage})` }}
     >
       <div className="flex flex-col bg-white text-center w-[319px] md:w-[610px] h-[546px] md:h-[624px] rounded-[16px] md:rounded-[30px] gap-4 border p-[20px] md:pt-[50px] md:px-[60px] md:pb-[60px] shadow-custom-glow">
         <img
@@ -51,17 +62,13 @@ export default function Login() {
             <div className="h-[210px]">
               <div className="h-[186px]">
                 <div className="h-[78px] gap-[6px]">
-                  <label
-                    htmlFor="email"
-                    className="block text-[#1F2937] mb-[6px] leading-[20px] h-[20px] text-[16px] font-medium"
-                  >
+                  <label htmlFor="email" className="block text-[#1F2937] mb-[6px] text-[16px] font-medium">
                     Email Address
                   </label>
-
                   <input
                     type="email"
                     id="email"
-                    className="w-full px-[14px] py-[6px] h-[52px] bg-[#F9FAFB] p-[14px] rounded-[12px] focus:outline-none leading-[24px] tracking-normal placeholder:font-normaln placeholder:leading-6 placeholder:text-gray-500 font-normal text-[16px]  text-[#6B7280]"
+                    className="w-full px-[14px] py-[6px] h-[52px] bg-[#F9FAFB] p-[14px] rounded-[12px] focus:outline-none text-[16px] text-[#6B7280]"
                     placeholder="Enter email address"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -69,18 +76,15 @@ export default function Login() {
                   />
                 </div>
 
-                <div className="relative h-[78px] gap-[6px] mt-[30px] ">
-                  <label
-                    htmlFor="password"
-                    className="block text-[#1F2937] mb-[6px] leading-[20px] h-[20px] text-[16px] font-medium"
-                  >
+                <div className="relative h-[78px] gap-[6px] mt-[30px]">
+                  <label htmlFor="password" className="block text-[#1F2937] mb-[6px] text-[16px] font-medium">
                     Password
                   </label>
                   <div className="relative">
                     <input
                       type={showPassword ? "text" : "password"}
                       id="password"
-                      className="w-[calc(100%-0px)] bg-[#F9FAFB] p-[14px] border border-[#F9FAFB] rounded-[12px] h-[52px] font-normal text-base leading-6 text-[#6B7280] focus:outline-none"
+                      className="w-full bg-[#F9FAFB] p-[14px] rounded-[12px] h-[52px] text-base text-[#6B7280] focus:outline-none"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
@@ -89,7 +93,7 @@ export default function Login() {
                       className="absolute right-4 top-1/2 transform -translate-y-1/2 cursor-pointer"
                       onClick={() => setShowPassword(!showPassword)}
                     >
-                      {showPassword ? <LoginEye /> : <LoginEye />}
+                      <LoginEye />
                     </span>
                   </div>
                 </div>
@@ -101,7 +105,7 @@ export default function Login() {
                     {remember ? (
                       <Checkbox className="w-[24px] h-[24px] rounded-[6px] mr-[6px] border border-gray-300" />
                     ) : (
-                      <Checkbox2 className="w-[24px] h-[24px] rounded-[6px] mr-[6px] " /> 
+                      <Checkbox2 className="w-[24px] h-[24px] rounded-[6px] mr-[6px] " />
                     )}
                   </button>
                   Remember me
@@ -117,7 +121,7 @@ export default function Login() {
 
             <button
               type="submit"
-              className="w-[calc(100%-0px)] bg-gradient-to-r from-[#00AEEF] to-[#007FC4] hover:from-[#00A0DC] hover:to-[#006EB4] text-white tracking-wide transition duration-200 m-auto h-[44px] rounded-[10px] gap-[8px] py-2 px-9 text-[16px] font-bold"
+              className="w-full bg-gradient-to-r from-[#00AEEF] to-[#007FC4] hover:from-[#00A0DC] hover:to-[#006EB4] text-white transition duration-200 h-[44px] rounded-[10px] py-2 px-9 text-[16px] font-bold"
             >
               Log In
             </button>
