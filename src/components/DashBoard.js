@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   LineChart,
   Line,
@@ -20,7 +20,7 @@ import { ReactComponent as TotalSale } from "../Assets/TotalSale.svg";
 import { ReactComponent as SaleRevenue } from "../Assets/SaleRevenue.svg";
 import { ReactComponent as ConversionRate } from "../Assets/ConversionRate.svg";
 import { ReactComponent as AOV } from "../Assets/AOV.svg";
-
+import DatePick from "./DatePick";
 const dataAOV = [
   { month: "Jan", value: 1600 },
   { month: "Feb", value: 1200 },
@@ -85,11 +85,41 @@ const Dashboard = () => {
   const [dateRange, setDateRange] = useState([null, null]);
   const [startDate, endDate] = dateRange;
   const [isOpen, setIsOpen] = useState(false);
+  const [openToDate, setOpenToDate] = useState(new Date());
+
+  useEffect(() => {
+    if (startDate) {
+      setOpenToDate(startDate);
+    }
+
+  }, [startDate]);
+  const handleApply = () => {
+    setIsOpen(false);
+  }
+  const handleCancel = () => {
+    setDateRange([null, null]);
+    setIsOpen(false);
+  };
+
+
+  const formatRange = () => {
+    if (!startDate || !endDate) return "";
+    const format = (d) =>
+      `${d.toLocaleDateString(undefined, {
+        month: "numeric",
+        day: "numeric",
+      })} ${d.toLocaleTimeString(undefined, {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      })}`;
+    return `${format(startDate)} - ${format(endDate)}`;
+  };
+
 
   const handleIconClick = () => {
     setIsOpen(!isOpen);
   };
-
   const handleDatePickerChange = (update) => {
     setDateRange(update);
     // Close the date picker after selecting both dates in a range
@@ -113,22 +143,8 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="flex items-center border rounded-[6px] border-[#DBDFE9] px-[10px] py-[8px] md:gap-2">
-          <CalendarIcon
-            className="h-[16px] w-[16px] text-gray-500 cursor-pointer"
-            onClick={handleIconClick}
-          />
-          <DatePicker
-            selected={startDate}
-            onChange={handleDatePickerChange}
-            startDate={startDate}
-            endDate={endDate}
-            selectsRange
-            dateFormat="MMM dd, yyyy"
-            className="hidden md:block text-[#252F4A] bg-[#F5F5F5] text-[12px] leading-[12px] font-normal"
-            open={isOpen}
-            onInputClick={handleIconClick}
-          />
+        <div >
+          <DatePick />
         </div>
       </div>
 
@@ -276,9 +292,9 @@ const Dashboard = () => {
               <option value="monthly">12 months</option>
               <option value="quarterly">Quarterly</option>
               <option value="yearly">Yearly</option>
-            </select> 
+            </select>
           </div>
-          <ResponsiveContainer width="100%" height={266 } className="px-[26px] pb-[26px]">
+          <ResponsiveContainer width="100%" height={266} className="px-[26px] pb-[26px]">
             <LineChart data={dataCVR}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" tick={false} axisLine={false} />

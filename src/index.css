@@ -1,3 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+.custom-datepicker .react-datepicker__month-container {
+    border: none !important;
+}
+
+.custom-datepicker .react-datepicker__header {
+    border-bottom: none !important;
+    background-color: transparent !important;
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+    box-shadow: none !important;
+    gap: 10px important;
+}

@@ -10,6 +10,7 @@ import { ReactComponent as BackArrow } from "../Assets/BackArrow.svg";
 import { ReactComponent as Cross } from "../Assets/cross.svg";
 import { ReactComponent as BlackLeft } from "../Assets/black-left.svg";
 import { ReactComponent as BlackRight } from "../Assets/black-right.svg";
+import DatePick from "./DatePick";
 
 const LeadsTable = () => {
   const allLeads = Array.from({ length: 51 }, (_, i) => ({
@@ -78,15 +79,16 @@ const LeadsTable = () => {
           </div>
         </div>
 
-        <div className="flex items-center border border-[#DBDFE9] rounded-[6px] px-[10px] py-[8px]  md:gap-2">
-          <CalendarIcon className="h-[16px] w-[16px] text-gray-500" />
+        <div >
+          {/* <CalendarIcon className="h-[16px] w-[16px] text-gray-500" />
           <DatePicker
             selected={selectedDate}
             onChange={(date) => setSelectedDate(date)}
             dateFormat="MMMM, yyyy"
             showMonthYearPicker
             className="md:block focus:outline-none w-40 bg-[#F5F5F5] text-[#252F4A] font-normal text-[12px] leading-[12px]"
-          />
+          /> */}
+          <DatePick/>
         </div>
       </div>
 
@@ -106,15 +108,16 @@ const LeadsTable = () => {
               />
             </div>
 
-            <div className="flex items-center border rounded-lg px-3 py-2 bg-[#FCFCFC]">
-              <CalendarIcon className="h-[16px] w-[16px] text-gray-500 cursor-pointer mr-[9px]" />
+            <div >
+              {/* <CalendarIcon className="h-[16px] w-[16px] text-gray-500 cursor-pointer mr-[9px]" />
               <DatePicker
                 selected={selectedDate}
                 onChange={(date) => setSelectedDate(date)}
                 dateFormat="MMMM, yyyy"
                 showMonthYearPicker
                 className="hidden md:block w-40 focus:outline-none bg-[#FCFCFC] text-[#252F4A] font-normal text-[12px] leading-[12px]"
-              />
+              /> */}
+              <DatePick/>
             </div>
           </div>
 
