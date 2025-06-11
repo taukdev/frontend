@@ -233,7 +233,7 @@ const LeadsTable = () => {
               </span>
             </div>
             <div className="hidden md:flex items-center">
-              <span className="text-[#4B5675] text-[13px] mr- leading-[14px] font-normal">
+              <span className="text-[#4B5675] text-[13px] mr-1 leading-[14px] font-normal">
                 1-10 of 52
               </span>
               <BlackLeft

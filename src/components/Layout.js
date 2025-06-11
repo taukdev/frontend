@@ -322,7 +322,7 @@ const SidebarWithHeader = ({ children }) => {
                         relative flex items-center cursor-pointer py-[16px] rounded-xl transition-all duration-200
                         ${selectedItem === key
                           ? "bg-gray-100 text-black font-medium"
-                          : "hover:bg-gray-100"}
+                          : "hover:bg-gray-100 "}
                         group
                       `}
                     >

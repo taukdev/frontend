@@ -216,7 +216,7 @@ const LeadsTable = () => {
             </tbody>
           </table>
 
-          <div className=" flex justify-between items-center py-4 px-6">
+          <div className=" flex justify-between items-center py-4 px-6 w-full">
             <div className="flex items-center gap-2">
               <label className="text-[13px] leading-[14px] font-normal text-[#4B5675]">
                 Show
@@ -249,7 +249,7 @@ const LeadsTable = () => {
               </span>
             </div>
             <div className="hidden md:flex items-center">
-              <span className="text-[#4B5675] text-[13px] mr- leading-[14px] font-normal">
+              <span className="text-[#4B5675] text-[13px] mr-1 leading-[14px] font-normal">
                 1-10 of 52
               </span>
               <BlackLeft
@@ -295,7 +295,7 @@ const LeadsTable = () => {
       </div>
 
       {isModalOpen && selectedLead && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#071437] bg-opacity-50 ">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#071437] bg-opacity-50">
           <div className="bg-white rounded-[26px] w-[646px] max-w-md overflow-hidden px-[22px] pt-[28px] pb-[40px] mx-4">
             <div className="bg-[linear-gradient(121.72deg,_rgba(0,174,239,0.06)_0%,_rgba(0,127,196,0.06)_100%)] flex justify-between items-center p-[20px] rounded-[12px]">
               <h2 className="text-[18px] leading-[20px] font-medium text-[#071437]">
