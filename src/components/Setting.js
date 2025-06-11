@@ -2,6 +2,9 @@ import { useState } from "react";
 import ProfilePicture from "../Assets/Profile.svg";
 import { ReactComponent as Upload } from "../Assets/Upload.svg";
 import { ReactComponent as Eye } from "../Assets/Eye.svg";
+import DatePick from "./DatePick";
+import DatePicker from "react-datepicker";
+import { CalendarIcon } from "lucide-react";
 
 export default function ProfileUpdateForm() {
   const [preview, setPreview] = useState(null);
@@ -30,13 +33,25 @@ export default function ProfileUpdateForm() {
   };
 
   return (
-    <div className="bg-gray-100 px-[40px] py-[20px]">
-      <div className="mb-6">
-        <h2 className="text-[20px] font-normal text-[#071437] leading-[20px] md:text-[20px] font-['Inter'] mb-[5px]">Settings</h2>
-        <p className="text-[20px] text-[#4B5675] leading-[20px]  md:text-[14px] font-['Inter'] ">
-          Central Hub for Personal Customization
-        </p>
+    <div className="bg-gray-100 xl:px-[40px] xl:py-[20px] p-4">
+
+      <div className="flex items-center justify-between mb-6">
+        {/* Left Side: Title & Subtitle */}
+        <div>
+          <h2 className="text-[20px] font-semibold text-[#071437] leading-[24px] font-['Inter'] mb-[5px]">
+            Settings
+          </h2>
+          <p className="text-[14px] text-[#4B5675] leading-[20px] font-['Inter']">
+            Central Hub for Personal Customization
+          </p>
+        </div>
+
+        {/* Right Side: Icon in rounded box */}
+        <div className="flex items-center justify-center w-[44px] h-[44px] bg-[#F5F8FA] rounded-[12px] border border-[#E4E6EF] md:hidden block">
+          <CalendarIcon className="h-[20px] w-[20px] text-[#071437]" />
+        </div>
       </div>
+
 
       {/* Profile Section */}
       <div className="flex items-center flex-row md:flex-row gap-4 md:gap-6 mb-6">
@@ -46,12 +61,14 @@ export default function ProfileUpdateForm() {
           className="object-cover border rounded-[20px] w-[122px] h-[122px]"
         />
 
-        <div className="flex flex-col gap-2 ">
+        <div className="flex flex-col gap-2.5">
           {/* Buttons container */}
           <div className="flex flex-row gap-2 items-center">
             {/* Upload Button */}
-            <label className=" bg-[linear-gradient(121.72deg,_#00AEEF_0%,_#007FC4_100%)] text-white px-[24px] py-[8px]  rounded-[10px] font-bold text-[16px] leading-[20px] cursor-pointer hover:bg-[#007FC4]">
-              <Upload className="md:hidden" />
+            <label className="relative flex items-center justify-center bg-[linear-gradient(121.72deg,_#00AEEF_0%,_#007FC4_100%)] text-white px-[24px] py-[8px] max-sm:w-24 max-[320px]:w-[4.5rem] rounded-[10px] font-bold text-[16px] leading-[20px] cursor-pointer hover:bg-[#007FC4]">
+              <div className="md:hidden flex items-center justify-center">
+                <Upload />
+              </div>
               <span className="hidden md:inline text-[14px] font-['Inter']">
                 Upload New Photo
               </span>
@@ -59,22 +76,23 @@ export default function ProfileUpdateForm() {
                 type="file"
                 accept="image/*"
                 onChange={handleImageChange}
-                className=" w-0 opacity-0 cursor-pointer"
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
               />
             </label>
+
 
             {/* Reset Button */}
             <button
               onClick={() => setPreview(null)}
-              className="bg-[#F5F5F5] text-[#99A1B7] hover:bg-gray-200 px-[36px] py-[8px] rounded-[10px] leading-[20px] text-[16px]"
+              className="bg-[#F5F5F5] text-[#99A1B7] border-2 w-24 hover:bg-gray-200 max-[320px]:w-[4.5rem] p-2.5 rounded-[10px] text-center leading-[20px] text-[16px]"
             >
               Reset
             </button>
           </div>
 
           {/* Info Text */}
-          <p className="text-[#4B5675] text-[16px] md:text-[15px] px-[4px] font-normal leadin-[100%]">
-            Allowed JPG, GIF, or PNG. Max size 800 KB
+          <p className="text-[#4B5675] text-[13px] md:text-[15px]  px-[4px] font-normal leadin-[100%]">
+            Allowed JPG, GIF, or PNG. Max size of 800 KB
           </p>
         </div>
       </div>
@@ -84,14 +102,14 @@ export default function ProfileUpdateForm() {
         <h3 className="text-[#071437] leading-[16px] text-[16px] font-['Inter'] mb-4 font-semibold">
           Profile Info
         </h3>
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-2 md:gap-6 gap-2">
           <div>
             <label className="block mb-[2px] text-[#1F2937] text-[14px] md:text-[16px] font-medium leading-[20px] ml-2">
               First Name
             </label>
             <input
               type="text"
-              className="w-full h-[52px] bg-[#F9FAFB] px-[14px] py-[6px] rounded-[12px] text-[#6B7280] font-normal text-[16px] leading-[24px] "
+              className="w-full h-[47px] bg-[#F9FAFB] px-[14px] py-[6px] rounded-[12px] text-[#6B7280] font-normal text-[16px] leading-[24px] "
               placeholder="Enter First Name"
             />
           </div>
@@ -101,13 +119,13 @@ export default function ProfileUpdateForm() {
             </label>
             <input
               type="text"
-              className="w-full h-[52px] bg-[#F9FAFB] px-[14px] py-[6px] rounded-[12px] text-[#6B7280] font-normal text-[16px] leading-[24px] "
+              className="w-full h-[47px] bg-[#F9FAFB] px-[14px] py-[6px] rounded-[12px] text-[#6B7280] font-normal text-[16px] leading-[24px] "
               placeholder="Enter Last Name"
             />
           </div>
         </div>
       </div>
-            <hr className="mb-6 mt-6 bg-[#071437] bg-opacity-10" />
+      <hr className="mb-6 mt-6 bg-[#071437] bg-opacity-10" />
 
       {/* Security Section */}
       <div>
@@ -125,8 +143,8 @@ export default function ProfileUpdateForm() {
               </label>
               <input
                 type={showCurrentPassword ? "text" : "password"}
-                className="w-full h-[52px] bg-[#F9FAFB] px-[14px] py-[6px] rounded-[12px] text-[#6B7280] font-normal text-[16px] leading-[24px]"
-           />
+                className="w-full h-[47px] bg-[#F9FAFB] px-[14px] py-[6px] border-2 rounded-[12px] text-[#6B7280] font-normal text-[16px] leading-[24px]"
+              />
               <button
                 type="button"
                 onClick={() => setShowCurrentPassword((prev) => !prev)}
@@ -143,8 +161,8 @@ export default function ProfileUpdateForm() {
               </label>
               <input
                 type={showNewPassword ? "text" : "password"}
-                className="w-full h-[52px] bg-[#F9FAFB] px-[14px] py-[6px] rounded-[12px] text-[#6B7280] font-normal text-[16px] leading-[24px]"
-           />
+                className="w-full h-[47px] bg-[#F9FAFB] px-[14px] py-[6px] border-2 rounded-[12px] text-[#6B7280] font-normal text-[16px] leading-[24px]"
+              />
               <button
                 type="button"
                 onClick={() => setShowNewPassword((prev) => !prev)}
@@ -156,18 +174,18 @@ export default function ProfileUpdateForm() {
           </div>
 
           {/* Confirm Password */}
-          <div className="relative w-full md:w-[37rem]">
+          <div className="relative w-full xl:w-[34rem] lg:w-[22.5rem]">
             <label className="block mb-[2px] text-[#1F2937] text-[14px] md:text-[16px] font-medium leading-[20px] ml-2">
               Confirm New Password
             </label>
             <input
               type={showConfirmPassword ? "text" : "password"}
-              className="w-[490px] h-[52px] bg-[#F9FAFB] px-[14px] py-[6px] rounded-[12px] text-[#6B7280] font-normal text-[16px] leading-[24px] relative"
+              className="w-full h-[52px] bg-[#F9FAFB] px-[14px] py-[6px] border-2 rounded-[12px] text-[#6B7280] font-normal text-[16px] leading-[24px] relative"
             />
             <button
               type="button"
               onClick={() => setShowConfirmPassword((prev) => !prev)}
-              className="absolute top-3/4 right-[110px] -translate-y-2/3 text-gray-500 hover:text-gray-700"
+              className="absolute top-3/4 right-2 -translate-y-2/3 text-gray-500 hover:text-gray-700"
             >
               <Eye className="w-5 h-5" />
             </button>
@@ -193,7 +211,7 @@ export default function ProfileUpdateForm() {
         </button>
         <button
           type="reset"
-          className="text-[#99A1B7] hover:bg-gray-200 px-[36px] py-[8px] text-[16px] leading-[20px] md:text-[16px] font-bold rounded-[10px] bg-[#F5F5F5]"
+          className="text-[#99A1B7] border-2 hover:bg-gray-200 px-[36px] py-[8px] text-[16px] leading-[20px] md:text-[16px] font-bold rounded-[10px] bg-[#F5F5F5]"
         >
           Reset
         </button>

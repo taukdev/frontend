@@ -303,20 +303,18 @@ const LeadsTable = () => {
   return (
     <div className="xl:px-[40px] xl:py-[20px] p-5 bg-gray-100 h-screen">
       <div className="flex justify-between items-center">
-        <div className="flex items-start gap-2">
-          {/* Left arrow only on small screens */}
+        <div className="flex items-start gap-3">
+          {/* Back Arrow Button */}
+          <button className="text-[#071437] text-[20px] font-semibold leading-none ">
+            &larr;
+          </button>
 
-
-          {/* Heading and subheading stacked vertically */}
+          {/* Heading and Subheading */}
           <div>
-
-            <h2 className="md:text-xl text-[20px] gap-2 flex items-center leading-[20px] font-semibold text-[#071437] mb-[3px]">
-              <button className="md:hidden text-gray-600 hover:text-black text-lg ">
-                &larr;
-              </button>
+            <h2 className="text-[#071437] text-[18px] font-semibold leading-[24px]">
               Total Sales
             </h2>
-            <p className="text-[14px] leading-[14px] text-[#4B5675] font-normal">
+            <p className="text-[#7E8299] text-[14px] font-normal leading-[20px]">
               Central Hub for Personal Customization
             </p>
           </div>
