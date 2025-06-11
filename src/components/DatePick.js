@@ -51,7 +51,7 @@ function DatePick({ onDateChange }) {
   };
 
   return (
-    <div className="relative w-fit">
+    <div className="relative w-full">
       <div
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center border rounded-lg px-3 py-2 bg-[#FCFCFC] cursor-pointer"
@@ -63,7 +63,7 @@ function DatePick({ onDateChange }) {
       </div>
 
       {isOpen && (
-        <div className="absolute z-50 mt-2 -ml-[500px] shadow-lg rounded-xl bg-white p-0">
+        <div className="absolute z-50 mt-2 md:-ml-[309px] -ml-48 shadow-lg rounded-xl bg-white p-0">
           <DatePicker
             selected={startDate}
             onChange={(update) => setDateRange(update)}
@@ -82,13 +82,17 @@ function DatePick({ onDateChange }) {
             }
           />
 
+
           <div className="flex flex-col border-t border-gray-100 bg-white p-4">
-            <div className="flex items-center justify-end gap-4">
-              {startDate && endDate && (
-                <span className="text-sm text-gray-600 font-medium text-center">
-                  {formatDateWithTime()}
-                </span>
-              )}
+            {/* Date text on top */}
+            {startDate && endDate && (
+              <span className="text-sm text-gray-600 font-medium text-center mb-3">
+                {formatDateWithTime()}
+              </span>
+            )}
+
+            {/* Buttons row on all screen sizes */}
+            <div className="flex justify-center md:justify-end gap-2">
               <button
                 onClick={handleCancel}
                 className="text-sm px-4 py-1.5 rounded-lg border border-gray-300 hover:bg-gray-100"
@@ -103,6 +107,7 @@ function DatePick({ onDateChange }) {
               </button>
             </div>
           </div>
+
         </div>
       )}
     </div>
