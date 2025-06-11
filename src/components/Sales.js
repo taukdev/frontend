@@ -260,8 +260,10 @@ import { ReactComponent as Cross } from "../Assets/cross.svg";
 import { ReactComponent as BlackLeft } from "../Assets/black-left.svg";
 import { ReactComponent as BlackRight } from "../Assets/black-right.svg";
 import DatePick from "./DatePick";
+import { apiInstance } from "../api/config/axios";
+import { ENDPOINTS } from "../api/constants";
 
-const LeadsTable = () => {
+const LeadTable = () => {
   const allLeads = Array.from({ length: 51 }, (_, i) => ({
     id: `S-${String(i + 1).padStart(3, "0")}`,
     firstName: `First${i + 1}`,
@@ -278,6 +280,7 @@ const LeadsTable = () => {
   const [selectedLeads, setSelectedLeads] = useState([]);
   const [selectedLead, setSelectedLead] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const filteredLeads = allLeads.filter((lead) => {
     const search = searchTerm.toLowerCase();
@@ -287,6 +290,20 @@ const LeadsTable = () => {
       lead.id.toLowerCase().includes(search)
     );
   });
+
+  const fetchSalesData = async (startDate, endDate, page, limit) => {
+    try {
+      setLoading(true);
+      const response = await apiInstance.get(`${ENDPOINTS.DASHBOARD.GET_SALES}?startDate=${startDate}&endDate=${endDate}&page=${page}&limit=${limit}`);
+      // setLoading(false);
+      return response.data.sales || [];
+
+
+      
+    } catch (error) {
+            console.error("Failed to fetch dashboard data:", error);
+
+    }
 
   const total = filteredLeads.length;
   const totalPages = Math.ceil(total / perPage);
@@ -561,7 +578,6 @@ const LeadsTable = () => {
       )}
     </div>
   );
-};
+};}
 
-export default LeadsTable;
-
+export default LeadTable;

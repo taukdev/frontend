@@ -9,11 +9,6 @@ import {
   CartesianGrid,
 } from "recharts";
 
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-
-import { ReactComponent as CalendarIcon } from "../Assets/calendar.svg";
-
 import { ReactComponent as TotalLead } from "../Assets/TotalLead.svg";
 import { ReactComponent as CallableLeadWithBackground } from "../Assets/CallableLeadWithBackground.svg";
 import { ReactComponent as TotalSale } from "../Assets/TotalSale.svg";
@@ -109,40 +104,6 @@ const Dashboard = () => {
     }
 
   }, [startDate]);
-  const handleApply = () => {
-    setIsOpen(false);
-  }
-  const handleCancel = () => {
-    setDateRange([null, null]);
-    setIsOpen(false);
-  };
-
-
-  const formatRange = () => {
-    if (!startDate || !endDate) return "";
-    const format = (d) =>
-      `${d.toLocaleDateString(undefined, {
-        month: "numeric",
-        day: "numeric",
-      })} ${d.toLocaleTimeString(undefined, {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true,
-      })}`;
-    return `${format(startDate)} - ${format(endDate)}`;
-  };
-
-
-  const handleIconClick = () => {
-    setIsOpen(!isOpen);
-  };
-  const handleDatePickerChange = (update) => {
-    setDateRange(update);
-    // Close the date picker after selecting both dates in a range
-    if (update[0] && update[1]) {
-      setIsOpen(false);
-    }
-  };
 
   const fetchDashboardData = async (startDate, endDate) => {
     try {
