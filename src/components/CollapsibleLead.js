@@ -54,28 +54,24 @@ const LeadsTable = () => {
   };
 
   return (
-    <div className="px-[40px] py-[20px] bg-gray-100 h-screen">
-      <div className="flex justify-between items-center mb-6">
-
+    <div className="xl:px-[40px] xl:py-[20px] p-5 bg-gray-100 h-screen">
+      <div className="flex justify-between items-center">
         <div className="flex items-start gap-2">
           {/* Left arrow only on small screens */}
-          <button className="md:hidden text-gray-600 hover:text-black text-lg mt-1">
-            {/* Replace this with your actual SVG icon if needed */}
-            &larr;
-          </button>
+
 
           {/* Heading and subheading stacked vertically */}
-          <div className="flex flex-row gap-3">
-            <BackArrow className="w-[24px] h-[24px] mr-[5px]" />
-            <div className="flex flex-col">
-              <h2 className="text-[20px] leading-[20px] font-semibold text-[#071437] mb-[6px]">
-                Callable Lead ID{" "}
-              </h2>
-              <p className="text-[14px] leading-[14px] text-[#4B5675] font-normal">
-                Central Hub for Personal Customization
-              </p>
-            </div>
+          <div>
 
+            <h2 className="md:text-xl text-[20px] gap-2 flex items-center leading-[20px] font-semibold text-[#071437] mb-[3px]">
+              <button className="md:hidden text-gray-600 hover:text-black text-lg ">
+                &larr;
+              </button>
+              Lead ID
+            </h2>
+            <p className="text-[14px] leading-[14px] text-[#4B5675] font-normal">
+              Central Hub for Personal Customization
+            </p>
           </div>
         </div>
 
@@ -86,30 +82,31 @@ const LeadsTable = () => {
             onChange={(date) => setSelectedDate(date)}
             dateFormat="MMMM, yyyy"
             showMonthYearPicker
-            className="md:block focus:outline-none w-40 bg-[#F5F5F5] text-[#252F4A] font-normal text-[12px] leading-[12px]"
+            className=" md:block focus:outline-none w-40 bg-[#F5F5F5] text-[#252F4A] font-normal text-[12px] leading-[12px]"
           /> */}
-          <DatePick/>
+          <DatePick />
         </div>
       </div>
-
-      <div className="bg-white flex items-center justify-center rounded-xl">
-        <div className=" w-full rounded-[18px] border border-[#F1F1F4] overflow-x-auto">
-          <div className="flex justify-between items-center p-[26px] border-[#F1F1F4] border-b">
-            <div className="relative w-64">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+      <div className="bg-white flex items-center justify-center rounded-2xl mt-5">
+        <div className=" w-full border border-[#F1F1F4] overflow-x-auto">
+          <div className="flex justify-between items-center p-[20px] border-[#F1F1F4] border-b">
+            <div className="relative lg:w-72 md:w-56 w-full">
+              <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
                 <Search className="h-4 w-4 text-gray-400" />
               </div>
               <input
                 type="text"
-                placeholder="Search leads..."
+                placeholder="Search leads"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="border rounded pl-10 pr-3 py-2 w-full text-[11px] leading-[12px] font-normal focus:outline-none text-[#FCFCFC]"
+                className="border rounded pl-7 pr-3 py-2 w-full text-[11px] leading-[12px] font-normal focus:outline-none text-black "
               />
             </div>
-
-            <div >
-              {/* <CalendarIcon className="h-[16px] w-[16px] text-gray-500 cursor-pointer mr-[9px]" />
+            <div className=" md:block hidden relative">
+              {/* <CalendarIcon
+                className="h-[16px] w-[16px] text-gray-500 cursor-pointer mr-[9px]"
+                onClick={handleIconClick}
+              />
               <DatePicker
                 selected={selectedDate}
                 onChange={(date) => setSelectedDate(date)}
@@ -117,7 +114,7 @@ const LeadsTable = () => {
                 showMonthYearPicker
                 className="hidden md:block w-40 focus:outline-none bg-[#FCFCFC] text-[#252F4A] font-normal text-[12px] leading-[12px]"
               /> */}
-              <DatePick/>
+              <DatePick />
             </div>
           </div>
 
@@ -203,34 +200,47 @@ const LeadsTable = () => {
             </tbody>
           </table>
 
-          <div className="mt-4 flex justify-between items-center m-4">
+          <div className=" flex justify-between items-center py-4 px-6">
             <div className="flex items-center gap-2">
-              <label className="text-[13px] leading-[14px] font-normal text-[#4B5675]">Show</label>
-              <select
-                value={perPage}
-                onChange={(e) => {
-                  setPerPage(+e.target.value);
-                  setPage(1);
-                }}
-                className="border border-[#DBDFE9] rounded-[6px] px-[10px] py-[8px] text-[11px] leading-[12px] font-normal bg-[#FCFCFC]"
-              >
-                {[2, 3, 4, 5, 10, 25, 50].map((n) => (
-                  <option key={n} value={n}>
-                    {n}
-                  </option>
-                ))}
-              </select>
-              <span className="text-[13px] leading-[14px] font-normal text-[#4B5675]">per page</span>
-            </div>
-            <div className="hidden md:flex items-center space-x-2">
-              <span className="text-[#4B5675] text-[13px] leading-[14px] font-normal ">
-                  1-10 of 52
+              <label className="text-[13px] leading-[14px] font-normal text-[#4B5675]">
+                Show
+              </label>
+              <div className="relative border border-[#F1F1F4] rounded-[6px]">
+                <select
+                  value={perPage}
+                  onChange={(e) => {
+                    setPerPage(+e.target.value);
+                    setPage(1);
+                  }}
+                  className="appearance-none border-none bg-transparent pr-6 pl-2 py-1 text-[15px] font-medium text-[#252F4A] focus:ring-0 focus:outline-none"
+                  style={{ minWidth: "40px" }}
+                >
+                  {[2, 3, 4, 5, 10, 25, 50].map((n) => (
+                    <option key={n} value={n}>
+                      {n}
+                    </option>
+                  ))}
+                </select>
+                <span className="pointer-events-none absolute right-1 top-1/2 -translate-y-1/2">
+                  {/* Down arrow SVG */}
+                  <svg width="16" height="16" fill="none" viewBox="0 0 20 20">
+                    <path d="M6 8l4 4 4-4" stroke="#4B5675" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </span>
+              </div>
+              <span className="text-[13px] leading-[14px] font-normal text-[#4B5675]">
+                per page
               </span>
-              <BlackLeft 
-                             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                              className="w-6 h-6 text-[13px] text-[#4B5675] hover:text-[#4B5675] disabled:text-gray-300 cursor-pointer" 
-                              disabled={page === totalPages}
-                            />
+            </div>
+            <div className="hidden md:flex items-center">
+              <span className="text-[#4B5675] text-[13px] mr- leading-[14px] font-normal">
+                1-10 of 52
+              </span>
+              <BlackLeft
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                className="w-5 h-5 hover:text-[black] disabled:text-gray-300 cursor-pointer"
+                disabled={page === 1}
+              />
               {(() => {
                 const maxVisible = 5;
                 let start = Math.max(1, page - Math.floor(maxVisible / 2));
@@ -247,7 +257,7 @@ const LeadsTable = () => {
                     <button
                       key={pageNum}
                       onClick={() => setPage(pageNum)}
-                      className={`px-[12px] py-[8px] rounded-[6px] text-[#4B5675] font-normal text-[14px] leading-[14px]  ${page === pageNum
+                      className={`px-[12px] py-[8px] rounded-[6px] text-[#4B5675] font-normal text-[14px] leading-[14px] ${page === pageNum
                         ? "bg-[#F1F1F4] rounded-[6px] text-[#252F4A] px-[12px] py-[8px] font-semibold flex justify-center items-center"
                         : "text-[#4B5675] hover:bg-[#F1F1F4] font-normal"
                         }`}
@@ -257,14 +267,15 @@ const LeadsTable = () => {
                   );
                 });
               })()}
+
               <BlackRight
-                           onClick={() => setPage((p) => Math.max(1, p - 1))}
-                             className=" w-6 h-6 hover:text-[black] disabled:text-gray-300 cursor-pointer"
-                             disabled={page === 1}
-                            />
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                className="w-5 h-5 text-[13px] text-[#4B5675] hover:text-[#4B5675] disabled:text-gray-300 cursor-pointer"
+                disabled={page === totalPages}
+              />
             </div>
           </div>
-          
+
         </div>
       </div>
 
@@ -275,7 +286,7 @@ const LeadsTable = () => {
               <h2 className="text-[18px] leading-[20px] font-medium text-[#071437]">
                 Callable Lead ID ({selectedLead.id})
               </h2>
-              <Cross onClick={() => setIsModalOpen(false)}  className="cursor-pointer"/>
+              <Cross onClick={() => setIsModalOpen(false)} className="cursor-pointer" />
             </div>
             <div className="divide-y divide-gray-200 px-[20px]">
               {[

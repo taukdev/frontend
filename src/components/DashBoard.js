@@ -66,24 +66,28 @@ const CustomTooltip = ({ active, payload, label, labelFormatter }) => {
 };
 
 const StatCard = ({ icon: Icon, title, value, arrow, showArrow = true }) => (
-  <div className="flex items-center justify-between gap-4 p-[26px] bg-white shadow-[0px_3px_4px_0px_#00000008] border border-[#F1F1F4] rounded-[18px]">
-    <div className="flex items-center">
-      <div className="mr-[20px] h-[44px] w-[44px]">
+  <div className="flex items-center justify-between gap-4 p-[18px] bg-white shadow-[0px_3px_4px_0px_#00000008] border overflow-hidden border-[#F1F1F4] rounded-[18px]">
+    <div className="flex items-center md:gap-2 xl:gap-4 gap-4">
+      <div className="lg:h-[44px] lg:w-[44px] w-[36px] h-[36px] flex items-center justify-center">
         <Icon />
       </div>
       <div>
-        <h4 className="text-[30px] font-semi-bold leading-[30px] tracking-[-2%] mb-[6px]">
+        <h4 className="text-[22px] font-semibold leading-[30px] tracking-[-2%] mb-[4px] truncate overflow-hidden whitespace-nowrap">
           {value}
         </h4>
-        <p className="text-[14px] leading-[14px] text-[#4B5675] font-normal">
+        <p className="text-[12px]  text-[#4B5675] font-normal truncate overflow-hidden whitespace-nowrap">
           {title}
         </p>
       </div>
     </div>
+
     {showArrow && (
-      <div className="cursor-pointer w-[24px] h-[24px] text-right">{arrow}</div>
+      <div className="shrink-0 w-[24px] h-[24px] text-right cursor-pointer">
+        {arrow}
+      </div>
     )}
   </div>
+
 );
 
 const Dashboard = () => {
@@ -143,7 +147,7 @@ const Dashboard = () => {
   const fetchDashboardData = async (startDate, endDate) => {
     try {
       setLoading(true);
-      
+
       // Format dates to YYYY-MM-DD to avoid timezone issues when sending to backend
       const formatToYYYYMMDD = (date) => {
         const d = new Date(date);
@@ -155,9 +159,9 @@ const Dashboard = () => {
 
       const formattedStartDate = formatToYYYYMMDD(startDate);
       const formattedEndDate = formatToYYYYMMDD(endDate);
-      
+
       const response = await apiInstance.get(`${ENDPOINTS.DASHBOARD.GET_STATS}?startDate=${formattedStartDate}&endDate=${formattedEndDate}`);
-      
+
       if (response.data) {
         setDashboardData({
           totalSales: response.data.totalSales,
@@ -182,15 +186,15 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="px-[40px] py-[20px] bg-gray-100 min-h-screen space-y-6">
+    <div className="xl:px-[40px] xl:py-[20px] p-5 bg-gray-100 space-y-6">
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-start gap-2">
           {/* Heading and subheading stacked vertically */}
           <div>
-            <h2 className="text-[20px] leading-[20px] mb-[5px] font-medium text-[#071437]">
+            <h2 className="md:text-[20px]  text-md leading-[20px] mb-[5px] font-medium text-[#071437]">
               Tauk Client Dashboard
             </h2>
-            <p className="text-[14px] leading-[14px] text-[#4B5675] font-normal">
+            <p className="md:text-[14px] text-[12px]  leading-[14px] text-[#4B5675] font-normal">
               Central Hub for Personal Customization
             </p>
           </div>
@@ -201,7 +205,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4">
         <StatCard
           icon={TotalLead}
           title="Total Leads"
@@ -249,7 +253,7 @@ const Dashboard = () => {
         <StatCard
           icon={TotalSale}
           title="Total Sales"
-                // value="42"
+          // value="42"
           value={loading ? "Loading..." : dashboardData.totalSales.toString()}
           arrow={
             <svg
@@ -269,6 +273,9 @@ const Dashboard = () => {
             </svg>
           }
         />
+        <h3 className="text-[15px] font-semibold text-[#181C32] md:hidden block">
+          Leads Statistics
+        </h3>
         <StatCard
           icon={SaleRevenue}
           title="Sales Revenue"
@@ -285,13 +292,13 @@ const Dashboard = () => {
         <StatCard
           icon={AOV}
           title="Average Order Value (AOV)"
-              //  value="$1,725"
+          //  value="$1,725"
           value={loading ? "Loading..." : `$${dashboardData.aov.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
           showArrow={false}
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white rounded-[18px] shadow-[0px_3px_4px_0px_#00000008] border border-[#F1F1F4]">
           <div className="flex justify-between items-center mb-[26px]  p-[26px] border-b border-b-[#F1F1F4]">
             <h3 className="text-[16px] leading-[16px] text-[#071437] font-semibold">

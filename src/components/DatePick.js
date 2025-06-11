@@ -57,7 +57,7 @@ function DatePick({ onDateChange }) {
         className="flex items-center border rounded-lg px-3 py-2 bg-[#FCFCFC] cursor-pointer"
       >
         <CalendarIcon className="h-[16px] w-[16px] text-gray-500 border border-gray-300 rounded-lg" />
-        <span className="ml-2 text-sm text-gray-700">
+        <span className="ml-2 text-sm text-gray-700 md:block hidden">
           {startDate && endDate ? formatDateOnly() : 'Select Date Range'}
         </span>
       </div>
