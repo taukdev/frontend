@@ -21,6 +21,11 @@ import { ReactComponent as SaleRevenue } from "../Assets/SaleRevenue.svg";
 import { ReactComponent as ConversionRate } from "../Assets/ConversionRate.svg";
 import { ReactComponent as AOV } from "../Assets/AOV.svg";
 import DatePick from "./DatePick";
+import { apiInstance } from '../api/config/axios';
+import { ENDPOINTS } from '../api/constants';
+import { useToast } from '../hooks/use-toast';
+import { ToastContainer } from './ui/Toast';
+
 const dataAOV = [
   { month: "Jan", value: 1600 },
   { month: "Feb", value: 1200 },
@@ -86,6 +91,13 @@ const Dashboard = () => {
   const [startDate, endDate] = dateRange;
   const [isOpen, setIsOpen] = useState(false);
   const [openToDate, setOpenToDate] = useState(new Date());
+  const [dashboardData, setDashboardData] = useState({
+    totalSales: 0,
+    totalRevenue: 0,
+    aov: 0
+  });
+  const [loading, setLoading] = useState(false);
+  const { toast, toasts, removeToast } = useToast();
 
   useEffect(() => {
     if (startDate) {
@@ -128,6 +140,47 @@ const Dashboard = () => {
     }
   };
 
+  const fetchDashboardData = async (startDate, endDate) => {
+    try {
+      setLoading(true);
+      
+      // Format dates to YYYY-MM-DD to avoid timezone issues when sending to backend
+      const formatToYYYYMMDD = (date) => {
+        const d = new Date(date);
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      };
+
+      const formattedStartDate = formatToYYYYMMDD(startDate);
+      const formattedEndDate = formatToYYYYMMDD(endDate);
+      
+      const response = await apiInstance.get(`${ENDPOINTS.DASHBOARD.GET_STATS}?startDate=${formattedStartDate}&endDate=${formattedEndDate}`);
+      
+      if (response.data) {
+        setDashboardData({
+          totalSales: response.data.totalSales,
+          totalRevenue: response.data.totalRevenue,
+          aov: response.data.aov
+        });
+      }
+    } catch (error) {
+      console.error("Failed to fetch dashboard data:", error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch dashboard data. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDateChange = (startDate, endDate) => {
+    fetchDashboardData(startDate, endDate);
+  };
+
   return (
     <div className="px-[40px] py-[20px] bg-gray-100 min-h-screen space-y-6">
       <div className="flex justify-between items-center mb-6">
@@ -144,7 +197,7 @@ const Dashboard = () => {
         </div>
 
         <div >
-          <DatePick />
+          <DatePick onDateChange={handleDateChange} />
         </div>
       </div>
 
@@ -196,7 +249,8 @@ const Dashboard = () => {
         <StatCard
           icon={TotalSale}
           title="Total Sales"
-          value="42"
+                // value="42"
+          value={loading ? "Loading..." : dashboardData.totalSales.toString()}
           arrow={
             <svg
               width="25"
@@ -218,7 +272,8 @@ const Dashboard = () => {
         <StatCard
           icon={SaleRevenue}
           title="Sales Revenue"
-          value="$72,450"
+          //  value="$72,450"
+          value={loading ? "Loading..." : `$${dashboardData.totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
           showArrow={false}
         />
         <StatCard
@@ -230,7 +285,8 @@ const Dashboard = () => {
         <StatCard
           icon={AOV}
           title="Average Order Value (AOV)"
-          value="$1,725"
+              //  value="$1,725"
+          value={loading ? "Loading..." : `$${dashboardData.aov.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
           showArrow={false}
         />
       </div>
@@ -325,6 +381,7 @@ const Dashboard = () => {
           </ResponsiveContainer>
         </div>
       </div>
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
     </div>
   );
 };

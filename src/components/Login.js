@@ -1,12 +1,15 @@
 // === src/pages/Login.js ===
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useToast } from '../hooks/use-toast';
+import { ToastContainer } from './ui/Toast';
 import logo from "../Assets/Logo.png";
 import BackGroundImage from "../Assets/BackGroundImage.png";
 import { ReactComponent as LoginEye } from "../Assets/LoginEye.svg";
 import { ReactComponent as Checkbox } from "../Assets/Checkbox.svg";
 import { ReactComponent as Checkbox2 } from "../Assets/Checkbox2.svg";
-import axios from "axios";
+import { apiInstance } from '../api/config/axios';
+import { ENDPOINTS } from '../api/constants';
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -14,22 +17,39 @@ export default function Login() {
   const [remember, setRemember] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-
+  const { toast, toasts, removeToast } = useToast();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://192.168.1.80:5000/api/auth/login", {
+      const response = await apiInstance.post(ENDPOINTS.AUTH.LOGIN, {
         email,
         password,
       });
 
-      const { token } = response.data;
-      localStorage.setItem("token", token);
-      navigate("/dashboard");
+      if (response.data.status === 'success') {
+        const token = response.data.data.token;
+        localStorage.setItem("token", token);
+        toast({
+          title: "Success",
+          description: response.data.message || "Login successful",
+          variant: "success"
+        });
+        navigate("/dashboard");
+      } else {
+        toast({
+          title: "Error",
+          description: "Login failed. Please try again.",
+          variant: "destructive"
+        });
+      }
     } catch (error) {
       console.error("Login failed:", error.response?.data || error.message);
-      alert("Login failed. Please check your credentials.");
+      toast({
+        title: "Error",
+        description: error.response?.data?.message || "Login failed. Please check your credentials.",
+        variant: "destructive"
+      });
     }
   };
 
@@ -38,6 +58,7 @@ export default function Login() {
       className="p-[1px] min-h-screen bg-cover bg-center flex items-center justify-center font-['Inter']"
       style={{ backgroundImage: `url(${BackGroundImage})` }}
     >
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
       <div className="flex flex-col bg-white text-center w-[319px] md:w-[610px] h-[546px] md:h-[624px] rounded-[16px] md:rounded-[30px] gap-4 border p-[20px] md:pt-[50px] md:px-[60px] md:pb-[60px] shadow-custom-glow">
         <img
           src={logo}
