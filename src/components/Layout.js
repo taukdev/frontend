@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ReactComponent as ProfileIcon } from "../Assets/Profile.svg";
 import { ReactComponent as DashBoardIcon } from "../Assets/DashBoard.svg";
 import { ReactComponent as LeadIcon } from "../Assets/Lead.svg";
-import { ReactComponent as CallableLeadIcon } from "../Assets/CallableLead.svg";
+import { ReactComponent as CollapsibleLeadIcon } from "../Assets/CallableLead.svg";
 import { ReactComponent as SalesIcon } from "../Assets/Sales.svg";
 import { ReactComponent as SettingIcon } from "../Assets/Setting.svg";
 import { ReactComponent as LogOutIcon } from "../Assets/LogOut.svg";
@@ -17,7 +17,7 @@ import { AUTH } from "../api/constants";
 const pageConfig = {
   "/dashboard": { key: "dashboard", title: "Dashboard" },
   "/Lead": { key: "lead", title: "Total Leads" },
-  "/CollapsibleLead": { key: "collapsible", title: "Collable Leads" },
+  "/CollapsibleLead": { key: "Collapsible", title: "Collable Leads" },
   "/Sales": { key: "sales", title: "Total Sales" },
   "/Setting": { key: "settings", title: "Settings" },
 };
@@ -82,9 +82,9 @@ const SidebarWithHeader = ({ children }) => {
       to: "/Lead",
     },
     {
-      key: "collapsible",
-      label: "Collapsible Lead ID",
-      icon: <CallableLeadIcon className="w-[20px] h-[20px] text-[#99A1B7]" />,
+      key: "Collapsible",
+      label: "Callable Lead ID",
+      icon: <CollapsibleLeadIcon className="w-[20px] h-[20px] text-[#99A1B7]" />,
       to: "/CollapsibleLead",
     },
     {

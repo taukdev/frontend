@@ -100,7 +100,7 @@ const SalesTable = () => {
               Total Sales
             </h2>
             <p className="text-[#7E8299] text-[14px] font-normal leading-[20px]">
-              Central Hub for Personal Customization
+              
             </p>
           </div>
         </div>

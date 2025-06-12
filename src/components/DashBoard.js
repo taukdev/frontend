@@ -10,7 +10,7 @@ import {
 } from "recharts";
 
 import { ReactComponent as TotalLead } from "../Assets/TotalLead.svg";
-import { ReactComponent as CallableLeadWithBackground } from "../Assets/CallableLeadWithBackground.svg";
+import { ReactComponent as CollapsibleLeadWithBackground } from "../Assets/CallableLeadWithBackground.svg";
 import { ReactComponent as TotalSale } from "../Assets/TotalSale.svg";
 import { ReactComponent as SaleRevenue } from "../Assets/SaleRevenue.svg";
 import { ReactComponent as ConversionRate } from "../Assets/ConversionRate.svg";
@@ -158,7 +158,7 @@ const Dashboard = () => {
               Tauk Client Dashboard
             </h2>
             <p className="md:text-[14px] text-[12px]  leading-[14px] text-[#4B5675] font-normal">
-              Central Hub for Personal Customization
+              
             </p>
           </div>
         </div>
@@ -193,9 +193,9 @@ const Dashboard = () => {
           }
         />
         <StatCard
-          icon={CallableLeadWithBackground}
+          icon={CollapsibleLeadWithBackground}
           title="Callable Leads"
-          value="178"
+          value="NA"
           arrow={
             <svg
               width="25"
@@ -250,7 +250,7 @@ const Dashboard = () => {
         <StatCard
           icon={ConversionRate}
           title="Conversion Rate (CVR)"
-          value="16.6%"
+          value="NA%"
           showArrow={false}
         />
         <StatCard

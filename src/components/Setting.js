@@ -148,7 +148,7 @@ export default function ProfileUpdateForm() {
             Settings
           </h2>
           <p className="text-[14px] text-[#4B5675] leading-[20px] font-['Inter']">
-            Central Hub for Personal Customization
+            
           </p>
         </div>
 

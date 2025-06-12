@@ -120,7 +120,7 @@ const LeadsTable = () => {
               Lead ID
             </h2>
             <p className="text-[14px] leading-[14px] text-[#4B5675] font-normal">
-              Central Hub for Personal Customization
+              
             </p>
           </div>
         </div>
@@ -165,8 +165,8 @@ const LeadsTable = () => {
                 </th>
                 {[
                   "Lead ID",
-                  "List NAme ",
-                  "TotalLeadCount",
+                  "List Name ",
+                  "Total Lead Count",
                   "Vendor",
                   "Action"
                 ].map((h) => (
