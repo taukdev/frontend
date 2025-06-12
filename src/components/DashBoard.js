@@ -93,7 +93,8 @@ const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState({
     totalSales: 0,
     totalRevenue: 0,
-    aov: 0
+    aov: 0,
+    totalLeadCount: 0
   });
   const [loading, setLoading] = useState(false);
   const { toast, toasts, removeToast } = useToast();
@@ -127,7 +128,8 @@ const Dashboard = () => {
         setDashboardData({
           totalSales: response.data.totalSales,
           totalRevenue: response.data.totalRevenue,
-          aov: response.data.aov
+          aov: response.data.aov,
+          totalLeadCount: response.data.totalLeadCount
         });
       }
     } catch (error) {
@@ -170,7 +172,8 @@ const Dashboard = () => {
         <StatCard
           icon={TotalLead}
           title="Total Leads"
-          value="253"
+          //  value="253"
+          value={loading ? "Loading..." : dashboardData.totalLeadCount.toLocaleString()}
           arrow={
             <svg
               width="25"

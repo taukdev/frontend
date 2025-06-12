@@ -9,45 +9,92 @@ import Sales from "./components/Sales";
 import Setting from "./components/Setting";
 import Screen2 from './components/ForgotPassWord/Screen2';
 import Layout from "./components/Layout";
+import PrivateRoute from "./components/PrivateRoute";
+
+// Public Routes Component
+const PublicRoute = ({ children }) => {
+  const token = localStorage.getItem('token');
+  
+  // If user is already logged in, redirect to dashboard
+  if (token) {
+    return <Navigate to="/dashboard" replace />;
+  }
+  
+  return children;
+};
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Navigate to="/Login" replace />} />
-        <Route path="/Login" element={<Login />} />
-        <Route path="/Forgotpassword" element={<ResetPassWord />} />
-        <Route path="/reset-password" element={<Screen2 />} />
+        {/* Public Routes */}
+        <Route path="/" element={
+          <PublicRoute>
+            <Navigate to="/Login" replace />
+          </PublicRoute>
+        } />
+        
+        <Route path="/Login" element={
+          <PublicRoute>
+            <Login />
+          </PublicRoute>
+        } />
+        
+        <Route path="/Forgotpassword" element={
+          <PublicRoute>
+            <ResetPassWord />
+          </PublicRoute>
+        } />
+        
+        <Route path="/reset-password" element={
+          <PublicRoute>
+            <Screen2 />
+          </PublicRoute>
+        } />
 
+        {/* Private Routes */}
         <Route path="/dashboard" element={
-          <Layout>
-            <DashBoard />
-          </Layout>
+          <PrivateRoute>
+            <Layout>
+              <DashBoard />
+            </Layout>
+          </PrivateRoute>
         } />
 
         <Route path="/Lead" element={
-          <Layout>
-            <Lead />
-          </Layout>
+          <PrivateRoute>
+            <Layout>
+              <Lead />
+            </Layout>
+          </PrivateRoute>
         } />
 
         <Route path="/CollapsibleLead" element={
-          <Layout>
-            <CollapsibleLead />
-          </Layout>
+          <PrivateRoute>
+            <Layout>
+              <CollapsibleLead />
+            </Layout>
+          </PrivateRoute>
         } />
 
         <Route path="/Sales" element={
-          <Layout>
-            <Sales />
-          </Layout>
+          <PrivateRoute>
+            <Layout>
+              <Sales />
+            </Layout>
+          </PrivateRoute>
         } />
 
         <Route path="/Setting" element={
-          <Layout>
-            <Setting />
-          </Layout>
+          <PrivateRoute>
+            <Layout>
+              <Setting />
+            </Layout>
+          </PrivateRoute>
         } />
+
+        {/* Catch all route - redirect to login */}
+        <Route path="*" element={<Navigate to="/Login" replace />} />
       </Routes>
     </Router>
   );
