@@ -174,68 +174,68 @@ const Dashboard = () => {
           title="Total Leads"
           //  value="253"
           value={loading ? "Loading..." : dashboardData.totalLeadCount.toLocaleString()}
-          arrow={
-            <svg
-              width="25"
-              height="24"
-              viewBox="0 0 25 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M9.66675 5L15.6667 12L9.66675 19"
-                stroke="#99A1B7"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          }
+          // arrow={
+          //   <svg
+          //     width="25"
+          //     height="24"
+          //     viewBox="0 0 25 24"
+          //     fill="none"
+          //     xmlns="http://www.w3.org/2000/svg"
+          //   >
+          //     <path
+          //       d="M9.66675 5L15.6667 12L9.66675 19"
+          //       stroke="#99A1B7"
+          //       strokeWidth="1.5"
+          //       strokeLinecap="round"
+          //       strokeLinejoin="round"
+          //     />
+          //   </svg>
+          // }
         />
         <StatCard
           icon={CollapsibleLeadWithBackground}
           title="Callable Leads"
           value="NA"
-          arrow={
-            <svg
-              width="25"
-              height="24"
-              viewBox="0 0 25 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M9.66675 5L15.6667 12L9.66675 19"
-                stroke="#99A1B7"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          }
+          // arrow={
+          //   <svg
+          //     width="25"
+          //     height="24"
+          //     viewBox="0 0 25 24"
+          //     fill="none"
+          //     xmlns="http://www.w3.org/2000/svg"
+          //   >
+          //     <path
+          //       d="M9.66675 5L15.6667 12L9.66675 19"
+          //       stroke="#99A1B7"
+          //       strokeWidth="1.5"
+          //       strokeLinecap="round"
+          //       strokeLinejoin="round"
+          //     />
+          //   </svg>
+          // }
         />
         <StatCard
           icon={TotalSale}
           title="Total Sales"
           // value="42"
           value={loading ? "Loading..." : dashboardData.totalSales.toString()}
-          arrow={
-            <svg
-              width="25"
-              height="24"
-              viewBox="0 0 25 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M9.66675 5L15.6667 12L9.66675 19"
-                stroke="#99A1B7"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          }
+          // arrow={
+          //   <svg
+          //     width="25"
+          //     height="24"
+          //     viewBox="0 0 25 24"
+          //     fill="none"
+          //     xmlns="http://www.w3.org/2000/svg"
+          //   >
+          //     <path
+          //       d="M9.66675 5L15.6667 12L9.66675 19"
+          //       stroke="#99A1B7"
+          //       strokeWidth="1.5"
+          //       strokeLinecap="round"
+          //       strokeLinejoin="round"
+          //     />
+          //   </svg>
+          // }
         />
         <h3 className="text-[15px] font-semibold text-[#181C32] md:hidden block">
           Leads Statistics
