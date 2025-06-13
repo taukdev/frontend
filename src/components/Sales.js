@@ -185,7 +185,7 @@ const SalesTable = () => {
                         />
                       </td>
                       <td className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}>
-                        {row.salesNo}
+                        {row["Order ID Number2"]}
                       </td>
                       <td className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}>
                         {row["Customer First Name"]}
@@ -204,7 +204,8 @@ const SalesTable = () => {
                               firstName: row["Customer First Name"],
                               lastName: row["Customer Last Name"],
                               Timestamp: row.Timestamp,
-                              offer_url: row.Offer_url
+                              offer_url: row.Offer_url,
+                              "Order ID Number2": row["Order ID Number2"]
                             });
                             setIsModalOpen(true);
                           }}
@@ -307,6 +308,7 @@ const SalesTable = () => {
             <div className="divide-y divide-gray-200 px-[20px]">
               {[
                 ["Sale Id", selectedLead.id],
+                ["Order ID", selectedLead["Order ID Number2"]],
                 ["First Name", selectedLead.firstName],
                 ["Last Name", selectedLead.lastName],
                 ["Date", new Date(selectedLead.Timestamp).toLocaleDateString()],

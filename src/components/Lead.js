@@ -164,7 +164,7 @@ const LeadsTable = () => {
                   />
                 </th>
                 {[
-                  "Lead ID",
+                  "List ID",
                   "List Name ",
                   "Total Lead Count",
                   "Vendor",
@@ -208,7 +208,7 @@ const LeadsTable = () => {
                         />
                       </td>
                       <td className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}>
-                        {row.leadNo}
+                        {row.listId}
                       </td>
                       <td className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}>
                         {row.listName}
