@@ -301,13 +301,13 @@ const SalesTable = () => {
           <div className="bg-white rounded-[26px] w-[646px] max-w-md overflow-hidden px-[22px] pt-[28px] pb-[40px]">
             <div className="bg-[linear-gradient(121.72deg,_rgba(0,174,239,0.06)_0%,_rgba(0,127,196,0.06)_100%)] flex justify-between items-center p-[20px] rounded-[12px]">
               <h2 className="text-[18px] leading-[20px] font-medium text-[#071437]">
-                Total Sales ({selectedLead.id})
+                Total Sales ({selectedLead["Order ID Number2"]})
               </h2>
               <Cross onClick={() => setIsModalOpen(false)} className="cursor-pointer" />
             </div>
             <div className="divide-y divide-gray-200 px-[20px]">
               {[
-                ["Sale Id", selectedLead.id],
+                // ["Sale Id", selectedLead.id],
                 ["Order ID", selectedLead["Order ID Number2"]],
                 ["First Name", selectedLead.firstName],
                 ["Last Name", selectedLead.lastName],

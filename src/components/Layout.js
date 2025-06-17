@@ -203,9 +203,9 @@ const SidebarWithHeader = ({ children }) => {
                 {pageTitle}
               </div>
 
-              <div className=" bg-opacity-40 md:block hidden border border-[#F1F1F4] p-[6px] rounded-[8px] absolute z-10 top-[50%] left-[-58px] transform -translate-y-1/2">
+              {/* <div className=" bg-opacity-40 md:block hidden border border-[#F1F1F4] p-[6px] rounded-[8px] absolute z-10 top-[50%] left-[-58px] transform -translate-y-1/2">
                 <HeaderArrow className="w-[20px] h-[20px] text-[#99A1B7]" />
-              </div>
+              </div> */}
             </div>
           </div>
           <div className="flex items-center space-x-4">
