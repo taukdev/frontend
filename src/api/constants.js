@@ -9,7 +9,7 @@ export const AUTH = {
 export const DASHBOARD = {
   GET_STATS: `${API_URL}/api/dashboard`,
   GET_CAMPAIGNS: `${API_URL}/api/dashboard/campaigns`,
-  GET_LEAD_LIST: `${API_URL}/api/dashboard/leadList`,
+  // GET_LEAD_LIST: `${API_URL}/api/dashboard/leadList`,
   FILTERED_STATS: (startDate, endDate, campaignName, listId) =>
     `${API_URL}/api/dashboard?startDate=${startDate}&endDate=${endDate}&campaignName=${campaignName}&listId=${listId}`,
 };

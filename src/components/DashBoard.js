@@ -20,6 +20,7 @@ import { apiInstance } from "../api/config/axios";
 import { ENDPOINTS } from "../api/constants";
 import { useToast } from "../hooks/use-toast";
 import { ToastContainer } from "./ui/Toast";
+import { useNavigate } from "react-router-dom";
 
 const dataAOV = [
   { month: "Jan", value: 1600 },
@@ -104,6 +105,8 @@ const Dashboard = () => {
   const [selectedLeadList, setSelectedLeadList] = useState(null);
   const campaignDropdownRef = useRef();
   const leadListDropdownRef = useRef();
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     if (startDate) {
@@ -177,7 +180,7 @@ const Dashboard = () => {
       startDate,
       endDate,
       selectedCampaign,
-      selectedLeadList?.id
+      // selectedLeadList?.id
     );
   };
 
@@ -186,19 +189,19 @@ const Dashboard = () => {
     fetchDashboardData(startDate, endDate, name, selectedLeadList?.id);
   };
 
-  const handleLeadListChange = (list) => {
-    setSelectedLeadList(list);
-    fetchDashboardData(startDate, endDate, selectedCampaign, list.id);
-  };
+  // const handleLeadListChange = (list) => {
+  //   setSelectedLeadList(list);
+  //   fetchDashboardData(startDate, endDate, selectedCampaign, list.id);
+  // };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (campaignDropdownRef.current && !campaignDropdownRef.current.contains(event.target)) {
         setIsCampaignOpen(false);
       }
-      if (leadListDropdownRef.current && !leadListDropdownRef.current.contains(event.target)) {
-        setIsLeadListOpen(false);
-      }
+      // if (leadListDropdownRef.current && !leadListDropdownRef.current.contains(event.target)) {
+      //   setIsLeadListOpen(false);
+      // }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -236,9 +239,8 @@ const Dashboard = () => {
             >
               <span>{selectedCampaign || "Select Campaign"}</span>
               <svg
-                className={`size-4 transition-transform ${
-                  isCampaignOpen ? "rotate-180" : ""
-                }`}
+                className={`size-4 transition-transform ${isCampaignOpen ? "rotate-180" : ""
+                  }`}
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="none"
@@ -276,7 +278,7 @@ const Dashboard = () => {
           </div>
 
           {/* Lead List Dropdown */}
-          <div
+          {/* <div
             ref={leadListDropdownRef}
             className="relative inline-flex w-full md:w-60"
           >
@@ -330,7 +332,7 @@ const Dashboard = () => {
                 </div>
               </div>
             )}
-          </div>
+          </div> */}
 
           {/* Date Picker */}
           <div className="max-sm:w-10 lg:h-10  md:h-13">
@@ -343,70 +345,81 @@ const Dashboard = () => {
         <StatCard
           icon={TotalLead}
           title="Total Leads"
-          //  value="253"
-          value={loading ? "Loading..." : dashboardData.totalLeadCount.toLocaleString()}
+          value={
+            loading
+              ? "Loading..."
+              : dashboardData.totalLeadCount.toLocaleString()
+          }
           arrow={
-            <svg
-              width="25"
-              height="24"
-              viewBox="0 0 25 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M9.66675 5L15.6667 12L9.66675 19"
-                stroke="#99A1B7"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            <div onClick={() => navigate("/Lead")} className="cursor-pointer">
+              <svg
+                width="25"
+                height="24"
+                viewBox="0 0 25 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M9.66675 5L15.6667 12L9.66675 19"
+                  stroke="#99A1B7"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
           }
         />
         <StatCard
           icon={CollapsibleLeadWithBackground}
           title="Callable Leads"
           value="NA"
-          // arrow={
-          //   <svg
-          //     width="25"
-          //     height="24"
-          //     viewBox="0 0 25 24"
-          //     fill="none"
-          //     xmlns="http://www.w3.org/2000/svg"
-          //   >
-          //     <path
-          //       d="M9.66675 5L15.6667 12L9.66675 19"
-          //       stroke="#99A1B7"
-          //       strokeWidth="1.5"
-          //       strokeLinecap="round"
-          //       strokeLinejoin="round"
-          //     />
-          //   </svg>
-          // }
+          arrow={
+            <div
+              onClick={() => navigate("/CollapsibleLead")}
+              className="cursor-pointer"
+            >
+              <svg
+                width="25"
+                height="24"
+                viewBox="0 0 25 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M9.66675 5L15.6667 12L9.66675 19"
+                  stroke="#99A1B7"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
+          }
         />
         <StatCard
           icon={TotalSale}
           title="Total Sales"
-          // value="42"
           value={loading ? "Loading..." : dashboardData.totalSales.toString()}
-          // arrow={
-          //   <svg
-          //     width="25"
-          //     height="24"
-          //     viewBox="0 0 25 24"
-          //     fill="none"
-          //     xmlns="http://www.w3.org/2000/svg"
-          //   >
-          //     <path
-          //       d="M9.66675 5L15.6667 12L9.66675 19"
-          //       stroke="#99A1B7"
-          //       strokeWidth="1.5"
-          //       strokeLinecap="round"
-          //       strokeLinejoin="round"
-          //     />
-          //   </svg>
-          // }
+          arrow={
+            <div onClick={() => navigate("/Sales")} className="cursor-pointer">
+              <svg
+                width="25"
+                height="24"
+                viewBox="0 0 25 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M9.66675 5L15.6667 12L9.66675 19"
+                  stroke="#99A1B7"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
+          }
         />
         <h3 className="text-[15px] font-semibold text-[#181C32] md:hidden block">
           Leads Statistics
@@ -419,9 +432,9 @@ const Dashboard = () => {
             loading
               ? "Loading..."
               : `$${dashboardData.totalRevenue.toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}`
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}`
           }
           showArrow={false}
         />
@@ -439,9 +452,9 @@ const Dashboard = () => {
             loading
               ? "Loading..."
               : `$${dashboardData.aov.toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}`
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}`
           }
           showArrow={false}
         />
