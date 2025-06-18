@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { ReactComponent as ProfileIcon } from "../Assets/Profile.svg";
+// import { ReactComponent as ProfileIcon } from "../Assets/Profile.svg";
 import { ReactComponent as DashBoardIcon } from "../Assets/DashBoard.svg";
 import { ReactComponent as LeadIcon } from "../Assets/Lead.svg";
 import { ReactComponent as CollapsibleLeadIcon } from "../Assets/CallableLead.svg";
 import { ReactComponent as SalesIcon } from "../Assets/Sales.svg";
 import { ReactComponent as SettingIcon } from "../Assets/Setting.svg";
 import { ReactComponent as LogOutIcon } from "../Assets/LogOut.svg";
-import { ReactComponent as NotificationIcon } from "../Assets/Notification.svg";
-import { ReactComponent as HeaderArrow } from "../Assets/black-left-line.svg";
+import ProfileIcon from "../Assets/S1Yc7F14OY0nt2uB50.png";
+
 import logo from "../Assets/Logo.png";
 import SortLogo from "../Assets/SortLogo.svg";
 import { apiInstance } from "../api/config/axios";
@@ -208,10 +208,11 @@ const SidebarWithHeader = ({ children }) => {
               </div> */}
             </div>
           </div>
-          <div className="flex items-center space-x-4">
-            <NotificationIcon className="w-[40px] h-[40px]" />
-            <ProfileIcon className="w-[40px] h-[40px] border rounded-full border-[#007FC4]" />
-          </div>
+            <div className="flex items-center space-x-4">
+              {/* <NotificationIcon className="w-[40px] h-[40px]" /> */}
+              {/* border-[#007FC4] */}
+              <img src={ProfileIcon} alt="Profile" className="w-[40px] h-[40px] border rounded-full " />
+            </div>
         </header>
 
         <main className="overflow-auto bg-[#F5F5F5] h-screen">{children}</main>

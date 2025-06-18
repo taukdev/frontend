@@ -186,7 +186,9 @@ const Dashboard = () => {
 
   const handleCampaignChange = (name) => {
     setSelectedCampaign(name);
-    fetchDashboardData(startDate, endDate, name, selectedLeadList?.id);
+    // If "All" is selected, pass null to show all campaigns
+    const campaignToFetch = name === "All" ? null : name;
+    fetchDashboardData(startDate, endDate, campaignToFetch, selectedLeadList?.id);
   };
 
   // const handleLeadListChange = (list) => {
@@ -259,6 +261,19 @@ const Dashboard = () => {
                 role="menu"
               >
                 <div className="p-1 space-y-0.5">
+                  {/* Add "All" option at the top */}
+                  <a
+                    className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 font-medium"
+                    href="#"
+                    onClick={() => {
+                      handleCampaignChange("All");
+                      setIsCampaignOpen(false);
+                    }}
+                  >
+                    All Campaigns
+                  </a>
+                  {/* Divider */}
+                  <div className="border-t border-gray-200 my-1"></div>
                   {campaigns.map((name) => (
                     <a
                       key={name}
