@@ -215,7 +215,7 @@ const SidebarWithHeader = ({ children }) => {
             </div>
         </header>
 
-        <main className="overflow-auto bg-[#F5F5F5] h-screen">{children}</main>
+        <main className="bg-[#F5F5F5]">{children}</main>
       </div>
     </div>
   );

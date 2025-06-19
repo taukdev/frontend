@@ -89,7 +89,7 @@ const SalesTable = () => {
   };
 
   return (
-    <div className="xl:px-[40px] xl:py-[20px] p-5 bg-gray-100 h-screen">
+    <div className="xl:px-[40px] xl:py-[20px] p-5 bg-gray-100 ">
       <div className="flex justify-between items-center">
         <div className="flex items-start gap-3">
           <button className="text-[#071437] text-[20px] font-semibold leading-none">
