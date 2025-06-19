@@ -96,7 +96,10 @@ const Dashboard = () => {
     totalRevenue: 0,
     aov: 0,
     totalLeadCount: 0,
+    callableLeads: 0,
+    conversionRate: 0,
   });
+  console.log(dashboardData);
   const [loading, setLoading] = useState(false);
   const { toast, toasts, removeToast } = useToast();
   const [campaigns, setCampaigns] = useState([]);
@@ -160,6 +163,8 @@ const Dashboard = () => {
           totalRevenue: response.data.totalRevenue,
           aov: response.data.aov,
           totalLeadCount: response.data.totalLeadCount,
+          callableLeads: response.data.callableLeads,
+          conversionRate: response.data.CVR,
         });
       }
     } catch (error) {
@@ -363,7 +368,7 @@ const Dashboard = () => {
           value={
             loading
               ? "Loading..."
-              : dashboardData.totalLeadCount.toLocaleString()
+              : (dashboardData.totalLeadCount ?? 0).toLocaleString()
           }
           arrow={
             <div onClick={() => navigate("/Lead")} className="cursor-pointer">
@@ -388,7 +393,11 @@ const Dashboard = () => {
         <StatCard
           icon={CollapsibleLeadWithBackground}
           title="Callable Leads"
-          value="NA"
+          value={
+            loading
+              ? "Loading..."
+              : (dashboardData.callableLeads ?? 0).toLocaleString()
+          }
           arrow={
             <div
               onClick={() => navigate("/CollapsibleLead")}
@@ -456,7 +465,11 @@ const Dashboard = () => {
         <StatCard
           icon={ConversionRate}
           title="Conversion Rate (CVR)"
-          value="NA%"
+          // value={loading ? "Loading..." : `${dashboardData.conversionRate}%`}
+          value={loading ? "Loading..." : `${dashboardData.conversionRate.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}`}
           showArrow={false}
         />
         <StatCard
