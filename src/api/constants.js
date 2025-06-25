@@ -1,4 +1,4 @@
-export const API_URL = process.env.VITE_API_URL || "http://168.231.69.2";
+export const API_URL = process.env.VITE_API_URL || "https://api.taukdash.com";
 console.log("api key === ", process.env.VITE_API_URL )
 export const AUTH = {
   LOGIN: `${API_URL}/api/auth/login`,
