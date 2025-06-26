@@ -80,14 +80,6 @@ const LeadsTable = () => {
     }
   };
 
-  // Handle date range changes
-  // const handleDateRangeChange = (startDate, endDate) => {
-  //   console.log('Date range changed:', { startDate, endDate }); // Debug log
-  //   setDateRange([startDate, endDate]);
-  //   setPage(1); // Reset to first page when date range changes
-  //   fetchLeads(1, perPage, startDate, endDate);
-  // };
-
   // Handle search
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
@@ -109,7 +101,7 @@ const LeadsTable = () => {
   };
 
   return (
-    <div className="xl:px-[40px] xl:py-[20px] p-5 bg-gray-100 h-screen">
+    <div className="xl:px-[40px] xl:py-[20px] p-5 bg-gray-100 min-h-screen">
       <div className="flex justify-between items-center">
         <div className="flex items-start gap-2">
           <div>
@@ -129,7 +121,7 @@ const LeadsTable = () => {
         </div>
       </div>
 
-      <div className="bg-white flex items-center justify-center rounded-2xl mt-5">
+      <div className="bg-white flex items-center justify-center rounded-2xl">
         <div className="w-full border border-[#F1F1F4] ">
           <div className="flex justify-between items-center p-[20px] border-[#F1F1F4] border-b">
             <div className="relative lg:w-72 md:w-56 w-full">
@@ -146,7 +138,8 @@ const LeadsTable = () => {
             </div>
           </div>
 
-          <table className="w-full border-separate border-[#F1F1F4] border-spacing-0 mb-2">
+        <div className="w-full">
+            <table className="w-full border-separate border-[#F1F1F4] border-spacing-0 mb-2">
             <thead className="bg-gray-100">
               <tr>
                 <th className="px-4 py-3 text-center border border-[#F1F1F4] bg-[#FCFCFC]">
@@ -233,6 +226,7 @@ const LeadsTable = () => {
               )}
             </tbody>
           </table>
+        </div>
 
           <div className="flex justify-between items-center py-4 px-6 w-full">
             <div className="flex items-center gap-2">
@@ -310,6 +304,7 @@ const LeadsTable = () => {
           </div>
         </div>
       </div>
+      {/* <div className="bg-gray-100 h-20 w-full rounded-b-2xl"></div> */}
 
       {isModalOpen && selectedLead && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#071437] bg-opacity-50">

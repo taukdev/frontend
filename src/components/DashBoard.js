@@ -297,63 +297,6 @@ const Dashboard = () => {
             )}
           </div>
 
-          {/* Lead List Dropdown */}
-          {/* <div
-            ref={leadListDropdownRef}
-            className="relative inline-flex w-full md:w-60"
-          >
-            <button
-              type="button"
-              onClick={() => {
-                setIsLeadListOpen((prev) => !prev);
-                setIsCampaignOpen(false);
-              }}
-              className="py-2 px-3 inline-flex items-center lg:h-10  md:h-13 gap-x-2 w-full text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50"
-              aria-haspopup="menu"
-              aria-expanded={isLeadListOpen}
-            >
-              {selectedLeadList ? selectedLeadList.name : "Select Lead List"}
-              <svg
-                className={`ml-auto size-4 transition-transform duration-200 ${
-                  isLeadListOpen ? "rotate-180" : ""
-                }`}
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="m6 9 6 6 6-6" />
-              </svg>
-            </button>
-
-            {isLeadListOpen && (
-              <div
-                className="absolute z-10 mt-[3.5rem] w-full bg-white shadow-md rounded-lg"
-                role="menu"
-              >
-                <div className="p-1 space-y-0.5">
-                  {leadLists.map((list) => (
-                    <a
-                      key={list.id}
-                      href="#"
-                      className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        handleLeadListChange(list);
-                        setIsLeadListOpen(false);
-                      }}
-                    >
-                      {list.name}
-                    </a>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div> */}
-
           {/* Date Picker */}
           <div className="max-sm:w-10 lg:h-10  md:h-13">
             <DatePick onDateChange={handleDateChange} />

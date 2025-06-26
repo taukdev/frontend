@@ -1,12 +1,8 @@
 import React, { useState } from "react";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-
 import { ReactComponent as Eye } from "../Assets/Eye.svg";
-import { ReactComponent as CalendarIcon } from "../Assets/calendar.svg";
 import { ReactComponent as Search } from "../Assets/Search.svg";
 import { ReactComponent as UpDown } from "../Assets/UpDown.svg";
-import { ReactComponent as BackArrow } from "../Assets/BackArrow.svg";
 import { ReactComponent as Cross } from "../Assets/cross.svg";
 import { ReactComponent as BlackLeft } from "../Assets/black-left.svg";
 import { ReactComponent as BlackRight } from "../Assets/black-right.svg";
@@ -25,7 +21,7 @@ const LeadsTable = () => {
   }));
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  // const [selectedDate, setSelectedDate] = useState(new Date());
   const [perPage, setPerPage] = useState(2);
   const [page, setPage] = useState(1);
   const [selectedLeads, setSelectedLeads] = useState([]);
@@ -54,7 +50,7 @@ const LeadsTable = () => {
   };
 
   return (
-    <div className="xl:px-[40px] xl:py-[20px] p-5 bg-gray-100 h-screen">
+    <div className="xl:px-[40px] xl:py-[20px] p-5 bg-gray-100 min-h-screen">
       <div className="flex justify-between items-center">
         <div className="flex items-start gap-3">
           {/* Back Arrow Button */}
@@ -117,7 +113,7 @@ const LeadsTable = () => {
             </div>
           </div>
 
-          <table className="w-full border-separate border-[#F1F1F4] border-spacing-0  mb-2">
+          <table className="w-full border-separate border-[#F1F1F4] border-spacing-0 mb-2">
             <thead className="bg-gray-100">
               <tr>
                 <th className="px-4 py-3 text-center border border-[#F1F1F4] bg-[#FCFCFC]">

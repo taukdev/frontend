@@ -116,7 +116,7 @@ const SidebarWithHeader = ({ children }) => {
           {/* Logo & Close */}
           <div className="md:p-[26px] p-[20px] grid grid-cols-[1fr_auto] items-center h-full">
             <div className={`text-lg font-bold ${isOpen ? "block" : "hidden"} md:block`}>
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-4 cursor-pointer" onClick={() => navigate("/dashboard")}>
                 <img src={logo} alt="Logo" className={`w-[124px] h-[67px] object-contain ${isOpen ? "w-[100px]" : ""}`} />
               </div>
             </div>

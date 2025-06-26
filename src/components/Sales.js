@@ -1,12 +1,8 @@
 import React, { useEffect, useState } from "react";
-
 import "react-datepicker/dist/react-datepicker.css";
-
 import { ReactComponent as Eye } from "../Assets/Eye.svg";
-
 import { ReactComponent as Search } from "../Assets/Search.svg";
 import { ReactComponent as UpDown } from "../Assets/UpDown.svg";
-
 import { ReactComponent as Cross } from "../Assets/cross.svg";
 import { ReactComponent as BlackLeft } from "../Assets/black-left.svg";
 import { ReactComponent as BlackRight } from "../Assets/black-right.svg";
@@ -89,7 +85,7 @@ const SalesTable = () => {
   };
 
   return (
-    <div className="xl:px-[40px] xl:py-[20px] p-5 bg-gray-100 ">
+    <div className="xl:px-[40px] xl:py-[20px] p-5 bg-gray-100 min-h-screen">
       <div className="flex justify-between items-center">
         <div className="flex items-start gap-3">
           <button className="text-[#071437] text-[20px] font-semibold leading-none">
