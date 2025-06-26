@@ -24,7 +24,7 @@ import { useNavigate } from "react-router-dom";
 
 const dataAOV = [
   { month: "Jan", value: 1600 },
-  { month: "Feb", value: 1200 },
+  { month: "Feb", value: 1200},
   { month: "Mar", value: 1300 },
   { month: "Apr", value: 1725 },
   { month: "May", value: 1100 },
@@ -52,7 +52,7 @@ const CustomTooltip = ({ active, payload, label, labelFormatter }) => {
             key={index}
             className="font-['Inter'] font-semibold text-[#071437]"
           >
-            $ {entry.value}
+            % {entry.value}
           </p>
         ))}
       </div>
@@ -215,12 +215,12 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div className="xl:px-[40px] xl:py-[20px] p-5 bg-gray-100 space-y-6">
-      <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-6 gap-4">
+    <div className="xl:px-[40px] xl:py-[20px] p-5 bg-gray-100 space-y-6 h-screen">
+      <div className="flex flex-col lg:flex-row justify-between items-start xl:items-center mb-6 gap-4">
         {/* Heading Section */}
-        <div className="flex items-start gap-2">
+        <div className="flex items-start w-full gap-2">
           <div>
-            <h2 className="text-md md:text-[20px] leading-[20px] mb-[5px] font-medium text-[#071437]">
+            <h2 className="text-md md:text-[20px] w-full leading-[20px] mb-[5px] font-medium text-[#071437]">
               Tauk Client Dashboard
             </h2>
             <p className="text-[12px] md:text-[14px] leading-[14px] text-[#4B5675] font-normal"></p>
@@ -228,7 +228,7 @@ const Dashboard = () => {
         </div>
 
         {/* Dropdowns and Date Picker */}
-        <div className="flex flex-col md:flex-row gap-2 w-full lg:w-auto">
+        <div className="flex justify-end items-center lg:flex-row gap-2 w-full ">
           {/* Campaign Dropdown */}
           <div
             ref={campaignDropdownRef}
@@ -412,7 +412,7 @@ const Dashboard = () => {
           value={loading ? "Loading..." : `${dashboardData.conversionRate.toLocaleString(undefined, {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
-          })}`}
+          })}%`}
           showArrow={false}
         />
         <StatCard
@@ -446,8 +446,8 @@ const Dashboard = () => {
           <ResponsiveContainer
             width="100%"
             height={266}
-            className="px-[26px] pb-[26px]"
-          >
+            className="md:px-[20px] md:pb-[20px] max-sm:pr-3"
+            >
             <LineChart data={dataAOV}>
               <defs>
                 <linearGradient id="aovGradient" x1="0" y1="0" x2="1" y2="0">
@@ -468,12 +468,12 @@ const Dashboard = () => {
                     letterSpacing: "0em",
                   },
                 }}
-                tickFormatter={(val) => `$ ${val}`}
+                tickFormatter={(val) => `% ${val}`}
               />
 
               <Tooltip
                 content={<CustomTooltip />}
-                formatter={(value) => [`$${value}`, "AOV"]}
+                formatter={(value) => [`${value}`, "AOV"]}
               />
               <Line
                 type="monotone"
@@ -499,7 +499,7 @@ const Dashboard = () => {
           <ResponsiveContainer
             width="100%"
             height={266}
-            className="px-[26px] pb-[26px]"
+            className="md:px-[20px] md:pb-[20px] max-sm:pr-3"
           >
             <LineChart data={dataCVR}>
               <CartesianGrid strokeDasharray="3 3" />

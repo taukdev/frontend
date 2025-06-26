@@ -211,7 +211,7 @@ const SidebarWithHeader = ({ children }) => {
             <div className="flex items-center space-x-4">
               {/* <NotificationIcon className="w-[40px] h-[40px]" /> */}
               {/* border-[#007FC4] */}
-              <img src={ProfileIcon} alt="Profile" className="w-[40px] h-[40px] border rounded-full " />
+              <img src={ProfileIcon} alt="Profile" className="w-[40px] h-[40px] border rounded-full cursor-pointer " />
             </div>
         </header>
 

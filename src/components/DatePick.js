@@ -78,7 +78,7 @@ function DatePick({ onDateChange }) {
       </div>
 
       {isOpen && (
-        <div className="absolute z-50 mt-2 md:-ml-[309px] -ml-48 shadow-lg rounded-xl bg-white p-0">
+        <div className="absolute z-[9999] mt-2 xl:ml-[-310px] lg:-ml-[310px] md:-ml-[310px] -ml-48 shadow-lg rounded-xl bg-white p-0">
           <DatePicker
             selected={startDate}
             onChange={(update) => setDateRange(update)}
@@ -98,16 +98,16 @@ function DatePick({ onDateChange }) {
           />
 
 
-          <div className="flex flex-col border-t border-gray-100 bg-white p-4">
+          <div className="flex md:flex-row flex-col gap-4 border-t justify-end items-center border-gray-100 bg-white p-4">
             {/* Date text on top */}
             {startDate && endDate && (
-              <span className="text-sm text-gray-600 font-medium text-center mb-3">
+              <span className="text-sm text-gray-600 font-medium text-center ">
                 {formatDateWithTime()}
               </span>
             )}
 
             {/* Buttons row on all screen sizes */}
-            <div className="flex justify-center md:justify-end gap-2">
+            <div className="flex justify-center md:justify-end gap-2 fixed-width-buttons">
               <button
                 onClick={handleCancel}
                 className="text-sm px-4 py-1.5 rounded-lg border border-gray-300 hover:bg-gray-100"

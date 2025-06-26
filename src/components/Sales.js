@@ -103,10 +103,10 @@ const SalesTable = () => {
 
       </div>
 
-      <div className="bg-white flex items-center justify-center rounded-2xl mt-5">
+      <div className="bg-white flex items-center justify-center rounded-2xl mt-5 relative z-10">
         <div className="w-full border border-[#F1F1F4] overflow-x-auto">
           <div className="flex justify-between items-center p-[20px] border-[#F1F1F4] border-b">
-            <div className="relative lg:w-72 md:w-56 w-full">
+            <div className="relative lg:w-72 md:w-40 w-full">
               <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
                 <Search className="h-4 w-4 text-gray-400" />
               </div>
@@ -118,7 +118,7 @@ const SalesTable = () => {
                 className="border rounded pl-7 pr-3 py-2 w-full text-[11px] leading-[12px] font-normal focus:outline-none text-black"
               />
             </div>
-            <div className="md:block hidden relative">
+            <div className="md:block hidden absolute z-50 right-5">
               <DatePick onDateChange={handleDateRangeChange} />
             </div>
           </div>
