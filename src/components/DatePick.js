@@ -1,5 +1,5 @@
 import { CalendarIcon } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -16,6 +16,8 @@ function DatePick({ onDateChange }) {
   const [startDate, endDate] = dateRange;
   const [isOpen, setIsOpen] = useState(false);
   const [openToDate, setOpenToDate] = useState(new Date());
+  const dropdownRef = useRef(null);
+  const inputRef = useRef(null);
 
   // Call onDateChange with default dates when component mounts
   useEffect(() => {
@@ -27,6 +29,25 @@ function DatePick({ onDateChange }) {
   useEffect(() => {
     if (startDate) setOpenToDate(startDate);
   }, [startDate]);
+
+  // Close on outside click (but not when clicking input or dropdown)
+  useEffect(() => {
+    if (!isOpen) return;
+    function handleClickOutside(event) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target) &&
+        inputRef.current &&
+        !inputRef.current.contains(event.target)
+      ) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen]);
 
   const formatDateOnly = () => {
     if (!startDate || !endDate) return '';
@@ -68,17 +89,18 @@ function DatePick({ onDateChange }) {
   return (
     <div className="relative w-full">
       <div
+        ref={inputRef}
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center border rounded-lg px-3 py-2 bg-[#FCFCFC] cursor-pointer"
+        className="flex items-center border rounded-lg gap-2 px-3 py-2 xl:w-full lg:w-full md:w-48 bg-[#FCFCFC] cursor-pointer"
       >
-        <CalendarIcon className="h-[16px] w-[16px] text-gray-500 border border-gray-300 rounded-lg" />
-        <span className="ml-2 text-sm text-gray-700 md:block hidden">
+        <CalendarIcon className=" lg:w-6  xl:w-[16px] w-6 text-gray-500" />
+        <span className="text-sm text-gray-700 md:block hidden">
           {startDate && endDate ? formatDateOnly() : 'Select Date Range'}
         </span>
       </div>
 
       {isOpen && (
-        <div className="absolute z-[9999] mt-2 xl:ml-[-310px] lg:-ml-[310px] md:-ml-[310px] -ml-48 shadow-lg rounded-xl bg-white p-0">
+        <div ref={dropdownRef} className="absolute z-50 mt-2  shadow-lg xl:-ml-[304.5px] lg:-ml-[304.5px] md:-ml-[289px]  -ml-52 rounded-xl bg-white">
           <DatePicker
             selected={startDate}
             onChange={(update) => setDateRange(update)}
@@ -97,16 +119,13 @@ function DatePick({ onDateChange }) {
             }
           />
 
-
           <div className="flex md:flex-row flex-col gap-4 border-t justify-end items-center border-gray-100 bg-white p-4">
-            {/* Date text on top */}
             {startDate && endDate && (
               <span className="text-sm text-gray-600 font-medium text-center ">
                 {formatDateWithTime()}
               </span>
             )}
 
-            {/* Buttons row on all screen sizes */}
             <div className="flex justify-center md:justify-end gap-2 fixed-width-buttons">
               <button
                 onClick={handleCancel}
@@ -122,7 +141,6 @@ function DatePick({ onDateChange }) {
               </button>
             </div>
           </div>
-
         </div>
       )}
     </div>

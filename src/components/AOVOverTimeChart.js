@@ -56,11 +56,11 @@ const AOVOverTimeChart = ({ startDate, endDate, selectedCampaign }) => {
                 <h3 className="text-[16px] leading-[16px] text-[#071437] font-semibold">
                     Average Order Value Over Time
                 </h3>
-                {/* <select className="border border-[#DBDFE9] rounded-[6px] px-[10px] py-[8px] text-[11px] leading-[12px] text-[#252F4A] ">
+                <select className="border border-[#DBDFE9] rounded-[6px] px-[10px] py-[8px] text-[11px] leading-[12px] text-[#252F4A] ">
                     <option value="monthly">12 months</option>
                     <option value="quarterly">Quarterly</option>
                     <option value="yearly">Yearly</option>
-                </select> */}
+                </select>
             </div>
             <ResponsiveContainer
                 width="100%"
@@ -87,7 +87,7 @@ const AOVOverTimeChart = ({ startDate, endDate, selectedCampaign }) => {
                         tickFormatter={(val) => `%${val.toFixed(2)}`}
                     />
                     <Tooltip
-                        formatter={(value) => [`%   ${value.toFixed(2)}`, "AOV"]}
+                        formatter={(value) => [`%${value.toFixed(2)}`, "AOV"]}
                         labelFormatter={(label) => `Date: ${label}`}
                     />
                     <Line
