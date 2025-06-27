@@ -432,7 +432,7 @@ const Dashboard = () => {
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 ">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <AOVOverTimeChart startDate={startDate} endDate={endDate} selectedCampaign={selectedCampaign} />
         <div className="bg-white rounded-[18px] shadow-[0px_3px_4px_0px_#00000008] border border-[#F1F1F4] ">
           <div className="flex justify-between items-center mb-[26px] p-[26px] border-b border-b-[#F1F1F4]">
