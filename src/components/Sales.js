@@ -54,7 +54,7 @@ const SalesTable = () => {
 
       const response = await apiInstance.get(SALES.GET_SALES, { params });
       const result = response.data;
-
+      console.log(result);
       setData(result?.sales || []);
       setTotalCount(result?.totalCount || 0);
       setTotalPages(Math.ceil(result?.totalCount / perPage));
@@ -181,13 +181,13 @@ const SalesTable = () => {
                         />
                       </td>
                       <td className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}>
-                        {row["Order ID Number2"]}
+                        {row.OrderID}
                       </td>
                       <td className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}>
-                        {row["Customer First Name"]}
+                        {row.FirstName}
                       </td>
                       <td className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}>
-                        {row["Customer Last Name"]}
+                        {row.LastName}
                       </td>
                       <td className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}>
                         {new Date(row.Timestamp).toLocaleDateString()}
@@ -197,11 +197,10 @@ const SalesTable = () => {
                           onClick={() => {
                             setSelectedLead({
                               id: row.salesNo,
-                              firstName: row["Customer First Name"],
-                              lastName: row["Customer Last Name"],
+                              FirstName: row.FirstName,
+                              LastName: row.LastName,
                               Timestamp: row.Timestamp,
-                              offer_url: row.Offer_url,
-                              "Order ID Number2": row["Order ID Number2"]
+                              OrderID: row.OrderID
                             });
                             setIsModalOpen(true);
                           }}
@@ -297,16 +296,15 @@ const SalesTable = () => {
           <div className="bg-white rounded-[26px] w-[646px] max-w-md overflow-hidden px-[22px] pt-[28px] pb-[40px]">
             <div className="bg-[linear-gradient(121.72deg,_rgba(0,174,239,0.06)_0%,_rgba(0,127,196,0.06)_100%)] flex justify-between items-center p-[20px] rounded-[12px]">
               <h2 className="text-[18px] leading-[20px] font-medium text-[#071437]">
-                Total Sales ({selectedLead["Order ID Number2"]})
+                Total Sales ({selectedLead.OrderID})
               </h2>
               <Cross onClick={() => setIsModalOpen(false)} className="cursor-pointer" />
             </div>
             <div className="divide-y divide-gray-200 px-[20px]">
               {[
-                // ["Sale Id", selectedLead.id],
-                ["Order ID", selectedLead["Order ID Number2"]],
-                ["First Name", selectedLead.firstName],
-                ["Last Name", selectedLead.lastName],
+                ["Order ID", selectedLead.OrderID],
+                ["First Name", selectedLead.FirstName],
+                ["Last Name", selectedLead.LastName],
                 ["Date", new Date(selectedLead.Timestamp).toLocaleDateString()],
               ].map(([label, value]) => (
                 <div key={label} className="flex align-center py-[15px]">
