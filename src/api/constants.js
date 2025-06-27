@@ -1,5 +1,7 @@
-export const API_URL = process.env.REACT_APP_API_URL || "https://api.taukdash.com";
-console.log("api key === ", process.env.REACT_APP_API_URL )
+// export const API_URL = process.env.VITE_API_URL || "https://api.taukdash.com";
+export const API_URL = process.env.VITE_API_URL || "http://localhost:5000";
+
+console.log("api key === ", process.env.VITE_API_URL )
 export const AUTH = {
   LOGIN: `${API_URL}/api/auth/login`,
   LOGOUT: `${API_URL}/api/auth/admin/logout`,

@@ -21,6 +21,7 @@ import { ENDPOINTS } from "../api/constants";
 import { useToast } from "../hooks/use-toast";
 import { ToastContainer } from "./ui/Toast";
 import { useNavigate } from "react-router-dom";
+import AOVOverTimeChart from "./AOVOverTimeChart";
 
 const dataAOV = [
   { month: "Jan", value: 1600 },
@@ -432,59 +433,7 @@ const Dashboard = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-[18px] shadow-[0px_3px_4px_0px_#00000008] border border-[#F1F1F4]">
-          <div className="flex justify-between items-center mb-[26px]  p-[26px] border-b border-b-[#F1F1F4]">
-            <h3 className="text-[16px] leading-[16px] text-[#071437] font-semibold">
-              Average Order Value Over Time
-            </h3>
-            <select className="border border-[#DBDFE9] rounded-[6px] px-[10px] py-[8px] text-[11px] leading-[12px] text-[#252F4A] ">
-              <option value="monthly">12 months</option>
-              <option value="quarterly">Quarterly</option>
-              <option value="yearly">Yearly</option>
-            </select>
-          </div>
-          <ResponsiveContainer
-            width="100%"
-            height={266}
-            className="md:px-[20px] md:pb-[20px] max-sm:pr-3"
-            >
-            <LineChart data={dataAOV}>
-              <defs>
-                <linearGradient id="aovGradient" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#0ea5e9" />
-                  <stop offset="100%" stopColor="#38bdf8" />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" tick={false} axisLine={false} />
-              <YAxis
-                dataKey="value"
-                tick={{
-                  fill: "#78829D",
-                  fontSize: 12,
-                  fontWeight: 400,
-                  fontFamily: "Inter",
-                  style: {
-                    letterSpacing: "0em",
-                  },
-                }}
-                tickFormatter={(val) => `% ${val}`}
-              />
-
-              <Tooltip
-                content={<CustomTooltip />}
-                formatter={(value) => [`${value}`, "AOV"]}
-              />
-              <Line
-                type="monotone"
-                dataKey="value"
-                stroke="url(#aovGradient)" // ← Use the gradient ID here
-                strokeWidth={3}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-
+        <AOVOverTimeChart />
         <div className="bg-white rounded-[18px] shadow-[0px_3px_4px_0px_#00000008] border border-[#F1F1F4]">
           <div className="flex justify-between items-center mb-[26px] p-[26px] border-b border-b-[#F1F1F4]">
             <h3 className="text-[16px] leading-[16px] text-[#071437] font-semibold">
