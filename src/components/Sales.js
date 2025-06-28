@@ -30,7 +30,6 @@ const SalesTable = () => {
     startDate.setDate(endDate.getDate() - 4); // 4 days before today (to include today)
     return [startDate, endDate];
   };
-
   // Set default date range when component mounts
   useEffect(() => {
     const defaultDates = getDefaultDates();
