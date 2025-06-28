@@ -129,7 +129,19 @@ const LeadsTable = () => {
             <p className="text-[#7E8299] text-[14px] font-normal leading-[20px]"></p>
           </div>
         </div>
-        <div><DatePick /></div>
+
+
+        <div >
+          {/* <CalendarIcon className="h-[16px] w-[16px] text-gray-500" />
+          <DatePicker
+            selected={selectedDate}
+            onChange={(date) => setSelectedDate(date)}
+            dateFormat="MMMM, yyyy"
+            showMonthYearPicker
+            className=" md:block focus:outline-none w-40 bg-[#F5F5F5] text-[#252F4A] font-normal text-[12px] leading-[12px]"
+          /> */}
+          <DatePick />
+        </div>
       </div>
 
       <div className="bg-white flex items-center justify-center rounded-2xl mt-5 relative z-10">
@@ -150,7 +162,20 @@ const LeadsTable = () => {
                 className="border rounded pl-7 pr-3 py-2 w-full text-[11px] leading-[12px] font-normal focus:outline-none text-black"
               />
             </div>
-            <div className="md:block hidden absolute z-50 right-5"><DatePick /></div>
+            <div className=" md:block hidden absolute z-50 right-5">
+              {/* <CalendarIcon
+                className="h-[16px] w-[16px] text-gray-500 cursor-pointer mr-[9px]"
+                onClick={handleIconClick}
+              />
+              <DatePicker
+                selected={selectedDate}
+                onChange={(date) => setSelectedDate(date)}
+                dateFormat="MMMM, yyyy"
+                showMonthYearPicker
+                className="hidden md:block w-40 focus:outline-none bg-[#FCFCFC] text-[#252F4A] font-normal text-[12px] leading-[12px]"
+              /> */}
+              <DatePick />
+            </div>
           </div>
 
           <table className="w-full border-separate border-[#F1F1F4] border-spacing-0 mb-2">
