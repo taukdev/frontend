@@ -79,7 +79,7 @@ const LeadsTable = () => {
             showMonthYearPicker
             className=" md:block focus:outline-none w-40 bg-[#F5F5F5] text-[#252F4A] font-normal text-[12px] leading-[12px]"
           /> */}
-          <DatePick />
+          {/* <DatePick /> */}
         </div>
       </div>
       <div className="bg-white flex items-center justify-center rounded-2xl mt-5 relative z-10">
@@ -109,7 +109,7 @@ const LeadsTable = () => {
                 showMonthYearPicker
                 className="hidden md:block w-40 focus:outline-none bg-[#FCFCFC] text-[#252F4A] font-normal text-[12px] leading-[12px]"
               /> */}
-              <DatePick />
+              {/* <DatePick /> */}
             </div>
           </div>
 
