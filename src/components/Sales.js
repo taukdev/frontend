@@ -102,7 +102,7 @@ const SalesTable = () => {
 
       </div>
 
-      <div className="bg-white flex items-center justify-center rounded-2xl mt-5 relative z-10">
+      <div className="bg-white flex items-center justify-center rounded-2xl mt-5 relative ">
         <div className="w-full border border-[#F1F1F4] overflow-x-auto">
           <div className="flex justify-between items-center p-[20px] border-[#F1F1F4] border-b">
             <div className="relative lg:w-72 md:w-40 w-full">
@@ -117,7 +117,7 @@ const SalesTable = () => {
                 className="border rounded pl-7 pr-3 py-2 w-full text-[11px] leading-[12px] font-normal focus:outline-none text-black"
               />
             </div>
-            <div className="md:block hidden absolute z-50 right-5">
+            <div className="md:block hidden absolute right-5">
               <DatePick onDateChange={handleDateRangeChange} />
             </div>
           </div>

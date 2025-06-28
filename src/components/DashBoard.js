@@ -25,7 +25,7 @@ import AOVOverTimeChart from "./AOVOverTimeChart";
 
 const dataAOV = [
   { month: "Jan", value: 1600 },
-  { month: "Feb", value: 1200},
+  { month: "Feb", value: 1200 },
   { month: "Mar", value: 1300 },
   { month: "Apr", value: 1725 },
   { month: "May", value: 1100 },
@@ -217,7 +217,7 @@ const Dashboard = () => {
 
   return (
     <div className="xl:px-[40px] xl:py-[20px] p-4 bg-gray-100 space-y-6 h-screen  overflow-y-auto">
-      <div className="flex flex-col lg:flex-row justify-between items-start xl:items-center mb-6 gap-4">
+      <div className="flex flex-col lg:flex-row justify-between items-start xl:items-center mb-6 gap-2">
         {/* Heading Section */}
         <div className="flex items-start w-full gap-2">
           <div>
@@ -432,7 +432,7 @@ const Dashboard = () => {
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 ">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <AOVOverTimeChart startDate={startDate} endDate={endDate} selectedCampaign={selectedCampaign} />
         <div className="bg-white rounded-[18px] shadow-[0px_3px_4px_0px_#00000008] border border-[#F1F1F4] ">
           <div className="flex justify-between items-center mb-[26px] p-[26px] border-b border-b-[#F1F1F4]">
