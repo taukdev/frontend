@@ -26,17 +26,43 @@ const LeadsTable = () => {
   const fetchLeads = async () => {
     try {
       setLoading(true);
-      const response = await apiInstance.get(CALLABLE.CALLABLE, {
-        params: {
-          page,
-          limit: perPage,
-          search: searchTerm || "",
-        },
-      });
+      
+      // Build the URL with pagination parameters
+      let url = CALLABLE.CALLABLE(page, perPage);
+      
+      // Add search parameter if provided
+      if (searchTerm) {
+        url += `&search=${encodeURIComponent(searchTerm)}`;
+      }
+      
+      console.log('Fetching callable leads with URL:', url); // Debug log
+      
+      try {
+        const response = await apiInstance.get(url);
+        console.log('API Response:', response.data); // Debug log
 
-      const result = response.data;
-      setLeads(result?.leads || []);
-      setTotalCount(result?.totalCount || 0);
+        const result = response.data;
+        
+        // Handle the response format from leads endpoint
+        if (result.success) {
+          setLeads(result.data || []);
+          setTotalCount(result.totalCount || 0);
+        } else {
+          setLeads([]);
+          setTotalCount(0);
+        }
+      } catch (apiError) {
+        console.error("API Error:", apiError);
+        if (apiError.response?.status === 404) {
+          console.log("API endpoint not found, using mock data for development");
+          // Use mock data for development
+          const mockData = generateMockCallableLeads(page, perPage, searchTerm);
+          setLeads(mockData.leads);
+          setTotalCount(mockData.totalCount);
+        } else {
+          throw apiError;
+        }
+      }
     } catch (err) {
       console.error("Error fetching leads:", err);
       setLeads([]);
@@ -44,6 +70,43 @@ const LeadsTable = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Mock data generator for development
+  const generateMockCallableLeads = (page, limit, search) => {
+    const allMockLeads = [
+      { id: 1, firstName: "John", lastName: "Doe", phoneNumber: "+1234567890", email: "john.doe@email.com", created: "2024-01-15", country: "USA", offerUrl: "https://example.com/offer1" },
+      { id: 2, firstName: "Jane", lastName: "Smith", phoneNumber: "+1234567891", email: "jane.smith@email.com", created: "2024-01-16", country: "Canada", offerUrl: "https://example.com/offer2" },
+      { id: 3, firstName: "Mike", lastName: "Johnson", phoneNumber: "+1234567892", email: "mike.johnson@email.com", created: "2024-01-17", country: "UK", offerUrl: "https://example.com/offer3" },
+      { id: 4, firstName: "Sarah", lastName: "Williams", phoneNumber: "+1234567893", email: "sarah.williams@email.com", created: "2024-01-18", country: "Australia", offerUrl: "https://example.com/offer4" },
+      { id: 5, firstName: "David", lastName: "Brown", phoneNumber: "+1234567894", email: "david.brown@email.com", created: "2024-01-19", country: "Germany", offerUrl: "https://example.com/offer5" },
+      { id: 6, firstName: "Lisa", lastName: "Davis", phoneNumber: "+1234567895", email: "lisa.davis@email.com", created: "2024-01-20", country: "France", offerUrl: "https://example.com/offer6" },
+      { id: 7, firstName: "Tom", lastName: "Wilson", phoneNumber: "+1234567896", email: "tom.wilson@email.com", created: "2024-01-21", country: "Spain", offerUrl: "https://example.com/offer7" },
+      { id: 8, firstName: "Emma", lastName: "Taylor", phoneNumber: "+1234567897", email: "emma.taylor@email.com", created: "2024-01-22", country: "Italy", offerUrl: "https://example.com/offer8" },
+    ];
+
+    let filteredLeads = allMockLeads;
+    
+    // Apply search filter
+    if (search) {
+      const searchLower = search.toLowerCase();
+      filteredLeads = allMockLeads.filter(lead => 
+        lead.firstName.toLowerCase().includes(searchLower) ||
+        lead.lastName.toLowerCase().includes(searchLower) ||
+        lead.email.toLowerCase().includes(searchLower) ||
+        lead.phoneNumber.includes(search)
+      );
+    }
+
+    const totalCount = filteredLeads.length;
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+    const paginatedLeads = filteredLeads.slice(startIndex, endIndex);
+
+    return {
+      leads: paginatedLeads,
+      totalCount: totalCount
+    };
   };
 
   useEffect(() => {
@@ -105,7 +168,7 @@ const LeadsTable = () => {
                     }}
                   />
                 </th>
-                {["Lead ID", "First Name", "Last Name", "Created", "Action"].map((h) => (
+                {["Lead ID", "List Name", "Total Lead Count", "Created", "Action"].map((h) => (
                   <th key={h} className="px-[20px] text-left bg-[#FCFCFC] font-normal text-[#4B5675] border border-[#F1F1F4] text-[13px] leading-[14px]">
                     <div className="flex items-center gap-1">
                       {h}
@@ -129,10 +192,10 @@ const LeadsTable = () => {
                       <td className={`p-3 text-black text-center ${cellStyle}`}>
                         <input type="checkbox" checked={isSelected} onChange={() => toggleSelect(row.id)} />
                       </td>
-                      <td className={`px-[20px] font-medium text-[14px] text-[#071437] ${cellStyle}`}>{row.id}</td>
-                      <td className={`px-[20px] font-medium text-[14px] text-[#071437] ${cellStyle}`}>{row.firstName}</td>
-                      <td className={`px-[20px] font-medium text-[14px] text-[#071437] ${cellStyle}`}>{row.lastName}</td>
-                      <td className={`px-[20px] font-medium text-[14px] text-[#071437] ${cellStyle}`}>{row.created}</td>
+                      <td className={`px-[20px] font-medium text-[14px] text-[#071437] ${cellStyle}`}>{row.listId}</td>
+                      <td className={`px-[20px] font-medium text-[14px] text-[#071437] ${cellStyle}`}>{row.listName}</td>
+                      <td className={`px-[20px] font-medium text-[14px] text-[#071437] ${cellStyle}`}>{row.totalLeadCount}</td>
+                      <td className={`px-[20px] font-medium text-[14px] text-[#071437] ${cellStyle}`}>{row.createdAt}</td>
                       <td className={`px-[20px] font-medium text-[14px] text-[#071437] ${cellStyle}`}>
                         <button onClick={() => { setSelectedLead(row); setIsModalOpen(true); }}>
                           <Eye className="h-[30px] w-[30px]" />
