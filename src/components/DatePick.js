@@ -91,7 +91,7 @@ function DatePick({ onDateChange }) {
       <div
         ref={inputRef}
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center border rounded-lg gap-2 px-3 py-2 xl:w-full lg:w-full md:w-48 bg-[#FCFCFC] cursor-pointer"
+        className="flex items-center border rounded-lg gap-2 px-3 py-2 xl:w-64 lg:w-64 md:w-48 bg-[#FCFCFC] cursor-pointer"
       >
         <CalendarIcon className=" lg:w-6  xl:w-[16px] w-6 text-gray-500" />
         <span className="text-sm text-gray-700 md:block hidden">
@@ -100,7 +100,7 @@ function DatePick({ onDateChange }) {
       </div>
 
       {isOpen && (
-        <div ref={dropdownRef} className="absolute z-50 mt-2  shadow-lg xl:-ml-[304.5px] lg:-ml-[304.5px] md:-ml-[289px]  -ml-52 rounded-xl bg-white">
+        <div ref={dropdownRef} className="absolute z-50 mt-2  shadow-lg xl:-ml-[310px] lg:-ml-[304.5px] md:-ml-[289px]  -ml-52 rounded-xl bg-white">
           <DatePicker
             selected={startDate}
             onChange={(update) => setDateRange(update)}
