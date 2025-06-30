@@ -186,7 +186,7 @@ const LeadsTable = () => {
                     }}
                   />
                 </th>
-                {["Lead No", "List ID", "List Name", "Description", "Leads Count", "Active", "Last Call Date", "Action"].map((h) => (
+                {[ "List ID", "List Name", "Description", "Leads Count", "Active", "Last Call Date", "Action"].map((h) => (
                   <th key={h} className="px-[20px] text-left bg-[#FCFCFC] font-normal text-[#4B5675] border border-[#F1F1F4] text-[13px] leading-[14px]">
                     <div className="flex items-center gap-1">
                       {h}
@@ -210,7 +210,7 @@ const LeadsTable = () => {
                       <td className={`p-3 text-black text-center ${cellStyle}`}>
                         <input type="checkbox" checked={isSelected} onChange={() => toggleSelect(row._id)} />
                       </td>
-                      <td className={`px-[20px] font-medium text-[14px] text-[#071437] ${cellStyle}`}>{row.leadNo}</td>
+                      {/* <td className={`px-[20px] font-medium text-[14px] text-[#071437] ${cellStyle}`}>{row.leadNo}</td> */}
                       <td className={`px-[20px] font-medium text-[14px] text-[#071437] ${cellStyle}`}>{row.listId}</td>
                       <td className={`px-[20px] font-medium text-[14px] text-[#071437] ${cellStyle}`}>{row.listName}</td>
                       <td className={`px-[20px] font-medium text-[14px] text-[#071437] ${cellStyle}`}>{row.description}</td>
