@@ -40,23 +40,21 @@ const SalesTable = () => {
   const fetchSales = async (page, limit, startDate, endDate) => {
     try {
       setLoading(true);
-      const params = {
-        page,
-        limit,
-        startDate: startDate || (dateRange[0] ? dateRange[0].toISOString() : null),
-        endDate: endDate || (dateRange[1] ? dateRange[1].toISOString() : null)
-      };
+      const startDateParam = startDate || (dateRange[0] ? dateRange[0].toISOString() : null);
+      const endDateParam = endDate || (dateRange[1] ? dateRange[1].toISOString() : null);
 
-      if (searchTerm) {
-        params.search = searchTerm;
-      }
+      // Build the URL with the function parameters
+      const url = SALES.GET_SALES(startDateParam, endDateParam, page, limit);
+      
+      // Add search parameter if needed
+      const finalUrl = searchTerm ? `${url}&search=${searchTerm}` : url;
 
-      const response = await apiInstance.get(SALES.GET_SALES, { params });
+      const response = await apiInstance.get(finalUrl);
       const result = response.data;
       console.log(result);
       setData(result?.sales || []);
-      setTotalCount(result?.totalCount || 0);
-      setTotalPages(Math.ceil(result?.totalCount / perPage));
+      setTotalCount(result?.totalRecords || 0);
+      setTotalPages(Math.ceil((result?.totalRecords || 0) / perPage));
     } catch (error) {
       console.error("Error fetching sales:", error);
     } finally {
@@ -283,7 +281,7 @@ const SalesTable = () => {
               <BlackRight
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 className="w-5 h-5 text-[13px] text-[#4B5675] hover:text-[#4B5675] disabled:text-gray-300 cursor-pointer"
-                disabled={page === totalPages}
+                disabled={page === totalPages || data.length === 0}
               />
             </div>
           </div>

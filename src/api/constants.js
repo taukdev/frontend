@@ -70,7 +70,8 @@ export const DASHBOARD = {
 
 // 💰 Sales Endpoints
 export const SALES = {
-  GET_SALES: `${API_URL}/api/sales/filtered-sales`,
+  GET_SALES: (startDate, endDate, page = 1, limit = 10) =>
+   `${API_URL}/api/sales/filtered-sales?startDate=${startDate}&endDate=${endDate}&page=${page}&limit=${limit}`,
 };
 
 // 📋 Leads Endpoints

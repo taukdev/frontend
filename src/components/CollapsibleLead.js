@@ -9,6 +9,7 @@ import { ReactComponent as BlackRight } from "../Assets/black-right.svg";
 // import DatePick from "./DatePick";
 import { apiInstance } from "../api/config/axios";
 import { CALLABLES } from "../api/constants";
+// import { CALLABLES } from "../api/constants";
 
 const LeadsTable = () => {
   const [leads, setLeads] = useState([]);
@@ -21,8 +22,7 @@ const LeadsTable = () => {
   console.log("selectedLead = ",selectedLead)
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  const totalPages = Math.ceil(totalCount / perPage);
+  const [totalPages, setTotalPages] = useState(1);
 
   const fetchLeads = async () => {
     try {
@@ -30,44 +30,39 @@ const LeadsTable = () => {
       
       // Build the URL with pagination parameters
       let url = CALLABLES.CALLABLES(page, perPage);
-      console.log("url=",url)
+      
       // Add search parameter if provided
       if (searchTerm) {
         url += `&search=${encodeURIComponent(searchTerm)}`;
       }
-      
-      console.log('Fetching callable leads with URL:', url); // Debug log
-      
       try {
         const response = await apiInstance.get(url);
-        console.log('API Response: callable lead ', response.data); // Debug log
+        console.log('API Response:', response.data); // Debug log
 
         const result = response.data;
-        
-        // Handle the response format from leads endpoint
         if (result.success) {
           setLeads(result.data || []);
-          setTotalCount(result.totalCount || 0);
+          setTotalCount(result.pagination?.total || 0);
+          setTotalPages(result.pagination?.totalPages || 1);
         } else {
           setLeads([]);
           setTotalCount(0);
+          setTotalPages(1);
         }
       } catch (apiError) {
-        console.error("API Error:", apiError);
         if (apiError.response?.status === 404) {
-          console.log("API endpoint not found, using mock data for development");
-          // Use mock data for development
           const mockData = generateMockCallableLeads(page, perPage, searchTerm);
           setLeads(mockData.leads);
           setTotalCount(mockData.totalCount);
+          setTotalPages(Math.ceil(mockData.totalCount / perPage) || 1);
         } else {
           throw apiError;
         }
       }
     } catch (err) {
-      console.error("Error fetching leads:", err);
       setLeads([]);
       setTotalCount(0);
+      setTotalPages(1);
     } finally {
       setLoading(false);
     }
@@ -85,10 +80,7 @@ const LeadsTable = () => {
       { id: 7, firstName: "Tom", lastName: "Wilson", phoneNumber: "+1234567896", email: "tom.wilson@email.com", created: "2024-01-21", country: "Spain", offerUrl: "https://example.com/offer7" },
       { id: 8, firstName: "Emma", lastName: "Taylor", phoneNumber: "+1234567897", email: "emma.taylor@email.com", created: "2024-01-22", country: "Italy", offerUrl: "https://example.com/offer8" },
     ];
-
     let filteredLeads = allMockLeads;
-    
-    // Apply search filter
     if (search) {
       const searchLower = search.toLowerCase();
       filteredLeads = allMockLeads.filter(lead => 
@@ -98,12 +90,10 @@ const LeadsTable = () => {
         lead.phoneNumber.includes(search)
       );
     }
-
     const totalCount = filteredLeads.length;
     const startIndex = (page - 1) * limit;
     const endIndex = startIndex + limit;
     const paginatedLeads = filteredLeads.slice(startIndex, endIndex);
-
     return {
       leads: paginatedLeads,
       totalCount: totalCount
@@ -133,10 +123,17 @@ const LeadsTable = () => {
 
 
         <div >
-
+          {/* <CalendarIcon className="h-[16px] w-[16px] text-gray-500" />
+          <DatePicker
+            selected={selectedDate}
+            onChange={(date) => setSelectedDate(date)}
+            dateFormat="MMMM, yyyy"
+            showMonthYearPicker
+            className=" md:block focus:outline-none w-40 bg-[#F5F5F5] text-[#252F4A] font-normal text-[12px] leading-[12px]"
+          /> */}
+          {/* <DatePick /> */}
         </div>
       </div>
-
       <div className="bg-white flex items-center justify-center rounded-2xl mt-5 relative z-10">
         <div className="w-full border border-[#F1F1F4] overflow-x-auto">
           <div className="flex justify-between items-center p-[20px] border-[#F1F1F4] border-b">
@@ -167,10 +164,9 @@ const LeadsTable = () => {
                 showMonthYearPicker
                 className="hidden md:block w-40 focus:outline-none bg-[#FCFCFC] text-[#252F4A] font-normal text-[12px] leading-[12px]"
               /> */}
-            
+              {/* <DatePick /> */}
             </div>
           </div>
-
           <table className="w-full border-separate border-[#F1F1F4] border-spacing-0 mb-2">
             <thead className="bg-gray-100">
               <tr>
@@ -228,7 +224,6 @@ const LeadsTable = () => {
               )}
             </tbody>
           </table>
-
           <div className="flex justify-between items-center py-4 px-6">
             <div className="flex items-center gap-2">
               <label className="text-[13px] text-[#4B5675]">Show</label>
@@ -252,10 +247,13 @@ const LeadsTable = () => {
               </div>
               <span className="text-[13px] text-[#4B5675]">per page</span>
             </div>
-
             <div className="hidden md:flex items-center">
               <span className="text-[#4B5675] text-[13px] mr-1">{`${(page - 1) * perPage + 1}-${Math.min(page * perPage, totalCount)} of ${totalCount}`}</span>
-              <BlackLeft onClick={() => setPage((p) => Math.max(1, p - 1))} className="w-5 h-5 cursor-pointer" />
+              <BlackLeft
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                className={`w-5 h-5 cursor-pointer${page === 1 ? ' opacity-50 pointer-events-none' : ''}`}
+                disabled={page === 1}
+              />
               {(() => {
                 const maxVisible = 5;
                 let start = Math.max(1, page - Math.floor(maxVisible / 2));
@@ -280,12 +278,15 @@ const LeadsTable = () => {
                   );
                 });
               })()}
-              <BlackRight onClick={() => setPage((p) => Math.min(totalPages, p + 1))} className="w-5 h-5 cursor-pointer" />
+              <BlackRight
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                className={`w-5 h-5 cursor-pointer${page === totalPages || totalPages === 0 ? ' opacity-50 pointer-events-none' : ''}`}
+                disabled={page === totalPages || totalPages === 0}
+              />
             </div>
           </div>
         </div>
       </div>
-
       {isModalOpen && selectedLead && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 px-4">
           <div className="bg-white rounded-[26px] w-[646px] max-w-md overflow-hidden px-[22px] pt-[28px] pb-[40px]">
