@@ -34,7 +34,6 @@ const LeadsTable = () => {
   useEffect(() => {
     const defaultDates = getDefaultDates();
     setDateRange(defaultDates);
-    fetchLeads(1, perPage, defaultDates[0], defaultDates[1]);
   }, []);
 
   const fetchLeads = async (page, limit) => {
@@ -83,7 +82,11 @@ const LeadsTable = () => {
   // Handle search
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
-      fetchLeads(page, perPage, dateRange[0], dateRange[1]);
+      if (page !== 1) {
+        setPage(1);
+      } else {
+        fetchLeads(1, perPage);
+      }
     }, 500);
 
     return () => clearTimeout(delayDebounceFn);
@@ -91,8 +94,10 @@ const LeadsTable = () => {
 
   // Handle pagination
   useEffect(() => {
-    fetchLeads(page, perPage, dateRange[0], dateRange[1]);
-  }, [page, perPage]);
+    if (dateRange[0] && dateRange[1]) {
+      fetchLeads(page, perPage);
+    }
+  }, [page, perPage, dateRange]);
 
   const toggleSelect = (id) => {
     setSelectedLeads((prev) =>

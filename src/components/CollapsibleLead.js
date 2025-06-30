@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from "react";
-import "react-datepicker/dist/react-datepicker.css";
-import { ReactComponent as Eye } from "../Assets/Eye.svg";
-import { ReactComponent as Search } from "../Assets/Search.svg";
-import { ReactComponent as UpDown } from "../Assets/UpDown.svg";
-import { ReactComponent as Cross } from "../Assets/cross.svg";
 import { ReactComponent as BlackLeft } from "../Assets/black-left.svg";
 import { ReactComponent as BlackRight } from "../Assets/black-right.svg";
-// import DatePick from "./DatePick";
+import { ReactComponent as Eye } from "../Assets/Eye.svg";
 import { apiInstance } from "../api/config/axios";
 import { CALLABLES } from "../api/constants";
-// import { CALLABLES } from "../api/constants";
+
+function formatDateDMY(dateString) {
+  if (!dateString) return '-';
+  const date = new Date(dateString);
+  if (isNaN(date)) return '-';
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = String(date.getFullYear()).slice(-2);
+  return `${day}/${month}/${year}`;
+}
 
 const LeadsTable = () => {
   const [leads, setLeads] = useState([]);
@@ -19,7 +23,6 @@ const LeadsTable = () => {
   const [totalCount, setTotalCount] = useState(0);
   const [selectedLeads, setSelectedLeads] = useState([]);
   const [selectedLead, setSelectedLead] = useState(null);
-  console.log("selectedLead = ",selectedLead)
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
@@ -27,18 +30,10 @@ const LeadsTable = () => {
   const fetchLeads = async () => {
     try {
       setLoading(true);
-      
-      // Build the URL with pagination parameters
       let url = CALLABLES.CALLABLES(page, perPage);
-      
-      // Add search parameter if provided
-      if (searchTerm) {
-        url += `&search=${encodeURIComponent(searchTerm)}`;
-      }
+      const finalUrl = searchTerm ? `${url}&search=${encodeURIComponent(searchTerm)}` : url;
       try {
-        const response = await apiInstance.get(url);
-        console.log('API Response:', response.data); // Debug log
-
+        const response = await apiInstance.get(finalUrl);
         const result = response.data;
         if (result.success) {
           setLeads(result.data || []);
@@ -50,14 +45,9 @@ const LeadsTable = () => {
           setTotalPages(1);
         }
       } catch (apiError) {
-        if (apiError.response?.status === 404) {
-          const mockData = generateMockCallableLeads(page, perPage, searchTerm);
-          setLeads(mockData.leads);
-          setTotalCount(mockData.totalCount);
-          setTotalPages(Math.ceil(mockData.totalCount / perPage) || 1);
-        } else {
-          throw apiError;
-        }
+        setLeads([]);
+        setTotalCount(0);
+        setTotalPages(1);
       }
     } catch (err) {
       setLeads([]);
@@ -66,38 +56,6 @@ const LeadsTable = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  // Mock data generator for development
-  const generateMockCallableLeads = (page, limit, search) => {
-    const allMockLeads = [
-      { id: 1, firstName: "John", lastName: "Doe", phoneNumber: "+1234567890", email: "john.doe@email.com", created: "2024-01-15", country: "USA", offerUrl: "https://example.com/offer1" },
-      { id: 2, firstName: "Jane", lastName: "Smith", phoneNumber: "+1234567891", email: "jane.smith@email.com", created: "2024-01-16", country: "Canada", offerUrl: "https://example.com/offer2" },
-      { id: 3, firstName: "Mike", lastName: "Johnson", phoneNumber: "+1234567892", email: "mike.johnson@email.com", created: "2024-01-17", country: "UK", offerUrl: "https://example.com/offer3" },
-      { id: 4, firstName: "Sarah", lastName: "Williams", phoneNumber: "+1234567893", email: "sarah.williams@email.com", created: "2024-01-18", country: "Australia", offerUrl: "https://example.com/offer4" },
-      { id: 5, firstName: "David", lastName: "Brown", phoneNumber: "+1234567894", email: "david.brown@email.com", created: "2024-01-19", country: "Germany", offerUrl: "https://example.com/offer5" },
-      { id: 6, firstName: "Lisa", lastName: "Davis", phoneNumber: "+1234567895", email: "lisa.davis@email.com", created: "2024-01-20", country: "France", offerUrl: "https://example.com/offer6" },
-      { id: 7, firstName: "Tom", lastName: "Wilson", phoneNumber: "+1234567896", email: "tom.wilson@email.com", created: "2024-01-21", country: "Spain", offerUrl: "https://example.com/offer7" },
-      { id: 8, firstName: "Emma", lastName: "Taylor", phoneNumber: "+1234567897", email: "emma.taylor@email.com", created: "2024-01-22", country: "Italy", offerUrl: "https://example.com/offer8" },
-    ];
-    let filteredLeads = allMockLeads;
-    if (search) {
-      const searchLower = search.toLowerCase();
-      filteredLeads = allMockLeads.filter(lead => 
-        lead.firstName.toLowerCase().includes(searchLower) ||
-        lead.lastName.toLowerCase().includes(searchLower) ||
-        lead.email.toLowerCase().includes(searchLower) ||
-        lead.phoneNumber.includes(search)
-      );
-    }
-    const totalCount = filteredLeads.length;
-    const startIndex = (page - 1) * limit;
-    const endIndex = startIndex + limit;
-    const paginatedLeads = filteredLeads.slice(startIndex, endIndex);
-    return {
-      leads: paginatedLeads,
-      totalCount: totalCount
-    };
   };
 
   useEffect(() => {
@@ -120,26 +78,14 @@ const LeadsTable = () => {
             <p className="text-[#7E8299] text-[14px] font-normal leading-[20px]"></p>
           </div>
         </div>
-
-
-        <div >
-          {/* <CalendarIcon className="h-[16px] w-[16px] text-gray-500" />
-          <DatePicker
-            selected={selectedDate}
-            onChange={(date) => setSelectedDate(date)}
-            dateFormat="MMMM, yyyy"
-            showMonthYearPicker
-            className=" md:block focus:outline-none w-40 bg-[#F5F5F5] text-[#252F4A] font-normal text-[12px] leading-[12px]"
-          /> */}
-          {/* <DatePick /> */}
-        </div>
+        <div></div>
       </div>
       <div className="bg-white flex items-center justify-center rounded-2xl mt-5 relative z-10">
         <div className="w-full border border-[#F1F1F4] overflow-x-auto">
           <div className="flex justify-between items-center p-[20px] border-[#F1F1F4] border-b">
             <div className="relative lg:w-72 md:w-40 w-full">
               <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
-                <Search className="h-4 w-4 text-gray-400" />
+                <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
               </div>
               <input
                 type="text"
@@ -152,20 +98,7 @@ const LeadsTable = () => {
                 className="border rounded pl-7 pr-3 py-2 w-full text-[11px] leading-[12px] font-normal focus:outline-none text-black"
               />
             </div>
-            <div className=" md:block hidden absolute z-50 right-5">
-              {/* <CalendarIcon
-                className="h-[16px] w-[16px] text-gray-500 cursor-pointer mr-[9px]"
-                onClick={handleIconClick}
-              />
-              <DatePicker
-                selected={selectedDate}
-                onChange={(date) => setSelectedDate(date)}
-                dateFormat="MMMM, yyyy"
-                showMonthYearPicker
-                className="hidden md:block w-40 focus:outline-none bg-[#FCFCFC] text-[#252F4A] font-normal text-[12px] leading-[12px]"
-              /> */}
-              {/* <DatePick /> */}
-            </div>
+            <div className=" md:block hidden absolute z-50 right-5"></div>
           </div>
           <table className="w-full border-separate border-[#F1F1F4] border-spacing-0 mb-2">
             <thead className="bg-gray-100">
@@ -186,7 +119,6 @@ const LeadsTable = () => {
                   <th key={h} className="px-[20px] text-left bg-[#FCFCFC] font-normal text-[#4B5675] border border-[#F1F1F4] text-[13px] leading-[14px]">
                     <div className="flex items-center gap-1">
                       {h}
-                      <UpDown className="h-[14px] w-[14px]" />
                     </div>
                   </th>
                 ))}
@@ -212,7 +144,9 @@ const LeadsTable = () => {
                       <td className={`px-[20px] font-medium text-[14px] text-[#071437] ${cellStyle}`}>{row.description}</td>
                       <td className={`px-[20px] font-medium text-[14px] text-[#071437] ${cellStyle}`}>{row.leadsCount}</td>
                       <td className={`px-[20px] font-medium text-[14px] text-[#071437] ${cellStyle}`}>{row.active === 'Y' ? 'Yes' : 'No'}</td>
-                      <td className={`px-[20px] font-medium text-[14px] text-[#071437] ${cellStyle}`}>{row.lastCallDate}</td>
+                      <td className={`px-[20px] font-medium text-[14px] text-[#071437] ${cellStyle}`}>
+                        {row.lastCallDate ? formatDateDMY(row.lastCallDate) : (row.createdAt ? formatDateDMY(row.createdAt) : 'No calls yet')}
+                      </td>
                       <td className={`px-[20px] font-medium text-[14px] text-[#071437] ${cellStyle}`}>
                         <button onClick={() => { setSelectedLead(row); setIsModalOpen(true); }}>
                           <Eye className="h-[30px] w-[30px]" />
@@ -292,7 +226,7 @@ const LeadsTable = () => {
           <div className="bg-white rounded-[26px] w-[646px] max-w-md overflow-hidden px-[22px] pt-[28px] pb-[40px]">
             <div className="bg-[linear-gradient(121.72deg,_rgba(0,174,239,0.06)_0%,_rgba(0,127,196,0.06)_100%)] flex justify-between items-center p-[20px] rounded-[12px]">
               <h2 className="text-[18px] font-medium text-[#071437]">Callable Lead ID ({selectedLead.leadNo || selectedLead.listId || '-'})</h2>
-              <Cross onClick={() => setIsModalOpen(false)} className="cursor-pointer" />
+              <button onClick={() => setIsModalOpen(false)} className="cursor-pointer">Close</button>
             </div>
             <div className="divide-y divide-gray-200 px-[20px]">
               {[
