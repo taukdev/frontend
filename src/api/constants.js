@@ -85,9 +85,9 @@ export const SETTING = {
 };
 
 // 📞 Callable Data Endpoints (with pagination)
-export const CALLABLE = {
+export const CALLABLES = {
   // Usage: CALLABLE.CALLABLE(2, 10) => /api/leads/filtered?page=2&limit=10&type=callable
-  CALLABLE: (page = 1, limit = 10) => `${API_URL}/api/leads/filtered?page=${page}&limit=${limit}&type=callable`,
+  CALLABLES: (page = 1, limit = 10) => `${API_URL}/api/callable/filtered?page=${page}&limit=${limit}&type=callable`,
 };
 
 // ✅ Export grouped endpoints
@@ -97,5 +97,5 @@ export const ENDPOINTS = {
   SALES,
   LEAD,
   SETTING,
-  CALLABLE,
+  CALLABLES,
 };

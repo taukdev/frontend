@@ -6,18 +6,19 @@ import { ReactComponent as UpDown } from "../Assets/UpDown.svg";
 import { ReactComponent as Cross } from "../Assets/cross.svg";
 import { ReactComponent as BlackLeft } from "../Assets/black-left.svg";
 import { ReactComponent as BlackRight } from "../Assets/black-right.svg";
-import DatePick from "./DatePick";
+// import DatePick from "./DatePick";
 import { apiInstance } from "../api/config/axios";
-import { CALLABLE } from "../api/constants";
+import { CALLABLES } from "../api/constants";
 
 const LeadsTable = () => {
   const [leads, setLeads] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [perPage, setPerPage] = useState(2);
+  const [perPage, setPerPage] = useState(10);
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [selectedLeads, setSelectedLeads] = useState([]);
   const [selectedLead, setSelectedLead] = useState(null);
+  console.log("selectedLead = ",selectedLead)
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -28,8 +29,8 @@ const LeadsTable = () => {
       setLoading(true);
       
       // Build the URL with pagination parameters
-      let url = CALLABLE.CALLABLE(page, perPage);
-      
+      let url = CALLABLES.CALLABLES(page, perPage);
+      console.log("url=",url)
       // Add search parameter if provided
       if (searchTerm) {
         url += `&search=${encodeURIComponent(searchTerm)}`;
@@ -39,7 +40,7 @@ const LeadsTable = () => {
       
       try {
         const response = await apiInstance.get(url);
-        console.log('API Response:', response.data); // Debug log
+        console.log('API Response: callable lead ', response.data); // Debug log
 
         const result = response.data;
         
@@ -132,15 +133,7 @@ const LeadsTable = () => {
 
 
         <div >
-          {/* <CalendarIcon className="h-[16px] w-[16px] text-gray-500" />
-          <DatePicker
-            selected={selectedDate}
-            onChange={(date) => setSelectedDate(date)}
-            dateFormat="MMMM, yyyy"
-            showMonthYearPicker
-            className=" md:block focus:outline-none w-40 bg-[#F5F5F5] text-[#252F4A] font-normal text-[12px] leading-[12px]"
-          /> */}
-          <DatePick />
+
         </div>
       </div>
 
@@ -174,7 +167,7 @@ const LeadsTable = () => {
                 showMonthYearPicker
                 className="hidden md:block w-40 focus:outline-none bg-[#FCFCFC] text-[#252F4A] font-normal text-[12px] leading-[12px]"
               /> */}
-              <DatePick />
+            
             </div>
           </div>
 
@@ -184,16 +177,16 @@ const LeadsTable = () => {
                 <th className="px-4 py-3 text-center border border-[#F1F1F4] bg-[#FCFCFC]">
                   <input
                     type="checkbox"
-                    checked={leads.length > 0 && leads.every((lead) => selectedLeads.includes(lead.id))}
+                    checked={leads.length > 0 && leads.every((lead) => selectedLeads.includes(lead._id))}
                     onChange={(e) => {
-                      const ids = leads.map((lead) => lead.id);
+                      const ids = leads.map((lead) => lead._id);
                       setSelectedLeads((prev) =>
                         e.target.checked ? [...new Set([...prev, ...ids])] : prev.filter((id) => !ids.includes(id))
                       );
                     }}
                   />
                 </th>
-                {["Lead ID", "List Name", "Total Lead Count", "Created", "Action"].map((h) => (
+                {["Lead No", "List ID", "List Name", "Description", "Leads Count", "Active", "Last Call Date", "Action"].map((h) => (
                   <th key={h} className="px-[20px] text-left bg-[#FCFCFC] font-normal text-[#4B5675] border border-[#F1F1F4] text-[13px] leading-[14px]">
                     <div className="flex items-center gap-1">
                       {h}
@@ -205,22 +198,25 @@ const LeadsTable = () => {
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan="6" className="text-center py-4">Loading...</td></tr>
+                <tr><td colSpan="9" className="text-center py-4">Loading...</td></tr>
               ) : leads.length === 0 ? (
-                <tr><td colSpan="6" className="text-center py-4">No data found</td></tr>
+                <tr><td colSpan="9" className="text-center py-4">No data found</td></tr>
               ) : (
                 leads.map((row) => {
-                  const isSelected = selectedLeads.includes(row.id);
+                  const isSelected = selectedLeads.includes(row._id);
                   const cellStyle = isSelected ? "bg-[#F5F5F5] border-[#F1F1F4] border" : "bg-white border border-[#F1F1F4]";
                   return (
-                    <tr key={row.id}>
+                    <tr key={row._id}>
                       <td className={`p-3 text-black text-center ${cellStyle}`}>
-                        <input type="checkbox" checked={isSelected} onChange={() => toggleSelect(row.id)} />
+                        <input type="checkbox" checked={isSelected} onChange={() => toggleSelect(row._id)} />
                       </td>
+                      <td className={`px-[20px] font-medium text-[14px] text-[#071437] ${cellStyle}`}>{row.leadNo}</td>
                       <td className={`px-[20px] font-medium text-[14px] text-[#071437] ${cellStyle}`}>{row.listId}</td>
                       <td className={`px-[20px] font-medium text-[14px] text-[#071437] ${cellStyle}`}>{row.listName}</td>
-                      <td className={`px-[20px] font-medium text-[14px] text-[#071437] ${cellStyle}`}>{row.totalLeadCount}</td>
-                      <td className={`px-[20px] font-medium text-[14px] text-[#071437] ${cellStyle}`}>{row.createdAt}</td>
+                      <td className={`px-[20px] font-medium text-[14px] text-[#071437] ${cellStyle}`}>{row.description}</td>
+                      <td className={`px-[20px] font-medium text-[14px] text-[#071437] ${cellStyle}`}>{row.leadsCount}</td>
+                      <td className={`px-[20px] font-medium text-[14px] text-[#071437] ${cellStyle}`}>{row.active === 'Y' ? 'Yes' : 'No'}</td>
+                      <td className={`px-[20px] font-medium text-[14px] text-[#071437] ${cellStyle}`}>{row.lastCallDate}</td>
                       <td className={`px-[20px] font-medium text-[14px] text-[#071437] ${cellStyle}`}>
                         <button onClick={() => { setSelectedLead(row); setIsModalOpen(true); }}>
                           <Eye className="h-[30px] w-[30px]" />
@@ -246,7 +242,7 @@ const LeadsTable = () => {
                   className="appearance-none border-none bg-transparent pr-6 pl-2 py-1 text-[15px] font-medium text-[#252F4A] focus:outline-none"
                   style={{ minWidth: "40px" }}
                 >
-                  {[2, 3, 4, 5, 10, 25, 50].map((n) => (
+                  {[10, 25, 50, 100].map((n) => (
                     <option key={n} value={n}>{n}</option>
                   ))}
                 </select>
@@ -294,28 +290,22 @@ const LeadsTable = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 px-4">
           <div className="bg-white rounded-[26px] w-[646px] max-w-md overflow-hidden px-[22px] pt-[28px] pb-[40px]">
             <div className="bg-[linear-gradient(121.72deg,_rgba(0,174,239,0.06)_0%,_rgba(0,127,196,0.06)_100%)] flex justify-between items-center p-[20px] rounded-[12px]">
-              <h2 className="text-[18px] font-medium text-[#071437]">Callable Lead ID ({selectedLead.id})</h2>
+              <h2 className="text-[18px] font-medium text-[#071437]">Callable Lead ID ({selectedLead.leadNo || selectedLead.listId || '-'})</h2>
               <Cross onClick={() => setIsModalOpen(false)} className="cursor-pointer" />
             </div>
             <div className="divide-y divide-gray-200 px-[20px]">
               {[
-                ["Id", selectedLead.id],
-                ["First Name", selectedLead.firstName],
-                ["Last Name", selectedLead.lastName],
-                ["Phone Number", selectedLead.phoneNumber],
-                ["Email Address", selectedLead.email],
-                ["Created", selectedLead.created],
-                ["Country", selectedLead.country],
-                ["Offer_url", selectedLead.offerUrl],
+                ["List ID", selectedLead.listId || '-'],
+                ["List Name", selectedLead.listName || '-'],
+                ["Description", selectedLead.description || 'No description available'],
+                ["Leads Count", selectedLead.leadsCount ?? selectedLead.totalLeadCount ?? '-'],
+                ["Active", (typeof selectedLead.active === 'boolean') ? (selectedLead.active ? 'Yes' : 'No') : (selectedLead.active === 'Y' ? 'Yes' : selectedLead.active === 'N' ? 'No' : (selectedLead.active ?? '-'))],
+                ["Last Call Date", selectedLead.lastCallDate || selectedLead.createdAt || 'No calls yet'],
               ].map(([label, value]) => (
                 <div key={label} className="flex align-center py-[15px]">
                   <div className="w-1/3 text-gray-500 pr-4">{label}</div>
                   <div className="w-2/3 border-gray-200 pl-4 overflow-x-auto max-w-full whitespace-nowrap">
-                    {label === "Offer_url" ? (
-                      <a href={value} target="_blank" rel="noopener noreferrer" className="text-[#252F4A] underline block">{value}</a>
-                    ) : (
-                      <div className="font-medium text-left">{value}</div>
-                    )}
+                    <div className="font-medium text-left">{value}</div>
                   </div>
                 </div>
               ))}
