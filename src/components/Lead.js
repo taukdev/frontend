@@ -8,6 +8,7 @@ import { ReactComponent as BlackLeft } from "../Assets/black-left.svg";
 import { ReactComponent as BlackRight } from "../Assets/black-right.svg";
 import { apiInstance } from "../api/config/axios";
 import { LEAD } from "../api/constants";
+import DatePick from "./DatePick";
 
 const LeadsTable = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -117,7 +118,7 @@ const LeadsTable = () => {
               Lead ID
             </h2>
             <p className="text-[14px] leading-[14px] text-[#4B5675] font-normal">
-              
+
             </p>
           </div>
         </div>
@@ -127,9 +128,9 @@ const LeadsTable = () => {
       </div>
 
       <div className="bg-white flex items-center justify-center rounded-2xl">
-        <div className="w-full border border-[#F1F1F4] overflow-x-auto">
+        <div className="w-full border border-[#F1F1F4]">
           <div className="flex justify-between items-center p-[20px] border-[#F1F1F4] border-b">
-            <div className="relative lg:w-72 md:w-56 w-full">
+            <div className="relative lg:w-72 md:w-40 w-full">
               <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
                 <Search className="h-4 w-4 text-gray-400" />
               </div>
@@ -138,102 +139,105 @@ const LeadsTable = () => {
                 placeholder="Search leads"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="border rounded pl-7 pr-3 py-2 w-full text-[11px] leading-[12px] font-normal focus:outline-none text-black "
+                className="border rounded pl-7 pr-3 py-2 lg:w-full md:w-52 w-44 text-[11px] leading-[12px] font-normal focus:outline-none text-black "
               />
             </div>
+            {/* <div className=" absolute right-5">
+              <DatePick  />
+            </div> */}
           </div>
 
-        <div className="w-full">
+          <div className="w-full border border-[#F1F1F4] overflow-x-auto">
             <table className="w-full border-separate border-[#F1F1F4] border-spacing-0 mb-2">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="px-4 py-3 text-center border border-[#F1F1F4] bg-[#FCFCFC]">
-                  <input
-                    type="checkbox"
-                    checked={data.length > 0 && data.every((lead) => selectedLeads.includes(lead._id))}
-                    onChange={(e) => {
-                      const ids = data.map((lead) => lead._id);
-                      setSelectedLeads((prev) =>
-                        e.target.checked
-                          ? [...new Set([...prev, ...ids])]
-                          : prev.filter((id) => !ids.includes(id))
-                      );
-                    }}
-                  />
-                </th>
-                {[
-                  "List ID",
-                  "List Name ",
-                  "Total Lead Count",
-                  "Vendor",
-                  "Action"
-                ].map((h) => (
-                  <th
-                    key={h}
-                    className="px-[20px] text-left bg-[#FCFCFC] font-normal text-[#4B5675] border border-[#F1F1F4] text-[13px] leading-[14px]"
-                  >
-                    <div className="flex items-center gap-1">
-                      {h}
-                      {<UpDown className="h-[14px] w-[14px]" />}
-                    </div>
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="px-4 py-3 text-center border border-[#F1F1F4] bg-[#FCFCFC]">
+                    <input
+                      type="checkbox"
+                      checked={data.length > 0 && data.every((lead) => selectedLeads.includes(lead._id))}
+                      onChange={(e) => {
+                        const ids = data.map((lead) => lead._id);
+                        setSelectedLeads((prev) =>
+                          e.target.checked
+                            ? [...new Set([...prev, ...ids])]
+                            : prev.filter((id) => !ids.includes(id))
+                        );
+                      }}
+                    />
                   </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                <tr>
-                  <td colSpan="7" className="text-center py-4">Loading...</td>
+                  {[
+                    "List ID",
+                    "List Name ",
+                    "Total Lead Count",
+                    "Vendor",
+                    "Action"
+                  ].map((h) => (
+                    <th
+                      key={h}
+                      className="px-[20px] text-left bg-[#FCFCFC] font-normal text-[#4B5675] border border-[#F1F1F4] text-[13px] leading-[14px]"
+                    >
+                      <div className="flex items-center gap-1">
+                        {h}
+                        {<UpDown className="h-[14px] w-[14px]" />}
+                      </div>
+                    </th>
+                  ))}
                 </tr>
-              ) : data.length === 0 ? (
-                <tr>
-                  <td colSpan="7" className="text-center py-4">No data found</td>
-                </tr>
-              ) : (
-                data.map((row) => {
-                  const isSelected = selectedLeads.includes(row._id);
-                  const cellStyle = isSelected
-                    ? "bg-[#F5F5F5] border-gray-100 border"
-                    : "bg-white border border-gray-100";
+              </thead>
+              <tbody>
+                {loading ? (
+                  <tr>
+                    <td colSpan="7" className="text-center py-4">Loading...</td>
+                  </tr>
+                ) : data.length === 0 ? (
+                  <tr>
+                    <td colSpan="7" className="text-center py-4">No data found</td>
+                  </tr>
+                ) : (
+                  data.map((row) => {
+                    const isSelected = selectedLeads.includes(row._id);
+                    const cellStyle = isSelected
+                      ? "bg-[#F5F5F5] border-gray-100 border"
+                      : "bg-white border border-gray-100";
 
-                  return (
-                    <tr key={row._id}>
-                      <td className={`p-3 text-black text-center ${cellStyle}`}>
-                        <input
-                          type="checkbox"
-                          checked={isSelected}
-                          onChange={() => toggleSelect(row._id)}
-                        />
-                      </td>
-                      <td className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}>
-                        {row.listId}
-                      </td>
-                      <td className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}>
-                        {row.listName}
-                      </td>
-                      <td className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}>
-                        {row.totalLeadCount}
-                      </td>
-                      <td className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}>
-                        {row.vendor}
-                      </td>
-                      <td className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}>
-                        <button onClick={() => {
-                          setSelectedLead(row);
-                          setIsModalOpen(true);
-                        }}>
-                          <Eye className="h-[30px] w-[30px]" />
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
+                    return (
+                      <tr key={row._id}>
+                        <td className={`p-3 text-black text-center ${cellStyle}`}>
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={() => toggleSelect(row._id)}
+                          />
+                        </td>
+                        <td className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}>
+                          {row.listId}
+                        </td>
+                        <td className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}>
+                          {row.listName}
+                        </td>
+                        <td className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}>
+                          {row.totalLeadCount}
+                        </td>
+                        <td className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}>
+                          {row.vendor}
+                        </td>
+                        <td className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}>
+                          <button onClick={() => {
+                            setSelectedLead(row);
+                            setIsModalOpen(true);
+                          }}>
+                            <Eye className="h-[30px] w-[30px]" />
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
 
-          <div className="flex justify-between items-center py-4 px-6 w-full">
+          <div className="flex flex-col md:flex-row justify-between items-center py-4 px-6 md:gap-4 gap-2 w-full">
             <div className="flex items-center gap-2">
               <label className="text-[13px] leading-[14px] font-normal text-[#4B5675]">
                 Show
@@ -264,7 +268,7 @@ const LeadsTable = () => {
                 per page
               </span>
             </div>
-            <div className="hidden md:flex items-center">
+            <div className="flex items-center">
               <span className="text-[#4B5675] text-[13px] mr-1 leading-[14px] font-normal">
                 {`${(page - 1) * perPage + 1}-${Math.min(page * perPage, totalCount)} of ${totalCount}`}
               </span>
@@ -289,11 +293,10 @@ const LeadsTable = () => {
                     <button
                       key={pageNum}
                       onClick={() => setPage(pageNum)}
-                      className={`px-[12px] py-[8px] rounded-[6px] text-[#4B5675] font-normal text-[14px] leading-[14px] ${
-                        page === pageNum
-                          ? "bg-[#F1F1F4] rounded-[6px] text-[#252F4A] px-[12px] py-[8px] font-semibold flex justify-center items-center"
-                          : "text-[#4B5675] hover:bg-[#F1F1F4] font-normal"
-                      }`}
+                      className={`px-[12px] py-[8px] rounded-[6px] text-[#4B5675] font-normal text-[14px] leading-[14px] ${page === pageNum
+                        ? "bg-[#F1F1F4] rounded-[6px] text-[#252F4A] px-[12px] py-[8px] font-semibold flex justify-center items-center"
+                        : "text-[#4B5675] hover:bg-[#F1F1F4] font-normal"
+                        }`}
                     >
                       {pageNum}
                     </button>
