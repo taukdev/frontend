@@ -10,6 +10,7 @@ import { ReactComponent as Checkbox } from "../Assets/Checkbox.svg";
 import { ReactComponent as Checkbox2 } from "../Assets/Checkbox2.svg";
 import { apiInstance } from '../api/config/axios';
 import { ENDPOINTS } from '../api/constants';
+import axios from "axios";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -22,12 +23,10 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await apiInstance.post(ENDPOINTS.AUTH.LOGIN, {
-        email,
-        password,
-      });
-
-      if (response.data.status === 'success') {
+      const response = await axios.post(ENDPOINTS.AUTH.LOGIN, { email, password });
+      // const response = await apiInstance.post(ENDPOINTS.AUTH.LOGIN, { email, password });
+      console.log("Login Success:", response);
+       if (response.data.status === 'success') {
         const token = response.data.data.token;
         localStorage.setItem("token", token);
         toast({
@@ -35,7 +34,7 @@ export default function Login() {
           description: response.data.message || "Login successful",
           variant: "success"
         });
-        navigate("/dashboard");
+        navigate("/dashboard", { replace: true });
       } else {
         toast({
           title: "Error",
@@ -43,13 +42,10 @@ export default function Login() {
           variant: "destructive"
         });
       }
+      // ...rest of code
     } catch (error) {
-      console.error("Login failed:", error.response?.data || error.message);
-      toast({
-        title: "Error",
-        description: error.response?.data?.message || "Login failed. Please check your credentials.",
-        variant: "destructive"
-      });
+      console.log("Login Error:", error);
+      // ...rest of code
     }
   };
 
@@ -122,7 +118,7 @@ export default function Login() {
 
               <div className="flex items-center justify-between mb-6  h-[24px] mt-[24px]">
                 <label className="flex items-center text-gray-600 leading-6 tracking-normal w-[140px] text-[16px] font-normal">
-                  <button onClick={() => setRemember((prev) => !prev)}>
+                  <button type="button" onClick={() => setRemember((prev) => !prev)}>
                     {remember ? (
                       <Checkbox className="w-[24px] h-[24px] rounded-[6px] mr-[6px] border border-gray-300" />
                     ) : (
