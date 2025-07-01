@@ -43,9 +43,8 @@
 
 
 // API Configuration
-
 // Set base API URL using environment variable or fallback
-export const API_URL = process.env.VITE_API_URL || "https://api.taukdash.com";
+export const API_URL = process.env.REACT_VITE_API || "https://api.taukdash.com";
 // Base URL for API from environment variable or fallback
 // export const API_URL = process.env.REACT_VITE_API || "http://localhost:5000";
 
