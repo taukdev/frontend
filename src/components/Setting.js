@@ -5,8 +5,8 @@ import { ReactComponent as Eye } from "../Assets/Eye.svg";
 import { CalendarIcon } from "lucide-react";
 import { apiInstance } from "../api/config/axios";
 import { SETTING } from "../api/constants";
-import { useToast } from '../hooks/use-toast';
-import { ToastContainer } from './ui/Toast';
+import { useToast } from "../hooks/use-toast";
+import { ToastContainer } from "./ui/Toast";
 
 export default function ProfileUpdateForm() {
   const [preview, setPreview] = useState(null);
@@ -16,11 +16,11 @@ export default function ProfileUpdateForm() {
   const [loading, setLoading] = useState(false);
   const [profileData, setProfileData] = useState(null);
   const [passwords, setPasswords] = useState({
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: ''
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
   });
-  const [passwordError, setPasswordError] = useState('');
+  const [passwordError, setPasswordError] = useState("");
   const { toast, toasts, removeToast } = useToast();
 
   const handleImageChange = (e) => {
@@ -51,9 +51,9 @@ export default function ProfileUpdateForm() {
     try {
       setLoading(true);
       const response = await apiInstance.get(SETTING.GET_PROFILE);
-      console.log('API Response:', response.data);
+      console.log("API Response:", response.data);
 
-      if (response.data?.status === 'success' && response.data?.data?.user) {
+      if (response.data?.status === "success" && response.data?.data?.user) {
         setProfileData(response.data.data);
       }
     } catch (error) {
@@ -65,72 +65,80 @@ export default function ProfileUpdateForm() {
 
   const handlePasswordChange = (e) => {
     const { name, value } = e.target;
-    setPasswords(prev => ({
+    setPasswords((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
-    setPasswordError(''); // Clear error when user types
+    setPasswordError(""); // Clear error when user types
   };
 
   const updatePassword = async () => {
     try {
-      if (!passwords.currentPassword || !passwords.newPassword || !passwords.confirmPassword) {
-        setPasswordError('Please fill in all password fields');
+      if (
+        !passwords.currentPassword ||
+        !passwords.newPassword ||
+        !passwords.confirmPassword
+      ) {
+        setPasswordError("Please fill in all password fields");
         return;
       }
 
       if (passwords.newPassword !== passwords.confirmPassword) {
-        setPasswordError('New password and confirm password do not match');
+        setPasswordError("New password and confirm password do not match");
         return;
       }
 
       if (passwords.newPassword.length < 8) {
-        setPasswordError('Password must be at least 8 characters long');
+        setPasswordError("Password must be at least 8 characters long");
         return;
       }
 
       setLoading(true);
       const response = await apiInstance.put(SETTING.PUT_PROFILE, {
         currentPassword: passwords.currentPassword,
-        newPassword: passwords.newPassword
+        newPassword: passwords.newPassword,
       });
 
-      if (response.data?.status === 'success') {
+      if (response.data?.status === "success") {
         setPasswords({
-          currentPassword: '',
-          newPassword: '',
-          confirmPassword: ''
+          currentPassword: "",
+          newPassword: "",
+          confirmPassword: "",
         });
-        setPasswordError('');
+        setPasswordError("");
         toast({
           title: "Success",
           description: "Password updated successfully",
-          variant: "success"
+          variant: "success",
         });
       } else {
-        setPasswordError(response.data?.message || 'Failed to update password');
+        setPasswordError(response.data?.message || "Failed to update password");
         toast({
           title: "Error",
-          description: response.data?.message || 'Failed to update password',
-          variant: "destructive"
+          description: response.data?.message || "Failed to update password",
+          variant: "destructive",
         });
       }
     } catch (error) {
       console.error("Error updating password:", error);
-      const errorMessage = error.response?.data?.message || 'Failed to update password';
+      const errorMessage =
+        error.response?.data?.message || "Failed to update password";
 
-      if (errorMessage.toLowerCase().includes('current password incorrect') || error.response?.status === 401) {
+      if (
+        errorMessage.toLowerCase().includes("current password incorrect") ||
+        error.response?.status === 401
+      ) {
         toast({
           title: "Error",
           description: "Current password incorrect",
-          variant: "destructive"
+          variant: "destructive",
         });
       } else {
         setPasswordError(errorMessage);
         toast({
           title: "Error",
           description: errorMessage,
-          variant: "destructive"
+          variant: "destructive",
         });
       }
     } finally {
@@ -147,9 +155,7 @@ export default function ProfileUpdateForm() {
           <h2 className="text-[20px] font-semibold text-[#071437] leading-[24px] font-['Inter'] mb-[5px]">
             Settings
           </h2>
-          <p className="text-[14px] text-[#4B5675] leading-[20px] font-['Inter']">
-
-          </p>
+      
         </div>
 
         {/* Right Side: Icon in rounded box */}
@@ -159,49 +165,7 @@ export default function ProfileUpdateForm() {
       </div>
 
       <div className="bg-white p-4 rounded-xl">
-        {/* Profile Section */}
-        {/* <div className="flex items-center flex-row md:flex-row gap-4 md:gap-6 mb-6">
-        <img
-          src={preview || ProfilePicture}
-          alt="Profile"
-          className="object-cover border rounded-[20px] w-[122px] h-[122px]"
-        />
-
-        <div className="flex flex-col gap-2.5">
-     
-          <div className="flex flex-row gap-2 items-center">
        
-            <label className="relative flex items-center justify-center bg-[linear-gradient(121.72deg,_#00AEEF_0%,_#007FC4_100%)] text-white px-[24px] py-[8px] max-sm:w-24 max-[320px]:w-[4.5rem] rounded-[10px] font-bold text-[16px] leading-[20px] cursor-pointer hover:bg-[#007FC4]">
-              <div className="md:hidden flex items-center justify-center">
-                <Upload />
-              </div>
-              <span className="hidden md:inline text-[14px] font-['Inter']">
-                Upload New Photo
-              </span>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-              />
-            </label>
-
-
-            <button
-              onClick={() => setPreview(null)}
-              className="bg-[#F5F5F5] text-[#99A1B7] border-2 w-24 hover:bg-gray-200 max-[320px]:w-[4.5rem] p-2.5 rounded-[10px] text-center leading-[20px] text-[16px]"
-            >
-              Reset
-            </button>
-          </div>
-
-       
-          <p className="text-[#4B5675] text-[13px] md:text-[15px]  px-[4px] font-normal leadin-[100%]">
-            Allowed JPG, GIF, or PNG. Max size of 800 KB
-          </p>
-        </div>
-      </div>
-      <hr className="mb-6 bg-[#071437] bg-opacity-10" /> */}
         {/* Profile Info */}
         <div>
           <h3 className="text-[#071437] leading-[16px] text-[16px] font-['Inter'] mb-4 font-semibold">
@@ -219,11 +183,13 @@ export default function ProfileUpdateForm() {
                   <input
                     type="text"
                     value={profileData.user.fullName}
-                    onChange={(e) => setProfileData(prev => ({
-                      ...prev,
-                      user: { ...prev.user, fullName: e.target.value }
-                    }))}
-                    className="w-full h-[47px] bg-[#F9FAFB] px-[14px] py-[6px] border-2 rounded-[12px] text-[#6B7280] font-normal text-[16px] leading-[24px]"
+                    onChange={(e) =>
+                      setProfileData((prev) => ({
+                        ...prev,
+                        user: { ...prev.user, fullName: e.target.value },
+                      }))
+                    }
+                    className="w-full h-[47px] bg-[#F9FAFB] px-[14px] py-[6px] border-2 focus:outline-none rounded-[12px] text-[#6B7280] font-normal text-[16px] leading-[24px]"
                     placeholder="Enter Full Name"
                     disabled={loading}
                   />
@@ -235,11 +201,13 @@ export default function ProfileUpdateForm() {
                   <input
                     type="email"
                     value={profileData.user.email}
-                    onChange={(e) => setProfileData(prev => ({
-                      ...prev,
-                      user: { ...prev.user, email: e.target.value }
-                    }))}
-                    className="w-full h-[47px] bg-[#F9FAFB] px-[14px] border-2 py-[6px] rounded-[12px] text-[#6B7280] font-normal text-[16px] leading-[24px]"
+                    onChange={(e) =>
+                      setProfileData((prev) => ({
+                        ...prev,
+                        user: { ...prev.user, email: e.target.value },
+                      }))
+                    }
+                    className="w-full h-[47px] bg-[#F9FAFB] focus:outline-none px-[14px] border-2 py-[6px] rounded-[12px] text-[#6B7280] font-normal text-[16px] leading-[24px]"
                     placeholder="Enter Email"
                     disabled={loading}
                   />
@@ -262,7 +230,7 @@ export default function ProfileUpdateForm() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Current Password */}
               <div className="relative">
-                <label className="block mb-[2px] text-[#1F2937] text-[14px] md:text-[16px] font-medium leading-[20px] ml-2">
+                <label className="block mb-[2px] text-[#1F2937]  text-[14px] md:text-[16px] font-medium leading-[20px] ml-2">
                   Current Password
                 </label>
                 <input
@@ -270,7 +238,7 @@ export default function ProfileUpdateForm() {
                   name="currentPassword"
                   value={passwords.currentPassword}
                   onChange={handlePasswordChange}
-                  className="w-full h-[47px] bg-[#F9FAFB] px-[14px] py-[6px] border-2 rounded-[12px] text-[#6B7280] font-normal text-[16px] leading-[24px]"
+                  className="w-full h-[47px] bg-[#F9FAFB] focus:outline-none px-[14px] py-[6px] border-2 rounded-[12px] text-[#6B7280] font-normal text-[16px] leading-[24px]"
                   placeholder="Enter Current Password"
                   disabled={loading}
                 />
@@ -293,7 +261,7 @@ export default function ProfileUpdateForm() {
                   name="newPassword"
                   value={passwords.newPassword}
                   onChange={handlePasswordChange}
-                  className="w-full h-[47px] bg-[#F9FAFB] px-[14px] py-[6px] border-2 rounded-[12px] text-[#6B7280] font-normal text-[16px] leading-[24px]"
+                  className="w-full h-[47px] bg-[#F9FAFB] focus:outline-none px-[14px] py-[6px] border-2 rounded-[12px] text-[#6B7280] font-normal text-[16px] leading-[24px]"
                   placeholder="Enter New Password"
                   disabled={loading}
                 />
@@ -317,7 +285,7 @@ export default function ProfileUpdateForm() {
                 name="confirmPassword"
                 value={passwords.confirmPassword}
                 onChange={handlePasswordChange}
-                className="w-full h-[52px] bg-[#F9FAFB] px-[14px] py-[6px] border-2 rounded-[12px] text-[#6B7280] font-normal text-[16px] leading-[24px]"
+                className="w-full h-[52px] focus:outline-none bg-[#F9FAFB] px-[14px] py-[6px] border-2 rounded-[12px] text-[#6B7280] font-normal text-[16px] leading-[24px]"
                 placeholder="Confirm New Password"
                 disabled={loading}
               />
@@ -331,9 +299,7 @@ export default function ProfileUpdateForm() {
             </div>
 
             {passwordError && (
-              <div className="text-red-500 text-sm mt-2">
-                {passwordError}
-              </div>
+              <div className="text-red-500 text-sm mt-2">{passwordError}</div>
             )}
 
             <div className="flex justify-end">
@@ -342,7 +308,7 @@ export default function ProfileUpdateForm() {
                 disabled={loading}
                 className="px-[24px] py-[8px] bg-[linear-gradient(121.72deg,_#00AEEF_0%,_#007FC4_100%)] text-white text-[16px] font-bold leading-[20px] rounded-[10px] disabled:opacity-50"
               >
-                {loading ? 'Updating...' : 'Update Password'}
+                {loading ? "Updating..." : "Update Password"}
               </button>
             </div>
           </div>

@@ -82,7 +82,7 @@ const CVROverTimeChart = ({ startDate, endDate, selectedCampaign }) => {
                         tickFormatter={(val) => `${val}%`}
                     />
                     <Tooltip
-                        formatter={(value) => [`${value}%`, "CVR"]}
+                        formatter={(value) => [`${value.toFixed(2)}%`, "CVR"]}
                         labelFormatter={(label) => `Date: ${label}`}
                     />
                     <Line

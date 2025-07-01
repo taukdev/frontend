@@ -82,7 +82,7 @@ const AOVOverTimeChart = ({ startDate, endDate, selectedCampaign }) => {
                         tickFormatter={(val) => `%${val.toFixed(2)}`}
                     />
                     <Tooltip
-                        formatter={(value) => [`%${value.toFixed(2)}`, "AOV"]}
+                        formatter={(value) => [`${value.toFixed(2)}%`, "AOV"]}
                         labelFormatter={(label) => `Date: ${label}`}
                     />
                     <Line
