@@ -87,7 +87,6 @@ const SalesTable = () => {
       fetchSales(page, perPage, dateRange[0].toISOString(), dateRange[1].toISOString());
     }
   }, [page, perPage, searchTerm]); // Re-fetch when page, perPage, or search term changes
-
   const toggleSelect = (id) => {
     setSelectedLeads((prev) =>
       prev.includes(id) ? prev.filter((leadId) => leadId !== id) : [...prev, id]
