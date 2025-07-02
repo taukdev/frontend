@@ -111,6 +111,7 @@ export default function Login() {
                       id="password"
                       className="w-full bg-[#F9FAFB] p-[14px] rounded-[12px] h-[52px] text-base text-[#6B7280] focus:outline-none"
                       value={password}
+                      placeholder="Enter password"
                       onChange={(e) => setPassword(e.target.value)}
                       required
                     />
