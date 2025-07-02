@@ -45,7 +45,15 @@ export default function Login() {
       // ...rest of code
     } catch (error) {
       console.log("Login Error:", error);
-      // ...rest of code
+      let errorMsg = "Login failed. Please check your credentials.";
+      if (error.response && error.response.data && error.response.data.message) {
+        errorMsg = error.response.data.message;
+      }
+      toast({
+        title: "Error",
+        description: errorMsg,
+        variant: "destructive"
+      });
     }
   };
 
