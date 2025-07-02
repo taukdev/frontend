@@ -57,6 +57,7 @@ export default function ProfileUpdateForm() {
         setProfileData(response.data.data);
       }
     } catch (error) {
+      
       console.error("Error fetching profile data:", error);
     } finally {
       setLoading(false);
