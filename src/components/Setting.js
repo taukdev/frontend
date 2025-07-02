@@ -21,6 +21,8 @@ export default function ProfileUpdateForm() {
     confirmPassword: "",
   });
   const [passwordError, setPasswordError] = useState("");
+  const [newPasswordError, setNewPasswordError] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
   const { toast, toasts, removeToast } = useToast();
 
   const handleImageChange = (e) => {
@@ -64,6 +66,19 @@ export default function ProfileUpdateForm() {
     }
   };
 
+  // Password validation function
+  const validatePassword = (password) => {
+    const minLength = password.length >= 8;
+    const hasLowercase = /[a-z]/.test(password);
+    const hasNumberSymbolOrWhitespace = /[0-9\W_\s]/.test(password);
+    return {
+      minLength,
+      hasLowercase,
+      hasNumberSymbolOrWhitespace,
+      isValid: minLength && hasLowercase && hasNumberSymbolOrWhitespace,
+    };
+  };
+
   const handlePasswordChange = (e) => {
     const { name, value } = e.target;
     setPasswords((prev) => ({
@@ -71,6 +86,34 @@ export default function ProfileUpdateForm() {
       [name]: value,
     }));
     setPasswordError(""); // Clear error when user types
+
+    if (name === "newPassword") {
+      const validation = validatePassword(value);
+      if (!validation.minLength) {
+        setNewPasswordError("Minimum 8 characters required");
+      } else if (!validation.hasLowercase) {
+        setNewPasswordError("At least one lowercase letter required");
+      } else if (!validation.hasNumberSymbolOrWhitespace) {
+        setNewPasswordError("At least one number, symbol, or whitespace required");
+      } else {
+        setNewPasswordError("");
+      }
+    }
+    if (name === "confirmPassword") {
+      if (value !== passwords.newPassword) {
+        setConfirmPasswordError("Passwords do not match");
+      } else {
+        setConfirmPasswordError("");
+      }
+    }
+    if (name === "newPassword" && passwords.confirmPassword) {
+      // Also re-validate confirm password if new password changes
+      if (passwords.confirmPassword !== value) {
+        setConfirmPasswordError("Passwords do not match");
+      } else {
+        setConfirmPasswordError("");
+      }
+    }
   };
 
   const updatePassword = async () => {
@@ -273,6 +316,9 @@ export default function ProfileUpdateForm() {
                 >
                   <Eye className="w-5 h-5" />
                 </button>
+                {newPasswordError && (
+                  <div className="text-red-500 text-xs mt-1">{newPasswordError}</div>
+                )}
               </div>
             </div>
 
@@ -297,13 +343,16 @@ export default function ProfileUpdateForm() {
               >
                 <Eye className="w-5 h-5" />
               </button>
+              {confirmPasswordError && (
+                <div className="text-red-500 text-xs mt-1">{confirmPasswordError}</div>
+              )}
             </div>
 
             {passwordError && (
               <div className="text-red-500 text-sm mt-2">{passwordError}</div>
             )}
 
-            <div className="flex justify-end">
+            {/* <div className="flex justify-end">
               <button
                 onClick={updatePassword}
                 disabled={loading}
@@ -311,7 +360,7 @@ export default function ProfileUpdateForm() {
               >
                 {loading ? "Updating..." : "Update Password"}
               </button>
-            </div>
+            </div> */}
           </div>
         </div>
 
@@ -329,7 +378,16 @@ export default function ProfileUpdateForm() {
 
         {/* Action Buttons */}
         <div className="flex justify-end gap-4 mt-6">
-          <button
+          <div className="flex justify-end">
+              <button
+                onClick={updatePassword}
+                disabled={loading || newPasswordError || confirmPasswordError || !passwords.currentPassword || !passwords.newPassword || !passwords.confirmPassword}
+                className="px-[24px] py-[8px] bg-[linear-gradient(121.72deg,_#00AEEF_0%,_#007FC4_100%)] text-white text-[16px] font-bold leading-[20px] rounded-[10px] disabled:opacity-50"
+              >
+                {loading ? "Updating..." : "Update Password"}
+              </button>
+            </div>
+          {/* <button
             type="submit"
             className="px-[24px] py-[8px] bg-[linear-gradient(121.72deg,_#00AEEF_0%,_#007FC4_100%)]  text-white text-[16px] md:text-[16px] font-bold leading-[20px] rounded-[10px]"
           >
@@ -340,7 +398,7 @@ export default function ProfileUpdateForm() {
             className="text-[#99A1B7] border-2 hover:bg-gray-200 px-[36px] py-[8px] text-[16px] leading-[20px] md:text-[16px] font-bold rounded-[10px] bg-[#F5F5F5]"
           >
             Reset
-          </button>
+          </button> */}
         </div>
       </div>
     </div>
