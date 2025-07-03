@@ -228,7 +228,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="xl:px-[40px] xl:py-[20px] p-4 bg-gray-100 space-y-6 h-screen  overflow-y-auto">
+    <div className="xl:px-[40px] xl:py-[20px] p-4 bg-gray-100 space-y-6  overflow-y-auto">
       <div className="flex flex-col lg:flex-row justify-between items-start xl:items-center mb-6 gap-2">
         {/* Heading Section */}
         <div className="flex items-start w-full gap-2">
@@ -438,9 +438,9 @@ const Dashboard = () => {
             </div>
           }
         />
-        <h3 className="text-[15px] font-semibold text-[#181C32] md:hidden block">
+        {/* <h3 className="text-[15px] font-semibold text-[#181C32] md:hidden block">
           Leads Statistics
-        </h3>
+        </h3> */}
         <StatCard
           icon={SaleRevenue}
           title="Sales Revenue"
