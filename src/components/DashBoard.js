@@ -1,14 +1,4 @@
 import React, { useEffect, useState, useRef } from "react";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  CartesianGrid,
-} from "recharts";
-
 import { ReactComponent as TotalLead } from "../Assets/TotalLead.svg";
 import { ReactComponent as CollapsibleLeadWithBackground } from "../Assets/CallableLeadWithBackground.svg";
 import { ReactComponent as TotalSale } from "../Assets/TotalSale.svg";
@@ -111,7 +101,7 @@ const Dashboard = () => {
   const campaignDropdownRef = useRef();
   const leadListDropdownRef = useRef();
   const navigate = useNavigate();
-
+  const [loadingToday, setLoadingToday] = useState(false);
 
   useEffect(() => {
     if (startDate) {
@@ -216,6 +206,27 @@ const Dashboard = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const handleTodayClick = async () => {
+    setLoadingToday(true);
+    try {
+      const response = await apiInstance.get(ENDPOINTS.DASHBOARD.TODAY_LEAD_COUNT);
+      if (response.data && typeof response.data.todayLeadCount === 'number') {
+        setDashboardData((prev) => ({
+          ...prev,
+          totalLeadCount: response.data.todayLeadCount,
+        }));
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to fetch today's lead count.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingToday(false);
+    }
+  };
+
   return (
     <div className="xl:px-[40px] xl:py-[20px] p-4 bg-gray-100 space-y-6 h-screen  overflow-y-auto">
       <div className="flex flex-col lg:flex-row justify-between items-start xl:items-center mb-6 gap-2">
@@ -231,6 +242,13 @@ const Dashboard = () => {
 
         {/* Dropdowns and Date Picker */}
         <div className="flex justify-end items-center lg:flex-row gap-2 w-full ">
+          <div>
+            <button
+              type="button"
+              onClick={handleTodayClick}
+              className="py-2 px-3 inline-flex items-center lg:h-10  md:h-13 justify-between w-full text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50"
+            > {loadingToday ? "Loading..." : "Today Leads"}</button>
+          </div>
           {/* Campaign Dropdown */}
           <div
             ref={campaignDropdownRef}
@@ -311,7 +329,7 @@ const Dashboard = () => {
           icon={TotalLead}
           title="Total Leads"
           value={
-            loading
+            loading || loadingToday
               ? "Loading..."
               : (dashboardData.totalLeadCount ?? 0).toLocaleString()
           }

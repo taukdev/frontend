@@ -64,7 +64,8 @@ export const DASHBOARD = {
   FILTERED_STATS: (startDate, endDate, campaignName, listId) =>
     `${API_URL}/api/dashboard?startDate=${startDate}&endDate=${endDate}&campaignName=${campaignName}&listId=${listId}`,
   AOV_OVER_TIME: `${API_URL}/api/dashboard/aovOverTime`,
-  CVR_OVER_TIME:`${API_URL}/api/dashboard/cvr`
+  CVR_OVER_TIME:`${API_URL}/api/dashboard/cvr`,
+  TODAY_LEAD_COUNT: `${API_URL}/api/dashboard/todayLeadCount`,
   // CALLABLE: `${API_URL}/api/dashboard/callable`, // Optional/Commented out
 };
 

@@ -59,7 +59,7 @@ export default function ProfileUpdateForm() {
         setProfileData(response.data.data);
       }
     } catch (error) {
-      
+
       console.error("Error fetching profile data:", error);
     } finally {
       setLoading(false);
@@ -199,7 +199,7 @@ export default function ProfileUpdateForm() {
           <h2 className="text-[20px] font-semibold text-[#071437] leading-[24px] font-['Inter'] mb-[5px]">
             Settings
           </h2>
-      
+
         </div>
 
         {/* Right Side: Icon in rounded box */}
@@ -209,7 +209,7 @@ export default function ProfileUpdateForm() {
       </div>
 
       <div className="bg-white p-4 rounded-xl">
-       
+
         {/* Profile Info */}
         <div>
           <h3 className="text-[#071437] leading-[16px] text-[16px] font-['Inter'] mb-4 font-semibold">
@@ -282,14 +282,14 @@ export default function ProfileUpdateForm() {
                   name="currentPassword"
                   value={passwords.currentPassword}
                   onChange={handlePasswordChange}
-                  className="w-full h-[47px] bg-[#F9FAFB] focus:outline-none px-[14px] py-[6px] border-2 rounded-[12px] text-[#6B7280] font-normal text-[16px] leading-[24px]"
+                  className="w-full h-[47px] bg-[#F9FAFB] focus:outline-none px-[14px] py-[6px] border-2 rounded-[12px] text-[#6B7280] font-normal text-[16px] leading-[24px] lg:placeholder:text-[16px] md:placeholder:text-[14px] placeholder:text-[16px]"
                   placeholder="Enter Current Password"
                   disabled={loading}
                 />
                 <button
                   type="button"
                   onClick={() => setShowCurrentPassword((prev) => !prev)}
-                  className="absolute top-3/4 right-2 -translate-y-2/3 text-gray-500 hover:text-gray-700"
+                  className="absolute top-[3.1rem] lg:right-3.5 md:right-2 right-3.5 -translate-y-2/3 text-gray-500 hover:text-gray-700"
                 >
                   <Eye className="w-5 h-5" />
                 </button>
@@ -305,14 +305,14 @@ export default function ProfileUpdateForm() {
                   name="newPassword"
                   value={passwords.newPassword}
                   onChange={handlePasswordChange}
-                  className="w-full h-[47px] bg-[#F9FAFB] focus:outline-none px-[14px] py-[6px] border-2 rounded-[12px] text-[#6B7280] font-normal text-[16px] leading-[24px]"
+                  className="w-full h-[47px] bg-[#F9FAFB] focus:outline-none px-[14px] py-[6px] border-2 rounded-[12px] text-[#6B7280] font-normal text-[16px] leading-[24px] lg:placeholder:text-[16px] md:placeholder:text-[14px] placeholder:text-[16px]"
                   placeholder="Enter New Password"
                   disabled={loading}
                 />
                 <button
                   type="button"
                   onClick={() => setShowNewPassword((prev) => !prev)}
-                  className="absolute top-3/4 right-2 -translate-y-2/3 text-gray-500 hover:text-gray-700"
+                  className="absolute top-[3.1rem] lg:right-3.5 md:right-2 right-3.5 -translate-y-2/3 text-gray-500 hover:text-gray-700"
                 >
                   <Eye className="w-5 h-5" />
                 </button>
@@ -323,7 +323,7 @@ export default function ProfileUpdateForm() {
             </div>
 
             {/* Confirm Password */}
-            <div className="relative w-full xl:w-[34rem] lg:w-[22.5rem]">
+            <div className="relative xl:w-[524px] lg:w-[340px] md:w-[212px] w-full">
               <label className="block mb-[2px] text-[#1F2937] text-[14px] md:text-[16px] font-medium leading-[20px] ml-2">
                 Confirm New Password
               </label>
@@ -332,14 +332,14 @@ export default function ProfileUpdateForm() {
                 name="confirmPassword"
                 value={passwords.confirmPassword}
                 onChange={handlePasswordChange}
-                className="w-full h-[52px] focus:outline-none bg-[#F9FAFB] px-[14px] py-[6px] border-2 rounded-[12px] text-[#6B7280] font-normal text-[16px] leading-[24px]"
+                className="xl:w-[524px] lg:w-[340px] md:w-[212px] w-full h-[47px] focus:outline-none bg-[#F9FAFB] px-[14px] py-[6px] border-2 rounded-[12px] text-[#6B7280] font-normal text-[16px] leading-[24px] lg:placeholder:text-[16px] md:placeholder:text-[14px] placeholder:text-[16px]"
                 placeholder="Confirm New Password"
                 disabled={loading}
               />
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword((prev) => !prev)}
-                className="absolute top-3/4 right-2 -translate-y-2/3 text-gray-500 hover:text-gray-700"
+                className="absolute top-[3.1rem] lg:right-3.5 md:right-2 right-3.5 -translate-y-2/3 text-gray-500 hover:text-gray-700"
               >
                 <Eye className="w-5 h-5" />
               </button>
@@ -379,14 +379,14 @@ export default function ProfileUpdateForm() {
         {/* Action Buttons */}
         <div className="flex justify-end gap-4 mt-6">
           <div className="flex justify-end">
-              <button
-                onClick={updatePassword}
-                disabled={loading || newPasswordError || confirmPasswordError || !passwords.currentPassword || !passwords.newPassword || !passwords.confirmPassword}
-                className="px-[24px] py-[8px] bg-[linear-gradient(121.72deg,_#00AEEF_0%,_#007FC4_100%)] text-white text-[16px] font-bold leading-[20px] rounded-[10px] disabled:opacity-50"
-              >
-                {loading ? "Updating..." : "Update Password"}
-              </button>
-            </div>
+            <button
+              onClick={updatePassword}
+              disabled={loading || newPasswordError || confirmPasswordError || !passwords.currentPassword || !passwords.newPassword || !passwords.confirmPassword}
+              className="px-[24px] py-[8px] bg-[linear-gradient(121.72deg,_#00AEEF_0%,_#007FC4_100%)] text-white text-[16px] font-bold leading-[20px] rounded-[10px] disabled:opacity-50"
+            >
+              {loading ? "Updating..." : "Update Password"}
+            </button>
+          </div>
           {/* <button
             type="submit"
             className="px-[24px] py-[8px] bg-[linear-gradient(121.72deg,_#00AEEF_0%,_#007FC4_100%)]  text-white text-[16px] md:text-[16px] font-bold leading-[20px] rounded-[10px]"
