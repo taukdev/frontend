@@ -8,7 +8,6 @@ import BackGroundImage from "../Assets/BackGroundImage.png";
 import { ReactComponent as LoginEye } from "../Assets/LoginEye.svg";
 import { ReactComponent as Checkbox } from "../Assets/Checkbox.svg";
 import { ReactComponent as Checkbox2 } from "../Assets/Checkbox2.svg";
-import { apiInstance } from '../api/config/axios';
 import { ENDPOINTS } from '../api/constants';
 import axios from "axios";
 
