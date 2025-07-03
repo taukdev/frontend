@@ -241,7 +241,7 @@ const Dashboard = () => {
         </div>
 
         {/* Dropdowns and Date Picker */}
-        <div className="flex justify-end items-center lg:flex-row gap-2 w-full ">
+        <div className="flex justify-between items-center lg:flex-row gap-2 w-full ">
           <div>
             <button
               type="button"
@@ -252,19 +252,47 @@ const Dashboard = () => {
           {/* Campaign Dropdown */}
           <div
             ref={campaignDropdownRef}
-            className="relative inline-flex w-full md:w-60"
+            className="relative inline-flex w-48 max-[320px]:w-44 md:w-48"
           >
+            {/* <button
+              type="button"
+              onClick={() => {
+                setIsCampaignOpen((prev) => !prev);
+                setIsLeadListOpen(false);
+              }}
+              className="py-2 px-3 inline-flex items-center overflow-y-auto md:w-60 lg:h-10  md:h-13 justify-between w-full text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50"
+              aria-haspopup="menu"
+              aria-expanded={isCampaignOpen}
+            > */}
             <button
               type="button"
               onClick={() => {
                 setIsCampaignOpen((prev) => !prev);
                 setIsLeadListOpen(false);
               }}
-              className="py-2 px-3 inline-flex items-center lg:h-10  md:h-13 justify-between w-full text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50"
+              className="py-2 px-3 inline-flex items-center lg:h-10 md:h-13 justify-between w-full text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50"
               aria-haspopup="menu"
               aria-expanded={isCampaignOpen}
             >
-              <span>{selectedCampaign || "Select Campaign"}</span>
+              {/* Scrollable Text Wrapper */}
+              <div className=" overflow-x-auto whitespace-nowrap scrollbar-hide">
+                {selectedCampaign || 'Select Campaign'}
+              </div>
+
+              {/* Dropdown Arrow Icon */}
+              {/* <svg
+                className="w-4 h-4 ml-2 flex-shrink-0"
+                aria-hidden="true"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.27a.75.75 0 01.02-1.06z"
+                  clipRule="evenodd"
+                />
+              </svg> */}
+              {/* <span>{selectedCampaign || "Select Campaign"}</span> */}
               <svg
                 className={`size-4 transition-transform ${isCampaignOpen ? "rotate-180" : ""
                   }`}
@@ -282,7 +310,7 @@ const Dashboard = () => {
 
             {isCampaignOpen && (
               <div
-                className="absolute z-10 mt-[3.5rem] w-full bg-white shadow-md rounded-lg"
+                className="absolute z-10 mt-[3.5rem] w-full bg-white shadow-md rounded-lg max-h-60 overflow-y-auto"
                 role="menu"
               >
                 <div className="p-1 space-y-0.5">

@@ -291,7 +291,26 @@ export default function ProfileUpdateForm() {
                   onClick={() => setShowCurrentPassword((prev) => !prev)}
                   className="absolute top-[3.1rem] lg:right-3.5 md:right-2 right-3.5 -translate-y-2/3 text-gray-500 hover:text-gray-700"
                 >
-                  <Eye className="w-5 h-5" />
+                  {/* <Eye className="w-5 h-5" /> */}
+                  <svg
+                  className="w-5 h-5"
+                  viewBox="0 0 20 16"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    opacity="0.3"
+                    d="M0 8C0 9.63938 0.424964 10.1915 1.27489 11.2957C2.97196 13.5004 5.81811 16 10 16C14.1819 16 17.028 13.5004 18.7251 11.2957C19.575 10.1915 20 9.63938 20 8C20 6.36062 19.575 5.80853 18.7251 4.70433C17.028 2.49956 14.1819 0 10 0C5.81811 0 2.97196 2.49956 1.27489 4.70433C0.424964 5.80853 0 6.36062 0 8Z"
+                    fill="#111827"
+                  />
+                  <path
+                    fillRule="evenodd"
+                    clipRule="evenodd"
+                    d="M0.25 4C0.25 1.92893 1.92893 0.25 4 0.25C6.07107 0.25 7.75 1.92893 7.75 4C7.75 6.07107 6.07107 7.75 4 7.75C1.92893 7.75 0.25 6.07107 0.25 4ZM1.75 4C1.75 2.75736 2.75736 1.75 4 1.75C5.24264 1.75 6.25 2.75736 6.25 4C6.25 5.24264 5.24264 6.25 4 6.25C2.75736 6.25 1.75 5.24264 1.75 4Z"
+                    fill="#111827"
+                    transform="translate(6,4)"
+                  />
+                </svg>
                 </button>
               </div>
 
@@ -314,7 +333,26 @@ export default function ProfileUpdateForm() {
                   onClick={() => setShowNewPassword((prev) => !prev)}
                   className="absolute top-[3.1rem] lg:right-3.5 md:right-2 right-3.5 -translate-y-2/3 text-gray-500 hover:text-gray-700"
                 >
-                  <Eye className="w-5 h-5" />
+                  {/* <Eye className="w-5 h-5" /> */}
+                  <svg
+                  className="w-5 h-5"
+                  viewBox="0 0 20 16"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    opacity="0.3"
+                    d="M0 8C0 9.63938 0.424964 10.1915 1.27489 11.2957C2.97196 13.5004 5.81811 16 10 16C14.1819 16 17.028 13.5004 18.7251 11.2957C19.575 10.1915 20 9.63938 20 8C20 6.36062 19.575 5.80853 18.7251 4.70433C17.028 2.49956 14.1819 0 10 0C5.81811 0 2.97196 2.49956 1.27489 4.70433C0.424964 5.80853 0 6.36062 0 8Z"
+                    fill="#111827"
+                  />
+                  <path
+                    fillRule="evenodd"
+                    clipRule="evenodd"
+                    d="M0.25 4C0.25 1.92893 1.92893 0.25 4 0.25C6.07107 0.25 7.75 1.92893 7.75 4C7.75 6.07107 6.07107 7.75 4 7.75C1.92893 7.75 0.25 6.07107 0.25 4ZM1.75 4C1.75 2.75736 2.75736 1.75 4 1.75C5.24264 1.75 6.25 2.75736 6.25 4C6.25 5.24264 5.24264 6.25 4 6.25C2.75736 6.25 1.75 5.24264 1.75 4Z"
+                    fill="#111827"
+                    transform="translate(6,4)"
+                  />
+                </svg>
                 </button>
                 {newPasswordError && (
                   <div className="text-red-500 text-xs mt-1">{newPasswordError}</div>
@@ -341,7 +379,26 @@ export default function ProfileUpdateForm() {
                 onClick={() => setShowConfirmPassword((prev) => !prev)}
                 className="absolute top-[3.1rem] lg:right-3.5 md:right-2 right-3.5 -translate-y-2/3 text-gray-500 hover:text-gray-700"
               >
-                <Eye className="w-5 h-5" />
+                {/* <Eye className="w-5 h-5" /> */}
+                <svg
+                  className="w-5 h-5"
+                  viewBox="0 0 20 16"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    opacity="0.3"
+                    d="M0 8C0 9.63938 0.424964 10.1915 1.27489 11.2957C2.97196 13.5004 5.81811 16 10 16C14.1819 16 17.028 13.5004 18.7251 11.2957C19.575 10.1915 20 9.63938 20 8C20 6.36062 19.575 5.80853 18.7251 4.70433C17.028 2.49956 14.1819 0 10 0C5.81811 0 2.97196 2.49956 1.27489 4.70433C0.424964 5.80853 0 6.36062 0 8Z"
+                    fill="#111827"
+                  />
+                  <path
+                    fillRule="evenodd"
+                    clipRule="evenodd"
+                    d="M0.25 4C0.25 1.92893 1.92893 0.25 4 0.25C6.07107 0.25 7.75 1.92893 7.75 4C7.75 6.07107 6.07107 7.75 4 7.75C1.92893 7.75 0.25 6.07107 0.25 4ZM1.75 4C1.75 2.75736 2.75736 1.75 4 1.75C5.24264 1.75 6.25 2.75736 6.25 4C6.25 5.24264 5.24264 6.25 4 6.25C2.75736 6.25 1.75 5.24264 1.75 4Z"
+                    fill="#111827"
+                    transform="translate(6,4)"
+                  />
+                </svg>
               </button>
               {confirmPasswordError && (
                 <div className="text-red-500 text-xs mt-1">{confirmPasswordError}</div>
