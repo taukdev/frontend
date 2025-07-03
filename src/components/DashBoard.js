@@ -241,18 +241,18 @@ const Dashboard = () => {
         </div>
 
         {/* Dropdowns and Date Picker */}
-        <div className="flex justify-between items-center lg:flex-row gap-2 w-full ">
+        <div className="flex justify-end items-center lg:flex-row gap-2 w-full ">
           <div>
             <button
               type="button"
               onClick={handleTodayClick}
-              className="py-2 px-3 inline-flex items-center lg:h-10  md:h-13 justify-between w-full text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50"
+              className="py-2 px-3 inline-flex items-center md:w-28 lg:h-10  md:h-13 w-full text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50"
             > {loadingToday ? "Loading..." : "Today Leads"}</button>
           </div>
           {/* Campaign Dropdown */}
           <div
             ref={campaignDropdownRef}
-            className="relative inline-flex w-48 max-[320px]:w-44 md:w-48"
+            className="relative inline-flex w-48 max-[320px]:w-44 "
           >
             {/* <button
               type="button"
@@ -270,7 +270,7 @@ const Dashboard = () => {
                 setIsCampaignOpen((prev) => !prev);
                 setIsLeadListOpen(false);
               }}
-              className="py-2 px-3 inline-flex items-center lg:h-10 md:h-13 justify-between w-full text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50"
+              className="py-2 px-3 inline-flex items-center lg:h-10 md:h-13  justify-between w-full text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50"
               aria-haspopup="menu"
               aria-expanded={isCampaignOpen}
             >
@@ -294,7 +294,7 @@ const Dashboard = () => {
               </svg> */}
               {/* <span>{selectedCampaign || "Select Campaign"}</span> */}
               <svg
-                className={`size-4 transition-transform ${isCampaignOpen ? "rotate-180" : ""
+                className={`size-5 transition-transform ${isCampaignOpen ? "rotate-180" : ""
                   }`}
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
@@ -310,7 +310,7 @@ const Dashboard = () => {
 
             {isCampaignOpen && (
               <div
-                className="absolute z-10 mt-[3.5rem] w-full bg-white shadow-md rounded-lg max-h-60 overflow-y-auto"
+                className="absolute z-10 mt-[3.5rem] w-full bg-white shadow-md rounded-lg "
                 role="menu"
               >
                 <div className="p-1 space-y-0.5">
@@ -326,7 +326,8 @@ const Dashboard = () => {
                     All Campaigns
                   </a>
                   {/* Divider */}
-                  <div className="border-t border-gray-200 my-1"></div>
+                  <div className="border-t border-gray-200"></div>
+                  <div className=" overflow-y-auto max-h-60">
                   {campaigns.map((name) => (
                     <a
                       key={name}
@@ -340,6 +341,7 @@ const Dashboard = () => {
                       {name}
                     </a>
                   ))}
+                  </div>
                 </div>
               </div>
             )}
