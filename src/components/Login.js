@@ -62,14 +62,14 @@ export default function Login() {
       style={{ backgroundImage: `url(${BackGroundImage})` }}
     >
       <ToastContainer toasts={toasts} removeToast={removeToast} />
-      <div className="flex flex-col bg-white text-center w-[319px] md:w-[610px] h-[546px] md:h-[624px] rounded-[16px] md:rounded-[30px] gap-4 border p-[20px] md:pt-[50px] md:px-[60px] md:pb-[60px] shadow-custom-glow">
+      <div className="flex flex-col bg-white text-center w-full max-sm:mx-4 md:w-[610px] h-[546px] md:h-[624px] rounded-[16px] md:rounded-[30px] gap-4 border p-[20px] md:pt-[50px] md:px-[60px] md:pb-[60px] shadow-custom-glow">
         <img
           src={logo}
           alt="Tauk Logo"
-          className="m-auto object-contain w-[64px] h-[44px] md:w-[118px] md:h-[64px]"
+          className="m-auto object-contain w-full h-[44px] md:w-[118px] md:h-[64px]"
         />
 
-        <div className="flex flex-col w-[278px] h-[446px] md:w-[490px] md:h-[434px] gap-[52px]">
+        <div className="flex flex-col w-full h-[446px] md:w-[490px] md:h-[434px] gap-[52px]">
           <div className="h-[76px] md:h-[64px]">
             <h2 className="leading-[36px] tracking-[-0.5px] text-center text-[#111827] mb-1 text-[20px] md:text-[30px] font-bold">
               Login To Tauk
@@ -81,7 +81,7 @@ export default function Login() {
 
           <form
             onSubmit={handleSubmit}
-            className="flex flex-col m-auto text-left w-[278px] h-[318px] md:w-[490px] md:h-[318px] gap-[40px]"
+            className="flex flex-col m-auto text-left w-full h-[318px] md:w-[490px] md:h-[318px] gap-[40px]"
           >
             <div className="h-[210px]">
               <div className="h-[186px]">

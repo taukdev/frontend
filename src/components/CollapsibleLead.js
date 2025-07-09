@@ -85,7 +85,7 @@ const LeadsTable = () => {
         </div>
         <div></div>
       </div>
-      <div className="bg-white flex items-center justify-center rounded-2xl mt-5 relative z-10">
+      <div className="bg-white flex items-center justify-center rounded-2xl mt-5 relative">
         <div className="w-full border border-[#F1F1F4]">
           <div className="flex justify-between items-center p-[20px] border-[#F1F1F4] border-b">
             <div className="relative lg:w-72 md:w-40 w-full">

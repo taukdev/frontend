@@ -107,7 +107,7 @@ const SidebarWithHeader = ({ children }) => {
       <div
         className={`
           text-black transition-all duration-300 ease-in-out 
-          h-screen fixed top-0 left-0 md:z-0 z-50 bg-white shadow-md border-r border-gray-100
+          h-full fixed top-0 left-0 md:z-0 z-50 bg-white shadow-md border-r border-gray-100
           ${isOpen ? "w-64" : "w-0"} 
            md:w-64  overflow-hidden
         `}
