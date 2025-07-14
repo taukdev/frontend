@@ -33,6 +33,8 @@ const SalesTable = () => {
   const [dateRange, setDateRange] = useState([null, null]);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
+  const [sortField, setSortField] = useState("Timestamp");
+  const [sortOption, setSortOption] = useState(1);
   const navigate = useNavigate();
 
 
@@ -47,17 +49,24 @@ const SalesTable = () => {
   useEffect(() => {
     const defaultDates = getDefaultDates();
     setDateRange(defaultDates);
-    fetchSales(1, perPage, defaultDates[0].toISOString(), defaultDates[1].toISOString());
+    fetchSales(1, perPage, defaultDates[0].toISOString(), defaultDates[1].toISOString(), sortField, sortOption);
   }, []);
 
-  const fetchSales = async (page, limit, startDate, endDate) => {
+  const fetchSales = async (page, limit, startDate, endDate, sortFieldParam, sortOptionParam) => {
     try {
       setLoading(true);
       const startDateParam = startDate || (dateRange[0] ? dateRange[0].toISOString() : null);
       const endDateParam = endDate || (dateRange[1] ? dateRange[1].toISOString() : null);
 
       // Build the URL with the function parameters
-      const url = SALES.GET_SALES(startDateParam, endDateParam, page, limit);
+      const url = SALES.GET_SALES(
+        startDateParam,
+        endDateParam,
+        page,
+        limit,
+        sortOptionParam || sortOption,
+        sortFieldParam || sortField
+      );
 
       // Add search parameter if needed
       const finalUrl = searchTerm ? `${url}&search=${searchTerm}` : url;
@@ -78,15 +87,32 @@ const SalesTable = () => {
   const handleDateRangeChange = (startDate, endDate) => {
     setDateRange([startDate, endDate]);
     setPage(1); // Reset to first page when date range changes
-    fetchSales(1, perPage, startDate.toISOString(), endDate.toISOString());
+    fetchSales(1, perPage, startDate.toISOString(), endDate.toISOString(), sortField, sortOption);
+  };
+
+  const handleSort = (field) => {
+    if (sortField === field) {
+      setSortOption((prev) => (prev === 1 ? -1 : 1));
+    } else {
+      setSortField(field);
+      setSortOption(1);
+    }
+    setPage(1); // Reset to first page on sort
   };
 
   // Add back pagination effect
   useEffect(() => {
     if (dateRange[0] && dateRange[1]) {
-      fetchSales(page, perPage, dateRange[0].toISOString(), dateRange[1].toISOString());
+      fetchSales(
+        page,
+        perPage,
+        dateRange[0].toISOString(),
+        dateRange[1].toISOString(),
+        sortField,
+        sortOption
+      );
     }
-  }, [page, perPage, searchTerm]); // Re-fetch when page, perPage, or search term changes
+  }, [page, perPage, searchTerm, sortField, sortOption]); // Re-fetch when page, perPage, or search term changes
   const toggleSelect = (id) => {
     setSelectedLeads((prev) =>
       prev.includes(id) ? prev.filter((leadId) => leadId !== id) : [...prev, id]
@@ -151,17 +177,31 @@ const SalesTable = () => {
                       }}
                     />
                   </th>
-                  {["Order ID", "First Name", "Last Name", "Date", "Action"].map((h) => (
-                    <th
-                      key={h}
-                      className="px-[20px] text-left bg-[#FCFCFC] font-normal text-[#4B5675] border border-[#F1F1F4] text-[13px] leading-[14px]"
-                    >
-                      <div className="flex items-center gap-1">
-                        {h}
-                        <UpDown className="h-[14px] w-[14px]" />
-                      </div>
-                    </th>
-                  ))}
+                  {["Order ID", "First Name", "Last Name", "Date", "Action"].map((h) => {
+                    const fieldMap = {
+                      "Order ID": "OrderID",
+                      "First Name": "FirstName",
+                      "Last Name": "LastName",
+                      "Date": "Timestamp",
+                    };
+                    const field = fieldMap[h];
+                    return (
+                      <th
+                        key={h}
+                        className="px-[20px] text-left bg-[#FCFCFC] font-normal text-[#4B5675] border border-[#F1F1F4] text-[13px] leading-[14px] cursor-pointer"
+                        onClick={h !== "Action" ? () => handleSort(field) : undefined}
+                      >
+                        <div className="flex items-center gap-1">
+                          {h}
+                          {h !== "Action" && (
+                            <UpDown
+                              className={`h-[14px] w-[14px] ${sortField === field ? "text-blue-500" : ""}`}
+                            />
+                          )}
+                        </div>
+                      </th>
+                    );
+                  })}
                 </tr>
               </thead>
               <tbody>

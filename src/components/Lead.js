@@ -32,6 +32,8 @@ const LeadsTable = () => {
   const [dateRange, setDateRange] = useState([null, null]);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
+  const [sortField, setSortField] = useState("listId");
+  const [sortOption, setSortOption] = useState(1);
   const navigate = useNavigate();
 
   const getDefaultDates = () => {
@@ -46,7 +48,14 @@ const LeadsTable = () => {
     setDateRange(defaultDates);
   }, []);
 
-  const fetchLeads = async (page, limit, startDate, endDate) => {
+  const fetchLeads = async (
+    page,
+    limit,
+    startDate,
+    endDate,
+    sortFieldParam,
+    sortOptionParam
+  ) => {
     try {
       setLoading(true);
       const startDateParam =
@@ -55,7 +64,14 @@ const LeadsTable = () => {
         endDate || (dateRange[1] ? dateRange[1].toISOString() : null);
 
       // Build the URL with the function parameters
-      const url = LEAD.GET_LEAD(startDateParam, endDateParam, page, limit);
+      const url = LEAD.GET_LEAD(
+        startDateParam,
+        endDateParam,
+        page,
+        limit,
+        sortOptionParam || sortOption,
+        sortFieldParam || sortField
+      );
 
       // Add search parameter if needed
       const finalUrl = searchTerm ? `${url}&search=${searchTerm}` : url;
@@ -73,9 +89,19 @@ const LeadsTable = () => {
     }
   };
 
+  const handleSort = (field) => {
+    if (sortField === field) {
+      setSortOption((prev) => (prev === 1 ? -1 : 1));
+    } else {
+      setSortField(field);
+      setSortOption(1);
+    }
+    setPage(1); // Reset to first page on sort
+  };
+
   useEffect(() => {
     fetchLeads(page, perPage);
-  }, [page, perPage, searchTerm]); 
+  }, [page, perPage, searchTerm, sortField, sortOption]);
 
   const toggleSelect = (id) => {
     setSelectedLeads((prev) =>
@@ -140,21 +166,39 @@ const LeadsTable = () => {
                   </th>
                   {[
                     "List ID",
-                    "List Name ",
+                    "List Name",
                     "Total Lead Count",
                     "Vendor",
                     "Action",
-                  ].map((h) => (
-                    <th
-                      key={h}
-                      className="px-[20px] text-left bg-[#FCFCFC] font-normal text-[#4B5675] border border-[#F1F1F4] text-[13px] leading-[14px]"
-                    >
-                      <div className="flex items-center gap-1">
-                        {h}
-                        {<UpDown className="h-[14px] w-[14px]" />}
-                      </div>
-                    </th>
-                  ))}
+                  ].map((h) => {
+                    const fieldMap = {
+                      "List ID": "listId",
+                      "List Name": "listName",
+                      "Total Lead Count": "totalLeadCount",
+                      "Vendor": "vendor",
+                    };
+                    const field = fieldMap[h];
+                    return (
+                      <th
+                        key={h}
+                        className="px-[20px] text-left bg-[#FCFCFC] font-normal text-[#4B5675] border border-[#F1F1F4] text-[13px] leading-[14px] cursor-pointer"
+                        onClick={
+                          h !== "Action" ? () => handleSort(field) : undefined
+                        }
+                      >
+                        <div className="flex items-center gap-1">
+                          {h}
+                          {h !== "Action" && (
+                            <UpDown
+                              className={`h-[14px] w-[14px] ${
+                                sortField === field ? "text-blue-500" : ""
+                              }`}
+                            />
+                          )}
+                        </div>
+                      </th>
+                    );
+                  })}
                 </tr>
               </thead>
               <tbody>

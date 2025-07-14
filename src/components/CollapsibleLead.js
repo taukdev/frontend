@@ -4,6 +4,7 @@ import { ReactComponent as BlackRight } from "../Assets/black-right.svg";
 import { ReactComponent as Eye } from "../Assets/Eye.svg";
 import { apiInstance } from "../api/config/axios";
 import { CALLABLES } from "../api/constants";
+import { ReactComponent as UpDown } from "../Assets/UpDown.svg";
 import { useNavigate } from "react-router-dom";
 
 function formatDateDMY(dateString) {
@@ -29,12 +30,19 @@ const LeadsTable = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const [sortField, setSortField] = useState("lastCallDate");
+  const [sortOption, setSortOption] = useState(1);
   const navigate = useNavigate();
 
-  const fetchLeads = async () => {
+  const fetchLeads = async (sortFieldParam, sortOptionParam) => {
     try {
       setLoading(true);
-      let url = CALLABLES.CALLABLES(page, perPage);
+      let url = CALLABLES.CALLABLES(
+        page,
+        perPage,
+        sortOptionParam || sortOption,
+        sortFieldParam || sortField
+      );
       const finalUrl = searchTerm ? `${url}&search=${encodeURIComponent(searchTerm)}` : url;
       try {
         const response = await apiInstance.get(finalUrl);
@@ -64,12 +72,22 @@ const LeadsTable = () => {
 
   useEffect(() => {
     fetchLeads();
-  }, [page, perPage, searchTerm]);
+  }, [page, perPage, searchTerm, sortField, sortOption]);
 
   const toggleSelect = (id) => {
     setSelectedLeads((prev) =>
       prev.includes(id) ? prev.filter((leadId) => leadId !== id) : [...prev, id]
     );
+  };
+
+  const handleSort = (field) => {
+    if (sortField === field) {
+      setSortOption((prev) => (prev === 1 ? -1 : 1));
+    } else {
+      setSortField(field);
+      setSortOption(1);
+    }
+    setPage(1); // Reset to first page on sort
   };
 
   return (
@@ -126,13 +144,35 @@ const LeadsTable = () => {
                       }}
                     />
                   </th>
-                  {["List ID", "List Name", "Description", "Leads Count", "Active", "Last Call Date", "Action"].map((h) => (
-                    <th key={h} className="px-[20px] text-left bg-[#FCFCFC] font-normal text-[#4B5675] border border-[#F1F1F4] text-[13px] leading-[14px]">
-                      <div className="flex items-center gap-1">
-                        {h}
-                      </div>
-                    </th>
-                  ))}
+                  {["List ID", "List Name", "Description", "Leads Count", "Active", "Last Call Date", "Action"].map((h) => {
+                    const fieldMap = {
+                      "List ID": "listId",
+                      "List Name": "listName",
+                      "Description": "description",
+                      "Leads Count": "leadsCount",
+                      "Active": "active",
+                      "Last Call Date": "lastCallDate",
+                    };
+                    const field = fieldMap[h];
+                    return (
+                      <th
+                        key={h}
+                        className="px-[20px] text-left bg-[#FCFCFC] font-normal text-[#4B5675] border border-[#F1F1F4] text-[13px] leading-[14px] cursor-pointer"
+                        onClick={h !== "Action" ? () => handleSort(field) : undefined}
+                      >
+                        <div className="flex items-center gap-1">
+                          {h}
+                          {h !== "Action" && (
+                            <UpDown
+                            className={`h-[14px] w-[14px] ${
+                              sortField === field ? "text-blue-500" : ""
+                            }`}
+                          />
+                          )}
+                        </div>
+                      </th>
+                    );
+                  })}
                 </tr>
               </thead>
               <tbody>
