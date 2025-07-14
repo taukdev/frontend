@@ -238,7 +238,7 @@ const SalesTable = () => {
                   className="appearance-none border-none bg-transparent pr-6 pl-2 py-1 text-[15px] font-medium text-[#252F4A] focus:ring-0 focus:outline-none"
                   style={{ minWidth: "40px" }}
                 >
-                  {[2, 3, 4, 5, 10, 25, 50].map((n) => (
+                  {[10, 25, 50, 100].map((n) => (
                     <option key={n} value={n}>{n}</option>
                   ))}
                 </select>

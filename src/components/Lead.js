@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import { ReactComponent as Eye } from "../Assets/Eye.svg";
 import { ReactComponent as Search } from "../Assets/Search.svg";
@@ -8,7 +8,17 @@ import { ReactComponent as BlackLeft } from "../Assets/black-left.svg";
 import { ReactComponent as BlackRight } from "../Assets/black-right.svg";
 import { apiInstance } from "../api/config/axios";
 import { LEAD } from "../api/constants";
-import DatePick from "./DatePick";
+import { useNavigate } from "react-router-dom";
+
+function formatDateDMY(dateString) {
+  if (!dateString) return "-";
+  const date = new Date(dateString);
+  if (isNaN(date)) return "-";
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = String(date.getFullYear()).slice(-2);
+  return `${day}/${month}/${year}`;
+}
 
 const LeadsTable = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -19,86 +29,53 @@ const LeadsTable = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
+  const [dateRange, setDateRange] = useState([null, null]);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
-  const [dateRange, setDateRange] = useState([null, null]);
+  const navigate = useNavigate();
 
-  // Calculate default dates (last 5 days from today)
   const getDefaultDates = () => {
     const endDate = new Date();
     const startDate = new Date();
-    startDate.setDate(endDate.getDate() - 4); // 4 days before today (to include today)
+    startDate.setDate(endDate.getDate() - 4);
     return [startDate, endDate];
   };
 
-  // Set default date range when component mounts
   useEffect(() => {
     const defaultDates = getDefaultDates();
     setDateRange(defaultDates);
   }, []);
 
-  const fetchLeads = async (page, limit) => {
+  const fetchLeads = async (page, limit, startDate, endDate) => {
     try {
       setLoading(true);
-      const params = {
-        page,
-        limit,
-      };
+      const startDateParam =
+        startDate || (dateRange[0] ? dateRange[0].toISOString() : null);
+      const endDateParam =
+        endDate || (dateRange[1] ? dateRange[1].toISOString() : null);
 
-      if (searchTerm) {
-        params.search = searchTerm;
-      }
+      // Build the URL with the function parameters
+      const url = LEAD.GET_LEAD(startDateParam, endDateParam, page, limit);
 
-      // Always include date range if available
-      if (dateRange[0] && dateRange[1]) {
-        params.startDate = dateRange[0].toISOString();
-        params.endDate = dateRange[1].toISOString();
-      }
+      // Add search parameter if needed
+      const finalUrl = searchTerm ? `${url}&search=${searchTerm}` : url;
 
-      console.log('Fetching leads with params:', params); // Debug log
-      const response = await apiInstance.get(LEAD.GET_LEAD, { params });
-      console.log('API Response:', response.data); // Debug log
-
+      const response = await apiInstance.get(finalUrl);
       const result = response.data;
-
-      if (result.success) {
-        setData(result.data || []);
-        setTotalCount(result.totalCount || 0);
-        setTotalPages(result.totalPages || 1);
-      } else {
-        setData([]);
-        setTotalCount(0);
-        setTotalPages(1);
-      }
+      console.log(result);
+      setData(result?.data || []);
+      setTotalCount(result?.pagination?.total || result?.data?.length || 0);
+      setTotalPages(result?.pagination?.totalPages123 || 1);
     } catch (error) {
-      console.error("Error fetching leads:", error);
-      setData([]);
-      setTotalCount(0);
-      setTotalPages(1);
+      console.error("Error fetching sales:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  // Handle search
   useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
-      if (page !== 1) {
-        setPage(1);
-      } else {
-        fetchLeads(1, perPage);
-      }
-    }, 500);
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [searchTerm]);
-
-  // Handle pagination
-  useEffect(() => {
-    if (dateRange[0] && dateRange[1]) {
-      fetchLeads(page, perPage);
-    }
-  }, [page, perPage, dateRange]);
+    fetchLeads(page, perPage);
+  }, [page, perPage, searchTerm]); 
 
   const toggleSelect = (id) => {
     setSelectedLeads((prev) =>
@@ -117,14 +94,10 @@ const LeadsTable = () => {
               </button>
               Lead ID
             </h2>
-            <p className="text-[14px] leading-[14px] text-[#4B5675] font-normal">
-
-            </p>
+            <p className="text-[14px] leading-[14px] text-[#4B5675] font-normal"></p>
           </div>
         </div>
-        <div>
-          {/* <DatePick onDateChange={handleDateRangeChange} /> */}
-        </div>
+        <div>{/* <DatePick onDateChange={handleDateRangeChange} /> */}</div>
       </div>
 
       <div className="bg-white flex items-center justify-center rounded-2xl">
@@ -142,9 +115,6 @@ const LeadsTable = () => {
                 className="border rounded pl-7 pr-3 py-2 lg:w-full md:w-52 w-44 text-[11px] leading-[12px] font-normal focus:outline-none text-black "
               />
             </div>
-            {/* <div className=" absolute right-5">
-              <DatePick  />
-            </div> */}
           </div>
 
           <div className="w-full border border-[#F1F1F4] overflow-x-auto">
@@ -154,7 +124,10 @@ const LeadsTable = () => {
                   <th className="px-4 py-3 text-center border border-[#F1F1F4] bg-[#FCFCFC]">
                     <input
                       type="checkbox"
-                      checked={data.length > 0 && data.every((lead) => selectedLeads.includes(lead._id))}
+                      checked={
+                        data.length > 0 &&
+                        data.every((lead) => selectedLeads.includes(lead._id))
+                      }
                       onChange={(e) => {
                         const ids = data.map((lead) => lead._id);
                         setSelectedLeads((prev) =>
@@ -170,7 +143,7 @@ const LeadsTable = () => {
                     "List Name ",
                     "Total Lead Count",
                     "Vendor",
-                    "Action"
+                    "Action",
                   ].map((h) => (
                     <th
                       key={h}
@@ -187,11 +160,15 @@ const LeadsTable = () => {
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan="7" className="text-center py-4">Loading...</td>
+                    <td colSpan="7" className="text-center py-4">
+                      Loading...
+                    </td>
                   </tr>
                 ) : data.length === 0 ? (
                   <tr>
-                    <td colSpan="7" className="text-center py-4">No data found</td>
+                    <td colSpan="7" className="text-center py-4">
+                      No data found
+                    </td>
                   </tr>
                 ) : (
                   data.map((row) => {
@@ -202,30 +179,44 @@ const LeadsTable = () => {
 
                     return (
                       <tr key={row._id}>
-                        <td className={`p-3 text-black text-center ${cellStyle}`}>
+                        <td
+                          className={`p-3 text-black text-center ${cellStyle}`}
+                        >
                           <input
                             type="checkbox"
                             checked={isSelected}
                             onChange={() => toggleSelect(row._id)}
                           />
                         </td>
-                        <td className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}>
+                        <td
+                          className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}
+                        >
                           {row.listId}
                         </td>
-                        <td className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}>
+                        <td
+                          className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}
+                        >
                           {row.listName}
                         </td>
-                        <td className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}>
+                        <td
+                          className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}
+                        >
                           {row.totalLeadCount}
                         </td>
-                        <td className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}>
+                        <td
+                          className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}
+                        >
                           {row.vendor}
                         </td>
-                        <td className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}>
-                          <button onClick={() => {
-                            setSelectedLead(row);
-                            setIsModalOpen(true);
-                          }}>
+                        <td
+                          className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}
+                        >
+                          <button
+                            onClick={() => {
+                              setSelectedLead(row);
+                              setIsModalOpen(true);
+                            }}
+                          >
                             <Eye className="h-[30px] w-[30px]" />
                           </button>
                         </td>
@@ -237,7 +228,8 @@ const LeadsTable = () => {
             </table>
           </div>
 
-          <div className="flex flex-col md:flex-row justify-between items-center py-4 px-6 md:gap-4 gap-2 w-full">
+          {/* Pagination */}
+          <div className="flex md:flex-row flex-col  items-center justify-between gap-4 py-4 px-6 w-full">
             <div className="flex items-center gap-2">
               <label className="text-[13px] leading-[14px] font-normal text-[#4B5675]">
                 Show
@@ -260,7 +252,13 @@ const LeadsTable = () => {
                 </select>
                 <span className="pointer-events-none absolute right-1 top-1/2 -translate-y-1/2">
                   <svg width="16" height="16" fill="none" viewBox="0 0 20 20">
-                    <path d="M6 8l4 4 4-4" stroke="#4B5675" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    <path
+                      d="M6 8l4 4 4-4"
+                      stroke="#4B5675"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
                   </svg>
                 </span>
               </div>
@@ -268,10 +266,13 @@ const LeadsTable = () => {
                 per page
               </span>
             </div>
-            <div className="flex items-center">
+
+            <div className="flex justify-center items-center gap-1 w-full md:w-auto">
               <span className="text-[#4B5675] text-[13px] mr-1 leading-[14px] font-normal">
-                {`${(page - 1) * perPage + 1}-${Math.min(page * perPage, totalCount)} of ${totalCount}`}
+                {(page - 1) * perPage + 1}-
+                {Math.min(page * perPage, totalCount)} of {totalCount}
               </span>
+
               <BlackLeft
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 className="w-5 h-5 hover:text-[black] disabled:text-gray-300 cursor-pointer"
@@ -293,10 +294,11 @@ const LeadsTable = () => {
                     <button
                       key={pageNum}
                       onClick={() => setPage(pageNum)}
-                      className={`px-[12px] py-[8px] rounded-[6px] text-[#4B5675] font-normal text-[14px] leading-[14px] ${page === pageNum
-                        ? "bg-[#F1F1F4] rounded-[6px] text-[#252F4A] px-[12px] py-[8px] font-semibold flex justify-center items-center"
-                        : "text-[#4B5675] hover:bg-[#F1F1F4] font-normal"
-                        }`}
+                      className={`px-[12px] py-[8px] rounded-[6px] text-[14px] leading-[14px] ${
+                        page === pageNum
+                          ? "bg-[#F1F1F4] text-[#252F4A] font-semibold"
+                          : "text-[#4B5675] hover:bg-[#F1F1F4]"
+                      }`}
                     >
                       {pageNum}
                     </button>
@@ -305,14 +307,13 @@ const LeadsTable = () => {
               })()}
               <BlackRight
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                className="w-5 h-5 text-[13px] text-[#4B5675] hover:text-[#4B5675] disabled:text-gray-300 cursor-pointer"
-                disabled={page === totalPages}
+                className="w-5 h-5 text-[#4B5675] hover:text-[#4B5675] disabled:text-gray-300 cursor-pointer"
+                disabled={page === totalPages || data.length === 0}
               />
             </div>
           </div>
         </div>
       </div>
-      {/* <div className="bg-gray-100 h-20 w-full rounded-b-2xl"></div> */}
 
       {isModalOpen && selectedLead && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#071437] bg-opacity-50">
@@ -321,7 +322,10 @@ const LeadsTable = () => {
               <h2 className="text-[18px] leading-[20px] font-medium text-[#071437]">
                 Lead Details ({selectedLead.leadNo})
               </h2>
-              <Cross onClick={() => setIsModalOpen(false)} className="cursor-pointer" />
+              <Cross
+                onClick={() => setIsModalOpen(false)}
+                className="cursor-pointer"
+              />
             </div>
             <div className="divide-y divide-gray-200 px-[20px]">
               {[

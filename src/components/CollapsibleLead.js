@@ -4,7 +4,6 @@ import { ReactComponent as BlackRight } from "../Assets/black-right.svg";
 import { ReactComponent as Eye } from "../Assets/Eye.svg";
 import { apiInstance } from "../api/config/axios";
 import { CALLABLES } from "../api/constants";
-import DatePick from "./DatePick";
 import { useNavigate } from "react-router-dom";
 
 function formatDateDMY(dateString) {

@@ -77,7 +77,9 @@ export const SALES = {
 
 // 📋 Leads Endpoints
 export const LEAD = {
-  GET_LEAD: `${API_URL}/api/leads/filtered`,
+  // GET_LEAD: `${API_URL}/api/leads/filtered`,
+   GET_LEAD: (startDate, endDate, page = 1, limit = 10) => 
+     `${API_URL}/api/leads/filtered?startDate=${startDate}&endDate=${endDate}&page=${page}&limit=${limit}`
 };
 
 // ⚙️ Settings/Profile Endpoints
