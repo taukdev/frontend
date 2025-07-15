@@ -45,7 +45,7 @@
 // Set base API URL using environment variable or fallback
 // export const API_URL = process.env.VITE_API_URL || "https://api.taukdash.com";
 // Base URL for API from environment variable or fallback
-export const API_URL = process.env.VITE_API_URL || "http://localhost:5000";
+export const API_URL = process.env.VITE_API_URL || "https://api.taukdash.com";
 console.log("api key === ", API_URL);
 // console.log("api key === ", process.env.REACT_VITE_API);
 
