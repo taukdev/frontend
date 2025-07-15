@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import { ReactComponent as Eye } from "../Assets/Eye.svg";
 import { ReactComponent as Search } from "../Assets/Search.svg";
@@ -8,7 +8,6 @@ import { ReactComponent as BlackLeft } from "../Assets/black-left.svg";
 import { ReactComponent as BlackRight } from "../Assets/black-right.svg";
 import { apiInstance } from "../api/config/axios";
 import { LEAD } from "../api/constants";
-import { useNavigate } from "react-router-dom";
 
 function formatDateDMY(dateString) {
   if (!dateString) return "-";
@@ -34,7 +33,6 @@ const LeadsTable = () => {
   const [totalCount, setTotalCount] = useState(0);
   const [sortField, setSortField] = useState("listId");
   const [sortOption, setSortOption] = useState(1);
-  const navigate = useNavigate();
 
   const getDefaultDates = () => {
     const endDate = new Date();
@@ -63,7 +61,6 @@ const LeadsTable = () => {
       const endDateParam =
         endDate || (dateRange[1] ? dateRange[1].toISOString() : null);
 
-      // Build the URL with the function parameters
       const url = LEAD.GET_LEAD(
         startDateParam,
         endDateParam,
@@ -73,15 +70,20 @@ const LeadsTable = () => {
         sortFieldParam || sortField
       );
 
-      // Add search parameter if needed
-      const finalUrl = searchTerm ? `${url}&search=${searchTerm}` : url;
+      const response = await apiInstance.get(url);
+      let leads = response.data?.data || [];
 
-      const response = await apiInstance.get(finalUrl);
-      const result = response.data;
-      console.log(result);
-      setData(result?.data || []);
-      setTotalCount(result?.pagination?.total || result?.data?.length || 0);
-      setTotalPages(result?.pagination?.totalPages123 || 1);
+      if (searchTerm) {
+        leads = leads.filter(
+          (lead) =>
+            lead.listName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            lead.vendor?.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+      }
+
+      setData(leads);
+      setTotalCount(leads.length);
+      setTotalPages(1); // or calculate based on leads.length and perPage
     } catch (error) {
       console.error("Error fetching sales:", error);
     } finally {
@@ -190,9 +192,8 @@ const LeadsTable = () => {
                           {h}
                           {h !== "Action" && (
                             <UpDown
-                              className={`h-[14px] w-[14px] ${
-                                sortField === field ? "text-blue-500" : ""
-                              }`}
+                              className={`h-[14px] w-[14px] ${sortField === field ? "text-blue-500" : ""
+                                }`}
                             />
                           )}
                         </div>
@@ -338,11 +339,10 @@ const LeadsTable = () => {
                     <button
                       key={pageNum}
                       onClick={() => setPage(pageNum)}
-                      className={`px-[12px] py-[8px] rounded-[6px] text-[14px] leading-[14px] ${
-                        page === pageNum
+                      className={`px-[12px] py-[8px] rounded-[6px] text-[14px] leading-[14px] ${page === pageNum
                           ? "bg-[#F1F1F4] text-[#252F4A] font-semibold"
                           : "text-[#4B5675] hover:bg-[#F1F1F4]"
-                      }`}
+                        }`}
                     >
                       {pageNum}
                     </button>
