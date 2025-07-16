@@ -22,14 +22,20 @@ const AOVOverTimeChart = ({ startDate, endDate, selectedCampaign }) => {
         const fetchChartData = async () => {
             try {
                 const token = localStorage.getItem("token");
+                // Determine campaignName param
+                let campaignNameParam = undefined;
+                if (Array.isArray(selectedCampaign) && selectedCampaign.length > 0 && !selectedCampaign.includes("All")) {
+                    campaignNameParam = selectedCampaign.join(",");
+                }
+                const params = {
+                    startDate: formatToYYYYMMDD(startDate),
+                    endDate: formatToYYYYMMDD(endDate),
+                };
+                if (campaignNameParam) params.campaignName = campaignNameParam;
                 const response = await axios.get(
                     ENDPOINTS.DASHBOARD.AOV_OVER_TIME,
                     {
-                        params: {
-                            startDate: formatToYYYYMMDD(startDate),
-                            endDate: formatToYYYYMMDD(endDate),
-                            selectedCampaign
-                        },
+                        params,
                         headers: {
                             Authorization: `Bearer ${token}`,
                         },

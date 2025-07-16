@@ -14,6 +14,7 @@ const formatToYYYYMMDD = (date) => {
 
 const CVROverTimeChart = ({ startDate, endDate, selectedCampaign }) => {
     const [dataCVR, setDataCVR] = useState([]);
+console.log("selectedCampaign = ",selectedCampaign);
 
     useEffect(() => {
         if (!startDate || !endDate) return;
@@ -21,25 +22,33 @@ const CVROverTimeChart = ({ startDate, endDate, selectedCampaign }) => {
         const fetchChartData = async () => {
             try {
                 const token = localStorage.getItem("token");
+                // Determine campaignName param
+                let campaignNameParam = undefined;
+                if (Array.isArray(selectedCampaign) && selectedCampaign.length > 0 && !selectedCampaign.includes("All")) {
+                    campaignNameParam = selectedCampaign.join(",");
+                }
+                const params = {
+                    startDate: formatToYYYYMMDD(startDate),
+                    endDate: formatToYYYYMMDD(endDate),
+                };
+                if (campaignNameParam) params.campaignName = campaignNameParam;
                 const response = await axios.get(
                     ENDPOINTS.DASHBOARD.CVR_OVER_TIME,
                     {
-                        params: {
-                            startDate: formatToYYYYMMDD(startDate),
-                            endDate: formatToYYYYMMDD(endDate),
-                            selectedCampaign
-                        },
+                        params,
                         headers: {
                             Authorization: `Bearer ${token}`,
                         },
                     }
                 );
+                console.log("response = ",response);
 
                 // Expecting response.data.data to be an array of { time/date, cvr }
-                const formattedData = response.data.data.map((item) => ({
-                    time: item.time || item.date,
-                    cvr: item.cvr || item.value,
+                const formattedData = response.data.map((item) => ({
+                    time: item.date,
+                    cvr: item.CVR,
                 }));
+console.log("formattedData = ",formattedData);
 
                 setDataCVR(formattedData);
             } catch (error) {
@@ -48,7 +57,7 @@ const CVROverTimeChart = ({ startDate, endDate, selectedCampaign }) => {
         };
 
         fetchChartData();
-    }, [startDate, endDate, selectedCampaign]);
+    }, [startDate, endDate,selectedCampaign]);
 
     return (
         <div className="bg-white rounded-[18px] shadow-[0px_3px_4px_0px_#00000008] border border-[#F1F1F4]">
@@ -79,10 +88,10 @@ const CVROverTimeChart = ({ startDate, endDate, selectedCampaign }) => {
                             fontWeight: 400,
                             fontFamily: "Inter",
                         }}
-                        tickFormatter={(val) => `${val}%`}
+                        tickFormatter={(val) => `${(val * 100).toFixed(2)}%`}
                     />
                     <Tooltip
-                        formatter={(value) => [`${value.toFixed(2)}%`, "CVR"]}
+                        formatter={(value) => [`${(value * 100).toFixed(2)}%`, "CVR"]}
                         labelFormatter={(label) => `Date: ${label}`}
                     />
                     <Line

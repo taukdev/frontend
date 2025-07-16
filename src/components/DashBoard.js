@@ -96,7 +96,8 @@ const Dashboard = () => {
   const { toast, toasts, removeToast } = useToast();
   const [campaigns, setCampaigns] = useState([]);
   const [leadLists, setLeadLists] = useState([]);
-  const [selectedCampaign, setSelectedCampaign] = useState(null);
+  // Change selectedCampaign to selectedCampaigns (array)
+  const [selectedCampaigns, setSelectedCampaigns] = useState([]);
   const [selectedLeadList, setSelectedLeadList] = useState(null);
   const campaignDropdownRef = useRef();
   const leadListDropdownRef = useRef();
@@ -173,19 +174,35 @@ const Dashboard = () => {
 
   const handleDateChange = (startDate, endDate) => {
     setDateRange([startDate, endDate]);
-    fetchDashboardData(
-      startDate,
-      endDate,
-      selectedCampaign,
-      // selectedLeadList?.id
-    );
+    if (selectedCampaigns.length === 0 || selectedCampaigns.includes("All")) {
+      fetchDashboardData(startDate, endDate, null, selectedLeadList?.id);
+    } else {
+      fetchDashboardData(startDate, endDate, selectedCampaigns.join(","), selectedLeadList?.id);
+    }
   };
 
+  // Update handleCampaignChange to handle multi-select logic
   const handleCampaignChange = (name) => {
-    setSelectedCampaign(name);
-    // If "All" is selected, pass null to show all campaigns
-    const campaignToFetch = name === "All" ? null : name;
-    fetchDashboardData(startDate, endDate, campaignToFetch, selectedLeadList?.id);
+    if (name === "All") {
+      setSelectedCampaigns(["All"]);
+      fetchDashboardData(startDate, endDate, null, selectedLeadList?.id);
+    } else {
+      let updated;
+      if (selectedCampaigns.includes("All")) {
+        updated = [name];
+      } else if (selectedCampaigns.includes(name)) {
+        updated = selectedCampaigns.filter((c) => c !== name);
+      } else {
+        updated = [...selectedCampaigns, name];
+      }
+      setSelectedCampaigns(updated);
+      // If nothing selected, treat as 'All'
+      if (updated.length === 0) {
+        fetchDashboardData(startDate, endDate, null, selectedLeadList?.id);
+      } else {
+        fetchDashboardData(startDate, endDate, updated.join(","), selectedLeadList?.id);
+      }
+    }
   };
 
   // const handleLeadListChange = (list) => {
@@ -254,16 +271,6 @@ const Dashboard = () => {
             ref={campaignDropdownRef}
             className="relative inline-flex w-48 max-[320px]:w-44 "
           >
-            {/* <button
-              type="button"
-              onClick={() => {
-                setIsCampaignOpen((prev) => !prev);
-                setIsLeadListOpen(false);
-              }}
-              className="py-2 px-3 inline-flex items-center overflow-y-auto md:w-60 lg:h-10  md:h-13 justify-between w-full text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50"
-              aria-haspopup="menu"
-              aria-expanded={isCampaignOpen}
-            > */}
             <button
               type="button"
               onClick={() => {
@@ -276,7 +283,9 @@ const Dashboard = () => {
             >
               {/* Scrollable Text Wrapper */}
               <div className=" overflow-x-auto whitespace-nowrap scrollbar-hide">
-                {selectedCampaign || 'Select Campaign'}
+                {selectedCampaigns.length === 0 || selectedCampaigns.includes("All")
+                  ? "Select Campaign"
+                  : selectedCampaigns.join(", ")}
               </div>
 
               {/* Dropdown Arrow Icon */}
@@ -314,32 +323,36 @@ const Dashboard = () => {
                 role="menu"
               >
                 <div className="p-1 space-y-0.5">
-                  {/* Add "All" option at the top */}
-                  <a
-                    className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 font-medium"
-                    href="#"
-                    onClick={() => {
-                      handleCampaignChange("All");
-                      setIsCampaignOpen(false);
-                    }}
-                  >
+                  {/* All Campaigns option */}
+                  <label className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 font-medium cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={selectedCampaigns.includes("All")}
+                      onChange={() => {
+                        handleCampaignChange("All");
+                        setIsCampaignOpen(false);
+                      }}
+                      className="form-checkbox"
+                    />
                     All Campaigns
-                  </a>
+                  </label>
                   {/* Divider */}
                   <div className="border-t border-gray-200"></div>
                   <div className=" overflow-y-auto max-h-60">
                   {campaigns.map((name) => (
-                    <a
+                    <label
                       key={name}
-                      className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100"
-                      href="#"
-                      onClick={() => {
-                        handleCampaignChange(name);
-                        setIsCampaignOpen(false);
-                      }}
+                      className={`flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 cursor-pointer ${selectedCampaigns.includes("All") ? "opacity-50 pointer-events-none" : ""}`}
                     >
+                      <input
+                        type="checkbox"
+                        checked={selectedCampaigns.includes(name)}
+                        onChange={() => handleCampaignChange(name)}
+                        disabled={selectedCampaigns.includes("All")}
+                        className="form-checkbox"
+                      />
                       {name}
-                    </a>
+                    </label>
                   ))}
                   </div>
                 </div>
@@ -391,28 +404,28 @@ const Dashboard = () => {
               ? "Loading..."
               : (dashboardData.callableLeads ?? 0).toLocaleString()
           }
-          arrow={
-            <div
-              onClick={() => navigate("/CollapsibleLead")}
-              className="cursor-pointer"
-            >
-              <svg
-                width="25"
-                height="24"
-                viewBox="0 0 25 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M9.66675 5L15.6667 12L9.66675 19"
-                  stroke="#99A1B7"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </div>
-          }
+          // arrow={
+          //   <div
+          //     // onClick={() => navigate("/CollapsibleLead")}
+          //     className="cursor-pointer"
+          //   >
+          //     <svg
+          //       width="25"
+          //       height="24"
+          //       viewBox="0 0 25 24"
+          //       fill="none"
+          //       xmlns="http://www.w3.org/2000/svg"
+          //     >
+          //       <path
+          //         d="M9.66675 5L15.6667 12L9.66675 19"
+          //         stroke="#99A1B7"
+          //         strokeWidth="1.5"
+          //         strokeLinecap="round"
+          //         strokeLinejoin="round"
+          //       />
+          //     </svg>
+          //   </div>
+          // }
         />
         <StatCard
           icon={TotalSale}
@@ -482,8 +495,8 @@ const Dashboard = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <AOVOverTimeChart startDate={startDate} endDate={endDate} selectedCampaign={selectedCampaign} />
-        <CVROverTimeChart startDate={startDate} endDate={endDate} selectedCampaign={selectedCampaign} />
+        <AOVOverTimeChart startDate={startDate} endDate={endDate} selectedCampaign={selectedCampaigns} />
+        <CVROverTimeChart startDate={startDate} endDate={endDate} selectedCampaign={selectedCampaigns} />
       </div>
       <ToastContainer toasts={toasts} removeToast={removeToast} />
     </div>

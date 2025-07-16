@@ -81,12 +81,12 @@ const SidebarWithHeader = ({ children }) => {
       icon: <LeadIcon className="w-[20px] h-[20px] text-[#99A1B7]" />,
       to: "/Lead",
     },
-    {
-      key: "Collapsible",
-      label: "Callable Lead ID",
-      icon: <CollapsibleLeadIcon className="w-[20px] h-[20px] text-[#99A1B7]" />,
-      to: "/CollapsibleLead",
-    },
+    // {
+    //   key: "Collapsible",
+    //   label: "Callable Lead ID",
+    //   icon: <CollapsibleLeadIcon className="w-[20px] h-[20px] text-[#99A1B7]" />,
+    //   to: "/CollapsibleLead",
+    // },
     {
       key: "sales",
       label: "Total Sales",
