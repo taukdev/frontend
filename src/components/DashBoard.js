@@ -227,10 +227,11 @@ const Dashboard = () => {
     setLoadingToday(true);
     try {
       const response = await apiInstance.get(ENDPOINTS.DASHBOARD.TODAY_LEAD_COUNT);
-      if (response.data && typeof response.data.todayLeadCount === 'number') {
+      if (response.data) {
         setDashboardData((prev) => ({
           ...prev,
-          totalLeadCount: response.data.todayLeadCount,
+          totalLeadCount: response.data.todayLeadCount ?? prev.totalLeadCount,
+          callableLeads: response.data.callableLeadCount ?? prev.callableLeads,
         }));
       }
     } catch (error) {
@@ -342,13 +343,21 @@ const Dashboard = () => {
                   {campaigns.map((name) => (
                     <label
                       key={name}
-                      className={`flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 cursor-pointer ${selectedCampaigns.includes("All") ? "opacity-50 pointer-events-none" : ""}`}
+                      className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 cursor-pointer"
                     >
                       <input
                         type="checkbox"
                         checked={selectedCampaigns.includes(name)}
-                        onChange={() => handleCampaignChange(name)}
-                        disabled={selectedCampaigns.includes("All")}
+                        onChange={() => {
+                          if (selectedCampaigns.includes("All")) {
+                            // If "All" is selected and user clicks another, select only that one
+                            setSelectedCampaigns([name]);
+                            fetchDashboardData(startDate, endDate, name, selectedLeadList?.id);
+                          } else {
+                            handleCampaignChange(name);
+                          }
+                          setIsCampaignOpen(false);
+                        }}
                         className="form-checkbox"
                       />
                       {name}
@@ -404,28 +413,7 @@ const Dashboard = () => {
               ? "Loading..."
               : (dashboardData.callableLeads ?? 0).toLocaleString()
           }
-          // arrow={
-          //   <div
-          //     // onClick={() => navigate("/CollapsibleLead")}
-          //     className="cursor-pointer"
-          //   >
-          //     <svg
-          //       width="25"
-          //       height="24"
-          //       viewBox="0 0 25 24"
-          //       fill="none"
-          //       xmlns="http://www.w3.org/2000/svg"
-          //     >
-          //       <path
-          //         d="M9.66675 5L15.6667 12L9.66675 19"
-          //         stroke="#99A1B7"
-          //         strokeWidth="1.5"
-          //         strokeLinecap="round"
-          //         strokeLinejoin="round"
-          //       />
-          //     </svg>
-          //   </div>
-          // }
+     
         />
         <StatCard
           icon={TotalSale}
