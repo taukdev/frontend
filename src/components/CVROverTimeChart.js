@@ -14,7 +14,6 @@ const formatToYYYYMMDD = (date) => {
 
 const CVROverTimeChart = ({ startDate, endDate, selectedCampaign }) => {
     const [dataCVR, setDataCVR] = useState([]);
-console.log("selectedCampaign = ",selectedCampaign);
 
     useEffect(() => {
         if (!startDate || !endDate) return;
@@ -22,7 +21,7 @@ console.log("selectedCampaign = ",selectedCampaign);
         const fetchChartData = async () => {
             try {
                 const token = localStorage.getItem("token");
-                // Determine campaignName param
+              
                 let campaignNameParam = undefined;
                 if (Array.isArray(selectedCampaign) && selectedCampaign.length > 0 && !selectedCampaign.includes("All")) {
                     campaignNameParam = selectedCampaign.join(",");
@@ -41,14 +40,11 @@ console.log("selectedCampaign = ",selectedCampaign);
                         },
                     }
                 );
-                console.log("response = ",response);
-
-                // Expecting response.data.data to be an array of { time/date, cvr }
+    
                 const formattedData = response.data.map((item) => ({
                     time: item.date,
                     cvr: item.CVR,
                 }));
-console.log("formattedData = ",formattedData);
 
                 setDataCVR(formattedData);
             } catch (error) {
