@@ -14,45 +14,6 @@ import { useNavigate } from "react-router-dom";
 import AOVOverTimeChart from "./AOVOverTimeChart";
 import CVROverTimeChart from './CVROverTimeChart';
 
-const dataAOV = [
-  { month: "Jan", value: 1600 },
-  { month: "Feb", value: 1200 },
-  { month: "Mar", value: 1300 },
-  { month: "Apr", value: 1725 },
-  { month: "May", value: 1100 },
-  { month: "Jun", value: 1500 },
-];
-
-const dataCVR = [
-  { month: "Jan", value: 25 },
-  { month: "Feb", value: 15 },
-  { month: "Mar", value: 20 },
-  { month: "Apr", value: 33 },
-  { month: "May", value: 17 },
-  { month: "Jun", value: 22 },
-];
-
-const CustomTooltip = ({ active, payload, label, labelFormatter }) => {
-  if (active && payload && payload.length) {
-    return (
-      <div className="bg-white border shadow-md rounded-lg p-2 text-sm text-gray-700">
-        <p className="font-semibold font-['Inter'] tracking-normal">
-          {labelFormatter ? labelFormatter(label) : label}
-        </p>
-        {payload.map((entry, index) => (
-          <p
-            key={index}
-            className="font-['Inter'] font-semibold text-[#071437]"
-          >
-            % {entry.value}
-          </p>
-        ))}
-      </div>
-    );
-  }
-  return null;
-};
-
 const StatCard = ({ icon: Icon, title, value, arrow, showArrow = true }) => (
   <div className="flex items-center justify-between gap-4 p-[18px] bg-white shadow-[0px_3px_4px_0px_#00000008] border overflow-hidden border-[#F1F1F4] rounded-[18px]">
     <div className="flex items-center md:gap-2 xl:gap-4 gap-4">
@@ -96,11 +57,11 @@ const Dashboard = () => {
   const { toast, toasts, removeToast } = useToast();
   const [campaigns, setCampaigns] = useState([]);
   const [leadLists, setLeadLists] = useState([]);
-  // Change selectedCampaign to selectedCampaigns (array)
+
   const [selectedCampaigns, setSelectedCampaigns] = useState([]);
   const [selectedLeadList, setSelectedLeadList] = useState(null);
   const campaignDropdownRef = useRef();
-  const leadListDropdownRef = useRef();
+
   const navigate = useNavigate();
   const [loadingToday, setLoadingToday] = useState(false);
   const [campaignSearch, setCampaignSearch] = useState("");
@@ -183,6 +144,8 @@ const Dashboard = () => {
   };
 
   // Update handleCampaignChange to handle multi-select logic
+
+
   const handleCampaignChange = (name) => {
     if (name === "All") {
       setSelectedCampaigns(["All"]);
@@ -216,9 +179,7 @@ const Dashboard = () => {
       if (campaignDropdownRef.current && !campaignDropdownRef.current.contains(event.target)) {
         setIsCampaignOpen(false);
       }
-      // if (leadListDropdownRef.current && !leadListDropdownRef.current.contains(event.target)) {
-      //   setIsLeadListOpen(false);
-      // }
+
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -284,26 +245,31 @@ const Dashboard = () => {
               aria-expanded={isCampaignOpen}
             >
               {/* Scrollable Text Wrapper */}
-              <div className=" overflow-x-auto whitespace-nowrap scrollbar-hide">
-                {selectedCampaigns.length === 0 || selectedCampaigns.includes("All")
-                  ? "Select Campaign"
-                  : selectedCampaigns.join(", ")}
+              <div className="flex gap-1 overflow-x-auto whitespace-nowrap scrollbar-hide">
+                {(selectedCampaigns.length === 0 || selectedCampaigns.includes("All")) ? (
+                  "Select Campaign"
+                ) : (
+                  selectedCampaigns.map((name) => (
+                    <span
+                      key={name}
+                      className="inline-flex items-center bg-gray-200 rounded px-2 py-0.5 text-xs mr-1"
+                    >
+                      {name}
+                      <button
+                        type="button"
+                        className="ml-1 text-gray-500 hover:text-red-500"
+                        onClick={e => {
+                          e.stopPropagation();
+                          handleCampaignChange(name);
+                        }}
+                      >
+                        &times;
+                      </button>
+                    </span>
+                  ))
+                )}
               </div>
 
-              {/* Dropdown Arrow Icon */}
-              {/* <svg
-                className="w-4 h-4 ml-2 flex-shrink-0"
-                aria-hidden="true"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.27a.75.75 0 01.02-1.06z"
-                  clipRule="evenodd"
-                />
-              </svg> */}
-              {/* <span>{selectedCampaign || "Select Campaign"}</span> */}
               <svg
                 className={`size-5 transition-transform ${isCampaignOpen ? "rotate-180" : ""
                   }`}
@@ -360,13 +326,13 @@ const Dashboard = () => {
                         checked={selectedCampaigns.includes(name)}
                         onChange={() => {
                           if (selectedCampaigns.includes("All")) {
-                            // If "All" is selected and user clicks another, select only that one
+                         
                             setSelectedCampaigns([name]);
                             fetchDashboardData(startDate, endDate, name, selectedLeadList?.id);
                           } else {
                             handleCampaignChange(name);
                           }
-                          // Do NOT close the dropdown here
+                   
                         }}
                         className="form-checkbox"
                       />
