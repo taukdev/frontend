@@ -366,7 +366,7 @@ const Dashboard = () => {
                           } else {
                             handleCampaignChange(name);
                           }
-                          setIsCampaignOpen(false);
+                          // Do NOT close the dropdown here
                         }}
                         className="form-checkbox"
                       />
