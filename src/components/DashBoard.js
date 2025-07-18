@@ -103,6 +103,7 @@ const Dashboard = () => {
   const leadListDropdownRef = useRef();
   const navigate = useNavigate();
   const [loadingToday, setLoadingToday] = useState(false);
+  const [campaignSearch, setCampaignSearch] = useState("");
 
   useEffect(() => {
     if (startDate) {
@@ -339,8 +340,17 @@ const Dashboard = () => {
                   </label>
                   {/* Divider */}
                   <div className="border-t border-gray-200"></div>
+                  <input
+                    type="text"
+                    placeholder="Search campaigns..."
+                    value={campaignSearch}
+                    onChange={e => setCampaignSearch(e.target.value)}
+                    className="w-full px-3 py-2 mb-2 border rounded focus:outline-none"
+                  />
                   <div className=" overflow-y-auto max-h-60">
-                  {campaigns.map((name) => (
+                  {campaigns
+                    .filter(name => name.toLowerCase().includes(campaignSearch.toLowerCase()))
+                    .map((name) => (
                     <label
                       key={name}
                       className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 cursor-pointer"
