@@ -8,6 +8,7 @@ import { ReactComponent as BlackLeft } from "../Assets/black-left.svg";
 import { ReactComponent as BlackRight } from "../Assets/black-right.svg";
 import { apiInstance } from "../api/config/axios";
 import { LEAD } from "../api/constants";
+import DatePick from "./DatePick";
 
 function formatDateDMY(dateString) {
   if (!dateString) return "-";
@@ -46,6 +47,13 @@ const LeadsTable = () => {
     setDateRange(defaultDates);
   }, []);
 
+  // Add handler for date range change
+  const handleDateRangeChange = (startDate, endDate) => {
+    setDateRange([startDate, endDate]);
+    setPage(1); // Reset to first page when date range changes
+    fetchLeads(1, perPage, startDate.toISOString(), endDate.toISOString(), sortField, sortOption);
+  };
+
   const fetchLeads = async (
     page,
     limit,
@@ -76,8 +84,7 @@ const LeadsTable = () => {
       if (searchTerm) {
         leads = leads.filter(
           (lead) =>
-            lead.listName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            lead.vendor?.toLowerCase().includes(searchTerm.toLowerCase())
+            lead.listName?.toLowerCase().includes(searchTerm.toLowerCase())
         );
       }
 
@@ -102,8 +109,10 @@ const LeadsTable = () => {
   };
 
   useEffect(() => {
-    fetchLeads(page, perPage);
-  }, [page, perPage, searchTerm, sortField, sortOption]);
+    if (dateRange[0] && dateRange[1]) {
+      fetchLeads(page, perPage, dateRange[0].toISOString(), dateRange[1].toISOString());
+    }
+  }, [page, perPage, searchTerm, sortField, sortOption, dateRange]);
 
   const toggleSelect = (id) => {
     setSelectedLeads((prev) =>
@@ -143,6 +152,9 @@ const LeadsTable = () => {
                 className="border rounded pl-7 pr-3 py-2 lg:w-full md:w-52 w-44 text-[11px] leading-[12px] font-normal focus:outline-none text-black "
               />
             </div>
+            <div className="absolute right-5">
+              <DatePick onDateChange={handleDateRangeChange} />
+            </div>
           </div>
 
           <div className="w-full border border-[#F1F1F4] overflow-x-auto">
@@ -170,14 +182,12 @@ const LeadsTable = () => {
                     "List ID",
                     "List Name",
                     "Total Lead Count",
-                    "Vendor",
                     "Action",
                   ].map((h) => {
                     const fieldMap = {
                       "List ID": "listId",
                       "List Name": "listName",
                       "Total Lead Count": "totalLeadCount",
-                      "Vendor": "vendor",
                     };
                     const field = fieldMap[h];
                     return (
@@ -247,11 +257,6 @@ const LeadsTable = () => {
                           className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}
                         >
                           {row.totalLeadCount}
-                        </td>
-                        <td
-                          className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}
-                        >
-                          {row.vendor}
                         </td>
                         <td
                           className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}
@@ -364,7 +369,7 @@ const LeadsTable = () => {
           <div className="bg-white rounded-[26px] w-[646px] max-w-md overflow-hidden px-[22px] pt-[28px] pb-[40px] mx-4">
             <div className="bg-[linear-gradient(121.72deg,_rgba(0,174,239,0.06)_0%,_rgba(0,127,196,0.06)_100%)] flex justify-between items-center p-[20px] rounded-[12px]">
               <h2 className="text-[18px] leading-[20px] font-medium text-[#071437]">
-                Lead Details ({selectedLead.leadNo})
+                Lead Details
               </h2>
               <Cross
                 onClick={() => setIsModalOpen(false)}
@@ -373,11 +378,10 @@ const LeadsTable = () => {
             </div>
             <div className="divide-y divide-gray-200 px-[20px]">
               {[
-                ["No", selectedLead.leadNo],
+               
                 ["List Id", selectedLead.listId],
                 ["List Name", selectedLead.listName],
                 ["TotalLeadCount", selectedLead.totalLeadCount],
-                ["Vendor", selectedLead.vendor],
               ].map(([label, value]) => (
                 <div key={label} className="flex align-center py-[15px]">
                   <div className="w-1/3 text-[#252F4A] text-[14px] leading-[14px] font-meduim">
