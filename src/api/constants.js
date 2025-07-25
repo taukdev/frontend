@@ -1,5 +1,5 @@
 
-export const API_URL = process.env.VITE_API_URL || "http://localhost:5000";
+export const API_URL = process.env.VITE_API_URL || "https://api.taukdash.com";
 
 export const AUTH = {
   LOGIN: `${API_URL}/api/auth/login`,
