@@ -1,5 +1,7 @@
 
 export const API_URL = process.env.VITE_API_URL || "https://api.taukdash.com";
+// export const API_URL = process.env.VITE_API_URL || "http://localhost:5000";
+
 
 export const AUTH = {
   LOGIN: `${API_URL}/api/auth/login`,
@@ -41,9 +43,15 @@ export const LEAD = {
     page = 1,
     limit = 10,
     sortoption = 1,
-    sortfield = "listId"
-  ) =>
-    `${API_URL}/api/leads/filtered?startDate=${startDate}&endDate=${endDate}&page=${page}&limit=${limit}&sortfield=${sortfield}&sortoption=${sortoption}`,
+    sortfield = "listId",
+    search = ""
+  ) => {
+    let url = `${API_URL}/api/leads/filtered?startDate=${startDate}&endDate=${endDate}&page=${page}&limit=${limit}&sortfield=${sortfield}&sortoption=${sortoption}`;
+    if (search) {
+      url += `&search=${encodeURIComponent(search)}`;
+    }
+    return url;
+  },
 };
 
 // ⚙️ Settings/Profile Endpoints

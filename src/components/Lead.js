@@ -22,6 +22,7 @@ function formatDateDMY(dateString) {
 
 const LeadsTable = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [perPage, setPerPage] = useState(10);
   const [page, setPage] = useState(1);
   const [selectedLeads, setSelectedLeads] = useState([]);
@@ -47,11 +48,20 @@ const LeadsTable = () => {
     setDateRange(defaultDates);
   }, []);
 
+  // Debounce search term
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
   // Add handler for date range change
   const handleDateRangeChange = (startDate, endDate) => {
     setDateRange([startDate, endDate]);
     setPage(1); // Reset to first page when date range changes
-    fetchLeads(1, perPage, startDate.toISOString(), endDate.toISOString(), sortField, sortOption);
+    fetchLeads(1, perPage, startDate.toISOString(), endDate.toISOString(), sortField, sortOption, debouncedSearchTerm);
   };
 
   const fetchLeads = async (
@@ -60,7 +70,8 @@ const LeadsTable = () => {
     startDate,
     endDate,
     sortFieldParam,
-    sortOptionParam
+    sortOptionParam,
+    searchTermParam
   ) => {
     try {
       setLoading(true);
@@ -75,24 +86,23 @@ const LeadsTable = () => {
         page,
         limit,
         sortOptionParam || sortOption,
-        sortFieldParam || sortField
+        sortFieldParam || sortField,
+        searchTermParam || ""
       );
 
       const response = await apiInstance.get(url);
       let leads = response.data?.data || [];
-
-      if (searchTerm) {
-        leads = leads.filter(
-          (lead) =>
-            lead.listName?.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-      }
+      
+      // Get pagination data from API response
+      const pagination = response.data?.pagination || {};
+      const total = pagination.total || 0;
+      const totalPages = pagination.totalPages || 1;
 
       setData(leads);
-      setTotalCount(leads.length);
-      setTotalPages(1); // or calculate based on leads.length and perPage
+      setTotalCount(total);
+      setTotalPages(totalPages);
     } catch (error) {
-      console.error("Error fetching sales:", error);
+      console.error("Error fetching leads:", error);
     } finally {
       setLoading(false);
     }
@@ -108,11 +118,16 @@ const LeadsTable = () => {
     setPage(1); // Reset to first page on sort
   };
 
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    setPage(1); // Reset to first page when search changes
+  };
+
   useEffect(() => {
     if (dateRange[0] && dateRange[1]) {
-      fetchLeads(page, perPage, dateRange[0].toISOString(), dateRange[1].toISOString());
+      fetchLeads(page, perPage, dateRange[0].toISOString(), dateRange[1].toISOString(), sortField, sortOption, debouncedSearchTerm);
     }
-  }, [page, perPage, searchTerm, sortField, sortOption, dateRange]);
+  }, [page, perPage, debouncedSearchTerm, sortField, sortOption, dateRange]);
 
   const toggleSelect = (id) => {
     setSelectedLeads((prev) =>
@@ -148,9 +163,14 @@ const LeadsTable = () => {
                 type="text"
                 placeholder="Search leads"
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={handleSearchChange}
                 className="border rounded pl-7 pr-3 py-2 lg:w-full md:w-52 w-44 text-[11px] leading-[12px] font-normal focus:outline-none text-black "
               />
+              {searchTerm !== debouncedSearchTerm && (
+                <div className="absolute inset-y-0 right-0 pr-2 flex items-center pointer-events-none">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-400"></div>
+                </div>
+              )}
             </div>
             <div className="absolute right-5">
               <DatePick onDateChange={handleDateRangeChange} />
@@ -357,7 +377,7 @@ const LeadsTable = () => {
               <BlackRight
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 className="w-5 h-5 text-[#4B5675] hover:text-[#4B5675] disabled:text-gray-300 cursor-pointer"
-                disabled={page === totalPages || data.length === 0}
+                disabled={page === totalPages || totalPages === 0}
               />
             </div>
           </div>
