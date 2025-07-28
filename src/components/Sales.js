@@ -49,14 +49,14 @@ const SalesTable = () => {
   useEffect(() => {
     const defaultDates = getDefaultDates();
     setDateRange(defaultDates);
-    fetchSales(1, perPage, defaultDates[0].toISOString(), defaultDates[1].toISOString(), sortField, sortOption);
+    fetchSales(1, perPage, defaultDates[0].toISOString().split('T')[0], defaultDates[1].toISOString().split('T')[0], sortField, sortOption);
   }, []);
 
   const fetchSales = async (page, limit, startDate, endDate, sortFieldParam, sortOptionParam) => {
     try {
       setLoading(true);
-      const startDateParam = startDate || (dateRange[0] ? dateRange[0].toISOString() : null);
-      const endDateParam = endDate || (dateRange[1] ? dateRange[1].toISOString() : null);
+      const startDateParam = startDate || (dateRange[0] ? dateRange[0].toISOString().split('T')[0] : null);
+      const endDateParam = endDate || (dateRange[1] ? dateRange[1].toISOString().split('T')[0] : null);
 
       // Build the URL with the function parameters
       const url = SALES.GET_SALES(
@@ -87,7 +87,7 @@ const SalesTable = () => {
   const handleDateRangeChange = (startDate, endDate) => {
     setDateRange([startDate, endDate]);
     setPage(1); // Reset to first page when date range changes
-    fetchSales(1, perPage, startDate.toISOString(), endDate.toISOString(), sortField, sortOption);
+    fetchSales(1, perPage, startDate.toISOString().split('T')[0], endDate.toISOString().split('T')[0], sortField, sortOption);
   };
 
   const handleSort = (field) => {
@@ -106,8 +106,8 @@ const SalesTable = () => {
       fetchSales(
         page,
         perPage,
-        dateRange[0].toISOString(),
-        dateRange[1].toISOString(),
+        dateRange[0].toISOString().split('T')[0],
+        dateRange[1].toISOString().split('T')[0],
         sortField,
         sortOption
       );

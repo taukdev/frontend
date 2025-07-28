@@ -61,7 +61,7 @@ const LeadsTable = () => {
   const handleDateRangeChange = (startDate, endDate) => {
     setDateRange([startDate, endDate]);
     setPage(1); // Reset to first page when date range changes
-    fetchLeads(1, perPage, startDate.toISOString(), endDate.toISOString(), sortField, sortOption, debouncedSearchTerm);
+    fetchLeads(1, perPage, startDate.toISOString().split('T')[0], endDate.toISOString().split('T')[0], sortField, sortOption, debouncedSearchTerm);
   };
 
   const fetchLeads = async (
@@ -76,9 +76,9 @@ const LeadsTable = () => {
     try {
       setLoading(true);
       const startDateParam =
-        startDate || (dateRange[0] ? dateRange[0].toISOString() : null);
+        startDate || (dateRange[0] ? dateRange[0].toISOString().split('T')[0] : null);
       const endDateParam =
-        endDate || (dateRange[1] ? dateRange[1].toISOString() : null);
+        endDate || (dateRange[1] ? dateRange[1].toISOString().split('T')[0] : null);
 
       const url = LEAD.GET_LEAD(
         startDateParam,
@@ -125,7 +125,7 @@ const LeadsTable = () => {
 
   useEffect(() => {
     if (dateRange[0] && dateRange[1]) {
-      fetchLeads(page, perPage, dateRange[0].toISOString(), dateRange[1].toISOString(), sortField, sortOption, debouncedSearchTerm);
+      fetchLeads(page, perPage, dateRange[0].toISOString().split('T')[0], dateRange[1].toISOString().split('T')[0], sortField, sortOption, debouncedSearchTerm);
     }
   }, [page, perPage, debouncedSearchTerm, sortField, sortOption, dateRange]);
 
