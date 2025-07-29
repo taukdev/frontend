@@ -222,13 +222,13 @@ const Dashboard = () => {
 
         {/* Dropdowns and Date Picker */}
         <div className="flex justify-end items-center lg:flex-row gap-2 w-full ">
-          <div>
+          {/* <div>
             <button
               type="button"
               onClick={handleTodayClick}
               className="py-2 px-3 inline-flex items-center md:w-28 lg:h-10  md:h-13 w-full text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50"
             > {loadingToday ? "Loading..." : "Today Leads"}</button>
-          </div>
+          </div> */}
           {/* Campaign Dropdown */}
           <div
             ref={campaignDropdownRef}
