@@ -84,10 +84,10 @@ const CVROverTimeChart = ({ startDate, endDate, selectedCampaign }) => {
                             fontWeight: 400,
                             fontFamily: "Inter",
                         }}
-                        tickFormatter={(val) => `${(val * 100).toFixed(2)}%`}
+                        tickFormatter={(val) => `${val.toFixed(2)}%`}
                     />
                     <Tooltip
-                        formatter={(value) => [`${(value * 100).toFixed(2)}%`, "CVR"]}
+                        formatter={(value) => [`${value.toFixed(2)}%`, "CVR"]}
                         labelFormatter={(label) => `Date: ${label}`}
                     />
                     <Line

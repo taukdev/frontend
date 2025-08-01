@@ -1,7 +1,4 @@
 import { useEffect, useState } from "react";
-import ProfilePicture from "../Assets/Profile.svg";
-import { ReactComponent as Upload } from "../Assets/Upload.svg";
-import { ReactComponent as Eye } from "../Assets/Eye.svg";
 import { CalendarIcon } from "lucide-react";
 import { apiInstance } from "../api/config/axios";
 import { SETTING } from "../api/constants";
