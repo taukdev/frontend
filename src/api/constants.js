@@ -1,6 +1,6 @@
 
-export const API_URL = process.env.VITE_API_URL || "https://api.taukdash.com";
-// export const API_URL = process.env.VITE_API_URL || "http://localhost:5000";
+// export const API_URL = process.env.VITE_API_URL || "https://api.taukdash.com";
+export const API_URL = process.env.VITE_API_URL || "http://localhost:5000";
 
 
 export const AUTH = {
@@ -26,7 +26,7 @@ export const SALES = {
   GET_SALES: (
     startDate,
     endDate,
-    page = 1,
+    page = 1, 
     limit = 10,
     sortoption = 1,
     sortfield = "Timestamp"
