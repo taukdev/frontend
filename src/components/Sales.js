@@ -55,9 +55,19 @@ const SalesTable = () => {
   const fetchSales = async (page, limit, startDate, endDate, sortFieldParam, sortOptionParam) => {
     try {
       setLoading(true);
-      const startDateParam = startDate || (dateRange[0] ? dateRange[0].toISOString().split('T')[0] : null);
-      const endDateParam = endDate || (dateRange[1] ? dateRange[1].toISOString().split('T')[0] : null);
-
+      const formatToDateString = (date) => {
+        if (!date) return "";
+        if (typeof date === "string") return date;
+        if (date instanceof Date) return date.toISOString().split("T")[0];
+        return "";
+      };
+      
+      const startDateParam = formatToDateString(startDate || dateRange[0]);
+      const endDateParam = formatToDateString(endDate || dateRange[1]);
+      
+      // const startDateParam = startDate || (dateRange[0] ? dateRange[0].toISOString().split('T')[0] : null);
+      // const endDateParam = endDate || (dateRange[1] ? dateRange[1].toISOString().split('T')[0] : null);
+      console.log(startDateParam, typeof startDateParam);
       // Build the URL with the function parameters
       const url = SALES.GET_SALES(
         startDateParam,

@@ -2,26 +2,27 @@ import { CalendarIcon } from 'lucide-react';
 import React, { useEffect, useState, useRef } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { useDateContext } from '../context/DateContext';
 
 function DatePick({ onDateChange }) {
-  // Calculate default dates (last 5 days from today)
-  const getDefaultDates = () => {
-    const endDate = new Date();
-    const startDate = new Date();
-    startDate.setDate(endDate.getDate() - 4); // 4 days before today (to include today)
-    return [startDate, endDate];
-  };
-
-  const [dateRange, setDateRange] = useState(getDefaultDates());
-  const [startDate, endDate] = dateRange;
+  const { dateRange: globalDateRange, updateDateRange } = useDateContext();
   const [isOpen, setIsOpen] = useState(false);
   const [openToDate, setOpenToDate] = useState(new Date());
   const dropdownRef = useRef(null);
   const inputRef = useRef(null);
+  
+  // Use global date range or fallback to local state
+  const [dateRange, setDateRange] = useState(globalDateRange);
+  const [startDate, endDate] = dateRange;
+
+  // Sync with global context when it changes
+  useEffect(() => {
+    setDateRange(globalDateRange);
+  }, [globalDateRange]);
 
   // Call onDateChange with default dates when component mounts
   useEffect(() => {
-    if (onDateChange) {
+    if (onDateChange && startDate && endDate) {
       onDateChange(startDate, endDate);
     }
   }, []); // Empty dependency array means this runs once on mount
@@ -80,8 +81,13 @@ function DatePick({ onDateChange }) {
   };
 
   const handleApply = () => {
-    if (startDate && endDate && onDateChange) {
-      onDateChange(startDate, endDate);
+    if (startDate && endDate) {
+      // Update global context
+      updateDateRange(startDate, endDate);
+      // Call local callback if provided
+      if (onDateChange) {
+        onDateChange(startDate, endDate);
+      }
     }
     setIsOpen(false);
   };

@@ -9,6 +9,7 @@ import Setting from "./components/Setting";
 import Screen2 from './components/ForgotPassWord/Screen2';
 import Layout from "./components/Layout";
 import PrivateRoute from "./components/PrivateRoute";
+import { DateProvider } from "./context/DateContext";
 
 // Public Routes Component
 const PublicRoute = ({ children }) => {
@@ -24,8 +25,9 @@ const PublicRoute = ({ children }) => {
 
 function App() {
   return (
-    <Router>
-      <Routes>
+    <DateProvider>
+      <Router>
+        <Routes>
         {/* Public Routes */}
         <Route path="/" element={
           <PublicRoute>
@@ -95,7 +97,8 @@ function App() {
         {/* Catch all route - redirect to login */}
         <Route path="*" element={<Navigate to="/Login" replace />} />
       </Routes>
-    </Router>
+        </Router>
+      </DateProvider>
   );
 }
 
