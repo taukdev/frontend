@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import { ReactComponent as Eye } from "../Assets/Eye.svg";
 import { ReactComponent as Search } from "../Assets/Search.svg";
@@ -7,8 +7,9 @@ import { ReactComponent as Cross } from "../Assets/cross.svg";
 import { ReactComponent as BlackLeft } from "../Assets/black-left.svg";
 import { ReactComponent as BlackRight } from "../Assets/black-right.svg";
 import { apiInstance } from "../api/config/axios";
-import { LEAD } from "../api/constants";
+import { LEAD, ENDPOINTS } from "../api/constants";
 import DatePick from "./DatePick";
+import { useDateContext } from "../context/DateContext";
 
 
 const LeadsTable = () => {
@@ -26,6 +27,13 @@ const LeadsTable = () => {
   const [totalCount, setTotalCount] = useState(0);
   const [sortField, setSortField] = useState("listId");
   const [sortOption, setSortOption] = useState(1);
+  
+  // Campaign dropdown states
+  const [isCampaignOpen, setIsCampaignOpen] = useState(false);
+  const [campaigns, setCampaigns] = useState([]);
+  const { startDate: globalStartDate, endDate: globalEndDate, selectedCampaigns, updateSelectedCampaigns } = useDateContext();
+  const [campaignSearch, setCampaignSearch] = useState("");
+  const campaignDropdownRef = useRef();
 
   const getDefaultDates = () => {
     const endDate = new Date();
@@ -35,8 +43,36 @@ const LeadsTable = () => {
   };
 
   useEffect(() => {
-    const defaultDates = getDefaultDates();
-    setDateRange(defaultDates);
+    // Initialize dates from global context
+    if (globalStartDate && globalEndDate) {
+      setDateRange([globalStartDate, globalEndDate]);
+    } else {
+      const defaultDates = getDefaultDates();
+      setDateRange(defaultDates);
+    }
+    
+    // Fetch campaigns
+    apiInstance
+      .get(ENDPOINTS.DASHBOARD.GET_CAMPAIGNS)
+      .then((res) => setCampaigns(res.data.campaignNames || []))
+      .catch(() => setCampaigns([]));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Clear selectedCampaigns in localStorage on page refresh (mount)
+  useEffect(() => {
+    localStorage.setItem('selectedCampaigns', JSON.stringify([]));
+  }, []);
+
+  // Handle click outside campaign dropdown
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (campaignDropdownRef.current && !campaignDropdownRef.current.contains(event.target)) {
+        setIsCampaignOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   // Debounce search term
@@ -52,7 +88,33 @@ const LeadsTable = () => {
   const handleDateRangeChange = (startDate, endDate) => {
     setDateRange([startDate, endDate]);
     setPage(1); // Reset to first page when date range changes
-    fetchLeads(1, perPage, startDate.toISOString().split('T')[0], endDate.toISOString().split('T')[0], sortField, sortOption, debouncedSearchTerm);
+    fetchLeads(1, perPage, startDate.toISOString().split('T')[0], endDate.toISOString().split('T')[0], sortField, sortOption, debouncedSearchTerm, null);
+  };
+
+  // Handle campaign change
+  const handleCampaignChange = (campaignName) => {
+    if (campaignName === "All") {
+      updateSelectedCampaigns(["All"]);
+    } else {
+      let updated;
+      if (selectedCampaigns.includes("All")) {
+        updated = [campaignName];
+      } else if (selectedCampaigns.includes(campaignName)) {
+        updated = selectedCampaigns.filter((c) => c !== campaignName);
+      } else {
+        updated = [...selectedCampaigns, campaignName];
+      }
+      updateSelectedCampaigns(updated);
+    }
+    setPage(1); // Reset to first page when campaign changes
+    
+    // Fetch leads with new campaign selection
+    if (dateRange[0] && dateRange[1]) {
+      // Pass the campaign name directly to fetchLeads
+      const campaignToPass = campaignName === "All" ? null : campaignName;
+
+      fetchLeads(1, perPage, dateRange[0].toISOString().split('T')[0], dateRange[1].toISOString().split('T')[0], sortField, sortOption, debouncedSearchTerm, campaignToPass);
+    }
   };
 
   const fetchLeads = async (
@@ -62,7 +124,8 @@ const LeadsTable = () => {
     endDate,
     sortFieldParam,
     sortOptionParam,
-    searchTermParam
+    searchTermParam,
+    campaignParam
   ) => {
     try {
       setLoading(true);
@@ -71,6 +134,14 @@ const LeadsTable = () => {
       const endDateParam =
         endDate || (dateRange[1] ? dateRange[1].toISOString().split('T')[0] : null);
 
+      // Prepare campaign parameter - prioritize passed parameter over state
+      let campaignName = null;
+      if (campaignParam) {
+        campaignName = campaignParam;
+      } else if (selectedCampaigns.length > 0 && !selectedCampaigns.includes("All")) {
+        campaignName = selectedCampaigns.join(",");
+      }
+
       const url = LEAD.GET_LEAD(
         startDateParam,
         endDateParam,
@@ -78,7 +149,8 @@ const LeadsTable = () => {
         limit,
         sortOptionParam || sortOption,
         sortFieldParam || sortField,
-        searchTermParam || ""
+        searchTermParam || "",
+        campaignName
       );
 
       const response = await apiInstance.get(url);
@@ -116,9 +188,15 @@ const LeadsTable = () => {
 
   useEffect(() => {
     if (dateRange[0] && dateRange[1]) {
-      fetchLeads(page, perPage, dateRange[0].toISOString().split('T')[0], dateRange[1].toISOString().split('T')[0], sortField, sortOption, debouncedSearchTerm);
+      // Get current campaign selection
+      let currentCampaign = null;
+      if (selectedCampaigns.length > 0 && !selectedCampaigns.includes("All")) {
+        currentCampaign = selectedCampaigns.join(",");
+      }
+      fetchLeads(page, perPage, dateRange[0].toISOString().split('T')[0], dateRange[1].toISOString().split('T')[0], sortField, sortOption, debouncedSearchTerm, currentCampaign);
     }
-  }, [page, perPage, debouncedSearchTerm, sortField, sortOption, dateRange]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, perPage, debouncedSearchTerm, sortField, sortOption, dateRange, selectedCampaigns]);
 
   const toggleSelect = (id) => {
     setSelectedLeads((prev) =>
@@ -140,7 +218,120 @@ const LeadsTable = () => {
             <p className="text-[14px] leading-[14px] text-[#4B5675] font-normal"></p>
           </div>
         </div>
-        <div>{/* <DatePick onDateChange={handleDateRangeChange} /> */}</div>
+        <div className="flex items-center gap-2">
+          {/* Campaign Dropdown */}
+          <div
+            ref={campaignDropdownRef}
+            className="relative inline-flex w-48 max-[320px]:w-44"
+          >
+            <button
+              type="button"
+              onClick={() => setIsCampaignOpen((prev) => !prev)}
+              className="py-2 px-3 inline-flex items-center lg:h-10 md:h-13 justify-between w-full text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50"
+              aria-haspopup="menu"
+              aria-expanded={isCampaignOpen}
+            >
+              {/* Scrollable Text Wrapper */}
+              <div className="flex gap-1 overflow-x-auto whitespace-nowrap scrollbar-hide">
+                {(selectedCampaigns.length === 0 || selectedCampaigns.includes("All")) ? (
+                  "Select Campaign"
+                ) : (
+                  selectedCampaigns.map((name) => (
+                    <span
+                      key={name}
+                      className="inline-flex items-center bg-gray-200 rounded px-2 py-0.5 text-xs mr-1"
+                    >
+                      {name}
+                      <button
+                        type="button"
+                        className="ml-1 text-gray-500 hover:text-red-500"
+                        onClick={e => {
+                          e.stopPropagation();
+                          handleCampaignChange(name);
+                        }}
+                      >
+                        &times;
+                      </button>
+                    </span>
+                  ))
+                )}
+              </div>
+
+              <svg
+                className={`size-5 transition-transform ${isCampaignOpen ? "rotate-180" : ""
+                  }`}
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            </button>
+
+            {isCampaignOpen && (
+              <div
+                className="absolute z-10 mt-[3.5rem] w-full bg-white shadow-md rounded-lg"
+                role="menu"
+              >
+                <div className="p-1 space-y-0.5">
+                  {/* All Campaigns option */}
+                  <label className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 font-medium cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={selectedCampaigns.includes("All")}
+                      onChange={() => {
+                        handleCampaignChange("All");
+                        setIsCampaignOpen(false);
+                      }}
+                      className="form-checkbox"
+                    />
+                    All Campaigns
+                  </label>
+                  {/* Divider */}
+                  <div className="border-t border-gray-200"></div>
+                  <input
+                    type="text"
+                    placeholder="Search campaigns..."
+                    value={campaignSearch}
+                    onChange={e => setCampaignSearch(e.target.value)}
+                    className="w-full px-3 py-2 mb-2 border rounded focus:outline-none"
+                  />
+                  <div className="overflow-y-auto max-h-60">
+                    {campaigns
+                      .filter(name => name.toLowerCase().includes(campaignSearch.toLowerCase()))
+                      .map((name) => (
+                        <label
+                          key={name}
+                          className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 cursor-pointer"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={selectedCampaigns.includes(name)}
+                            onChange={() => {
+                              if (selectedCampaigns.includes("All")) {
+                                updateSelectedCampaigns([name]);
+                              } else {
+                                handleCampaignChange(name);
+                              }
+                            }}
+                            className="form-checkbox"
+                          />
+                          {name}
+                        </label>
+                      ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+          
+          {/* Date Picker */}
+          <DatePick onDateChange={handleDateRangeChange} />
+        </div>
       </div>
 
       <div className="bg-white flex items-center justify-center rounded-2xl">
@@ -162,9 +353,6 @@ const LeadsTable = () => {
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-400"></div>
                 </div>
               )}
-            </div>
-            <div className="absolute right-5">
-              <DatePick onDateChange={handleDateRangeChange} />
             </div>
           </div>
 

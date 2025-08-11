@@ -21,6 +21,16 @@ export const DateProvider = ({ children }) => {
 
   const [dateRange, setDateRange] = useState(getDefaultDates());
   const [startDate, endDate] = dateRange;
+  const [selectedCampaigns, setSelectedCampaigns] = useState(() => {
+    const saved = localStorage.getItem('selectedCampaigns');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return parsed;
+      } catch {}
+    }
+    return ["All"]; // Default to "All"
+  });
 
   // Load dates from localStorage on mount
   useEffect(() => {
@@ -37,6 +47,18 @@ export const DateProvider = ({ children }) => {
         console.error('Error parsing saved dates:', error);
       }
     }
+
+    const savedCampaigns = localStorage.getItem('selectedCampaigns');
+    if (savedCampaigns) {
+      try {
+        const parsedCampaigns = JSON.parse(savedCampaigns);
+        if (Array.isArray(parsedCampaigns)) {
+          setSelectedCampaigns(parsedCampaigns);
+        }
+      } catch (error) {
+        console.error('Error parsing saved campaigns:', error);
+      }
+    }
   }, []);
 
   // Save dates to localStorage whenever they change
@@ -50,11 +72,23 @@ export const DateProvider = ({ children }) => {
     setDateRange([newStartDate, newEndDate]);
   };
 
+  // Campaign selection persistence
+  const updateSelectedCampaigns = (campaignNamesArray) => {
+    setSelectedCampaigns(campaignNamesArray || []);
+    try {
+      localStorage.setItem('selectedCampaigns', JSON.stringify(campaignNamesArray || []));
+    } catch (error) {
+      console.error('Failed saving campaigns to localStorage:', error);
+    }
+  };
+
   const value = {
     dateRange,
     startDate,
     endDate,
     updateDateRange,
+    selectedCampaigns,
+    updateSelectedCampaigns,
   };
 
   return (

@@ -36,6 +36,8 @@ export const SALES = {
 
 // 📋 Leads Endpoints
 export const LEAD = {
+  
+
   // GET_LEAD: `${API_URL}/api/leads/filtered`,
   GET_LEAD: (
     startDate,
@@ -44,11 +46,16 @@ export const LEAD = {
     limit = 10,
     sortoption = 1,
     sortfield = "listId",
-    search = ""
+    search = "",
+    campaignName = null
   ) => {
+    console.log("API_URL", API_URL);
     let url = `${API_URL}/api/leads/filtered?startDate=${startDate}&endDate=${endDate}&page=${page}&limit=${limit}&sortfield=${sortfield}&sortoption=${sortoption}`;
     if (search) {
       url += `&search=${encodeURIComponent(search)}`;
+    }
+    if (campaignName) {
+      url += `&campaignName=${encodeURIComponent(campaignName)}`;
     }
     return url;
   },

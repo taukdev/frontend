@@ -13,6 +13,7 @@ import { ToastContainer } from "./ui/Toast";
 import { useNavigate } from "react-router-dom";
 import AOVOverTimeChart from "./AOVOverTimeChart";
 import CVROverTimeChart from './CVROverTimeChart';
+import { useDateContext } from "../context/DateContext";
 
 const StatCard = ({ icon: Icon, title, value, arrow, showArrow = true }) => (
   <div className="flex items-center justify-between gap-4 p-[18px] bg-white shadow-[0px_3px_4px_0px_#00000008] border overflow-hidden border-[#F1F1F4] rounded-[18px]">
@@ -39,11 +40,16 @@ const StatCard = ({ icon: Icon, title, value, arrow, showArrow = true }) => (
 );
 
 const Dashboard = () => {
+    // Clear selectedCampaigns in localStorage on page refresh (mount)
+    useEffect(() => {
+      localStorage.setItem('selectedCampaigns', JSON.stringify([]));
+    }, []);
   const [dateRange, setDateRange] = useState([null, null]);
   const [startDate, endDate] = dateRange;
   const [isCampaignOpen, setIsCampaignOpen] = useState(false);
-  const [isLeadListOpen, setIsLeadListOpen] = useState(false);
-  const [openToDate, setOpenToDate] = useState(new Date());
+  // reserved for future use - remove unused state to avoid lints
+  // const [isLeadListOpen, setIsLeadListOpen] = useState(false);
+  // const [openToDate, setOpenToDate] = useState(new Date());
   const [dashboardData, setDashboardData] = useState({
     totalSales: 0,
     totalRevenue: 0,
@@ -56,32 +62,28 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(false);
   const { toast, toasts, removeToast } = useToast();
   const [campaigns, setCampaigns] = useState([]);
-  const [leadLists, setLeadLists] = useState([]);
+  // const [leadLists, setLeadLists] = useState([]);
 
-  const [selectedCampaigns, setSelectedCampaigns] = useState([]);
-  const [selectedLeadList, setSelectedLeadList] = useState(null);
+  const { selectedCampaigns, updateSelectedCampaigns } = useDateContext();
+  // const [selectedLeadList, setSelectedLeadList] = useState(null);
   const campaignDropdownRef = useRef();
 
   const navigate = useNavigate();
-  const [loadingToday, setLoadingToday] = useState(false);
   const [campaignSearch, setCampaignSearch] = useState("");
 
   useEffect(() => {
-    if (startDate) {
-      setOpenToDate(startDate);
-    }
-
     // Fetch campaigns
     apiInstance
       .get(ENDPOINTS.DASHBOARD.GET_CAMPAIGNS)
       .then((res) => setCampaigns(res.data.campaignNames || []))
       .catch(() => setCampaigns([]));
 
-    // Fetch lead lists
-    apiInstance
-      .get(ENDPOINTS.DASHBOARD.GET_LEAD_LIST)
-      .then((res) => setLeadLists(res.data.leadList || []))
-      .catch(() => setLeadLists([]));
+    // Fetch lead lists (disabled for now)
+    // apiInstance
+    //   .get(ENDPOINTS.DASHBOARD.GET_LEAD_LIST)
+    //   .then((res) => setLeadLists(res.data.leadList || []))
+    //   .catch(() => setLeadLists([]));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchDashboardData = async (
@@ -137,9 +139,9 @@ const Dashboard = () => {
   const handleDateChange = (startDate, endDate) => {
     setDateRange([startDate, endDate]);
     if (selectedCampaigns.length === 0 || selectedCampaigns.includes("All")) {
-      fetchDashboardData(startDate, endDate, null, selectedLeadList?.id);
+      fetchDashboardData(startDate, endDate, null, null);
     } else {
-      fetchDashboardData(startDate, endDate, selectedCampaigns.join(","), selectedLeadList?.id);
+      fetchDashboardData(startDate, endDate, selectedCampaigns.join(","), null);
     }
   };
 
@@ -148,8 +150,8 @@ const Dashboard = () => {
 
   const handleCampaignChange = (name) => {
     if (name === "All") {
-      setSelectedCampaigns(["All"]);
-      fetchDashboardData(startDate, endDate, null, selectedLeadList?.id);
+      updateSelectedCampaigns(["All"]);
+      fetchDashboardData(startDate, endDate, null, null);
     } else {
       let updated;
       if (selectedCampaigns.includes("All")) {
@@ -159,12 +161,12 @@ const Dashboard = () => {
       } else {
         updated = [...selectedCampaigns, name];
       }
-      setSelectedCampaigns(updated);
+      updateSelectedCampaigns(updated);
       // If nothing selected, treat as 'All'
       if (updated.length === 0) {
-        fetchDashboardData(startDate, endDate, null, selectedLeadList?.id);
+        fetchDashboardData(startDate, endDate, null, null);
       } else {
-        fetchDashboardData(startDate, endDate, updated.join(","), selectedLeadList?.id);
+        fetchDashboardData(startDate, endDate, updated.join(","), null);
       }
     }
   };
@@ -185,27 +187,27 @@ const Dashboard = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleTodayClick = async () => {
-    setLoadingToday(true);
-    try {
-      const response = await apiInstance.get(ENDPOINTS.DASHBOARD.TODAY_LEAD_COUNT);
-      if (response.data) {
-        setDashboardData((prev) => ({
-          ...prev,
-          totalLeadCount: response.data.todayLeadCount ?? prev.totalLeadCount,
-          callableLeads: response.data.callableLeadCount ?? prev.callableLeads,
-        }));
-      }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to fetch today's lead count.",
-        variant: "destructive",
-      });
-    } finally {
-      setLoadingToday(false);
-    }
-  };
+  // const handleTodayClick = async () => {
+  //   setLoadingToday(true);
+  //   try {
+  //     const response = await apiInstance.get(ENDPOINTS.DASHBOARD.TODAY_LEAD_COUNT);
+  //     if (response.data) {
+  //       setDashboardData((prev) => ({
+  //         ...prev,
+  //         totalLeadCount: response.data.todayLeadCount ?? prev.totalLeadCount,
+  //         callableLeads: response.data.callableLeadCount ?? prev.callableLeads,
+  //       }));
+  //     }
+  //   } catch (error) {
+  //     toast({
+  //       title: "Error",
+  //       description: "Failed to fetch today's lead count.",
+  //       variant: "destructive",
+  //     });
+  //   } finally {
+  //     setLoadingToday(false);
+  //   }
+  // };
 
   return (
     <div className="xl:px-[40px] xl:py-[20px] p-4 bg-gray-100 space-y-6  overflow-y-auto">
@@ -238,7 +240,6 @@ const Dashboard = () => {
               type="button"
               onClick={() => {
                 setIsCampaignOpen((prev) => !prev);
-                setIsLeadListOpen(false);
               }}
               className="py-2 px-3 inline-flex items-center lg:h-10 md:h-13  justify-between w-full text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50"
               aria-haspopup="menu"
@@ -326,9 +327,8 @@ const Dashboard = () => {
                         checked={selectedCampaigns.includes(name)}
                         onChange={() => {
                           if (selectedCampaigns.includes("All")) {
-                         
-                            setSelectedCampaigns([name]);
-                            fetchDashboardData(startDate, endDate, name, selectedLeadList?.id);
+                            updateSelectedCampaigns([name]);
+                            fetchDashboardData(startDate, endDate, name, null);
                           } else {
                             handleCampaignChange(name);
                           }
@@ -357,7 +357,7 @@ const Dashboard = () => {
           icon={TotalLead}
           title="Total Leads"
           value={
-            loading || loadingToday
+            loading
               ? "Loading..."
               : (dashboardData.totalLeadCount ?? 0).toLocaleString()
           }
