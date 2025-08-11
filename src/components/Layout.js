@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 // import { ReactComponent as ProfileIcon } from "../Assets/Profile.svg";
 import { ReactComponent as DashBoardIcon } from "../Assets/DashBoard.svg";
 import { ReactComponent as LeadIcon } from "../Assets/Lead.svg";
-import { ReactComponent as CollapsibleLeadIcon } from "../Assets/CallableLead.svg";
+
 import { ReactComponent as SalesIcon } from "../Assets/Sales.svg";
 import { ReactComponent as SettingIcon } from "../Assets/Setting.svg";
 import { ReactComponent as LogOutIcon } from "../Assets/LogOut.svg";
