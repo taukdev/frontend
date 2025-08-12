@@ -26,7 +26,8 @@ apiInstance.interceptors.request.use(
 apiInstance.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (error.response?.status === 401) {
+        // Don't redirect for users API endpoint on 401
+        if (error.response?.status === 401 && !error.config.url.includes('/users/masteradmin/users')) {
             localStorage.removeItem('token');
             window.location.href = '/login';
         }

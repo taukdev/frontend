@@ -32,6 +32,17 @@ export const DateProvider = ({ children }) => {
     return ["All"]; // Default to "All"
   });
 
+  const [selectedUsers, setSelectedUsers] = useState(() => {
+    const saved = localStorage.getItem('selectedUsers');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return parsed;
+      } catch {}
+    }
+    return ["All"]; // Default to "All"
+  });
+
   // Load dates from localStorage on mount
   useEffect(() => {
     // Try to load dates from localStorage first
@@ -75,6 +86,19 @@ export const DateProvider = ({ children }) => {
         console.error('Error parsing saved campaigns:', error);
       }
     }
+
+    // const savedUsers = localStorage.getItem('selectedUsers');
+    // if (savedUsers) {
+    //   try {
+    //     const parsedUsers = JSON.parse(savedUsers);
+    //     if (Array.isArray(parsedUsers)) {
+    //       setSelectedUsers(parsedUsers);
+     
+    //     }
+    //   } catch (error) {
+    //     console.error('Error parsing saved users:', error);
+    //   }
+    // }
   }, []);
 
   // Save dates to localStorage whenever they change
@@ -98,6 +122,16 @@ export const DateProvider = ({ children }) => {
     }
   };
 
+  // User selection persistence
+  const updateSelectedUsers = (userIdsArray) => {
+    setSelectedUsers(userIdsArray || []);
+    try {
+      localStorage.setItem('selectedUsers', JSON.stringify(userIdsArray || []));
+    } catch (error) {
+      console.error('Failed saving users to localStorage:', error);
+    }
+  };
+
   const value = {
     dateRange,
     startDate,
@@ -105,6 +139,8 @@ export const DateProvider = ({ children }) => {
     updateDateRange,
     selectedCampaigns,
     updateSelectedCampaigns,
+    selectedUsers,
+    updateSelectedUsers,
   };
 
   return (

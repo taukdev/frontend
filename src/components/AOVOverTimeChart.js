@@ -12,7 +12,7 @@ const formatToYYYYMMDD = (date) => {
     return `${year}-${month}-${day}`;
 };
 
-const AOVOverTimeChart = ({ startDate, endDate, selectedCampaign }) => {
+const AOVOverTimeChart = ({ startDate, endDate, selectedCampaign, selectedUsers }) => {
     const [dataAOV, setDataAOV] = useState([]);
 
     useEffect(() => {
@@ -27,11 +27,17 @@ const AOVOverTimeChart = ({ startDate, endDate, selectedCampaign }) => {
                 if (Array.isArray(selectedCampaign) && selectedCampaign.length > 0 && !selectedCampaign.includes("All")) {
                     campaignNameParam = selectedCampaign.join(",");
                 }
+                // Determine userId param
+                let userIdParam = undefined;
+                if (Array.isArray(selectedUsers) && selectedUsers.length > 0 && !selectedUsers.includes("All")) {
+                    userIdParam = selectedUsers.join(",");
+                }
                 const params = {
                     startDate: formatToYYYYMMDD(startDate),
                     endDate: formatToYYYYMMDD(endDate),
                 };
                 if (campaignNameParam) params.campaignName = campaignNameParam;
+                if (userIdParam) params.userId = userIdParam;
                 const response = await axios.get(
                     ENDPOINTS.DASHBOARD.AOV_OVER_TIME,
                     {
@@ -54,7 +60,7 @@ const AOVOverTimeChart = ({ startDate, endDate, selectedCampaign }) => {
         };
 
         fetchChartData();
-    }, [startDate, endDate, selectedCampaign]);
+    }, [startDate, endDate, selectedCampaign, selectedUsers]);
 
     return (
         <div className="bg-white rounded-[18px] shadow-[0px_3px_4px_0px_#00000008] border border-[#F1F1F4]">

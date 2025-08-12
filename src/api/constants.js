@@ -7,6 +7,7 @@ export const AUTH = {
   LOGIN: `${API_URL}/api/auth/login`,
   LOGOUT: `${API_URL}/api/auth/admin/logout`,
   REFRESH_TOKEN: `${API_URL}/api/auth/admin/refresh-token`,
+  GET_USERS: `${API_URL}/api/dashboard/masteradmin/users`,
 };
 
 // 📊 Dashboard Endpoints
@@ -47,7 +48,8 @@ export const LEAD = {
     sortoption = 1,
     sortfield = "listId",
     search = "",
-    campaignName = null
+    campaignName = null,
+    userId = null
   ) => {
     console.log("API_URL", API_URL);
     let url = `${API_URL}/api/leads/filtered?startDate=${startDate}&endDate=${endDate}&page=${page}&limit=${limit}&sortfield=${sortfield}&sortoption=${sortoption}`;
@@ -56,6 +58,9 @@ export const LEAD = {
     }
     if (campaignName) {
       url += `&campaignName=${encodeURIComponent(campaignName)}`;
+    }
+    if (userId) {
+      url += `&userId=${encodeURIComponent(userId)}`;
     }
     return url;
   },

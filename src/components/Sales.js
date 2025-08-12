@@ -11,6 +11,7 @@ import { apiInstance } from "../api/config/axios";
 import { SALES, ENDPOINTS } from "../api/constants";
 import { useNavigate } from "react-router-dom";
 import { useDateContext } from "../context/DateContext";
+import { isMasterAdmin } from "../utils/auth";
 
 function formatDateDMY(dateString) {
   if (!dateString) return '-';
@@ -44,9 +45,15 @@ const SalesTable = () => {
   // Campaign dropdown states
   const [isCampaignOpen, setIsCampaignOpen] = useState(false);
   const [campaigns, setCampaigns] = useState([]);
-  const { startDate: globalStartDate, endDate: globalEndDate, selectedCampaigns, updateSelectedCampaigns } = useDateContext();
+  const { startDate: globalStartDate, endDate: globalEndDate, selectedCampaigns, updateSelectedCampaigns, selectedUsers, updateSelectedUsers } = useDateContext();
   const [campaignSearch, setCampaignSearch] = useState("");
   const campaignDropdownRef = useRef();
+  
+  // User dropdown states
+  const [isUserOpen, setIsUserOpen] = useState(false);
+  const [users, setUsers] = useState([]);
+  const [userSearch, setUserSearch] = useState("");
+  const userDropdownRef = useRef();
 
   // Calculate default dates (last 5 days from today)
   const getDefaultDates = () => {
@@ -72,6 +79,20 @@ const SalesTable = () => {
       .get(ENDPOINTS.DASHBOARD.GET_CAMPAIGNS)
       .then((res) => setCampaigns(res.data.campaignNames || []))
       .catch(() => setCampaigns([]));
+
+    // Fetch users if user is masteradmin
+    if (isMasterAdmin()) {
+      apiInstance
+        .get(ENDPOINTS.AUTH.GET_USERS)
+        .then((res) => {
+          console.log("Users fetched successfully:", res.data);
+          setUsers(res.data.data?.users || []);
+        })
+        .catch((error) => {
+          console.error("Error fetching users:", error);
+          setUsers([]);
+        });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -81,12 +102,15 @@ const SalesTable = () => {
       if (campaignDropdownRef.current && !campaignDropdownRef.current.contains(event.target)) {
         setIsCampaignOpen(false);
       }
+      if (userDropdownRef.current && !userDropdownRef.current.contains(event.target)) {
+        setIsUserOpen(false);
+      }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const fetchSales = async (page, limit, startDate, endDate, sortFieldParam, sortOptionParam, campaignParam) => {
+  const fetchSales = async (page, limit, startDate, endDate, sortFieldParam, sortOptionParam, campaignParam, userParam) => {
     try {
       setLoading(true);
       const formatToDateString = (date) => {
@@ -105,6 +129,14 @@ const SalesTable = () => {
         campaignName = campaignParam;
       } else if (selectedCampaigns.length > 0 && !selectedCampaigns.includes("All")) {
         campaignName = selectedCampaigns.join(",");
+      }
+      
+      // Prepare user parameter
+      let userId = null;
+      if (userParam) {
+        userId = userParam;
+      } else if (selectedUsers.length > 0 && !selectedUsers.includes("All")) {
+        userId = selectedUsers.join(",");
       }
       
       console.log(startDateParam, typeof startDateParam);
@@ -126,8 +158,14 @@ const SalesTable = () => {
         finalUrl += `&campaignName=${encodeURIComponent(campaignName)}`;
       }
 
+      // Add user parameter if needed
+      if (userId) {
+        finalUrl += `&userId=${encodeURIComponent(userId)}`;
+      }
+
       console.log("API URL:", finalUrl);
       console.log("Campaign Parameter:", campaignName);
+      console.log("User Parameter:", userId);
 
       const response = await apiInstance.get(finalUrl);
       const result = response.data;
@@ -173,6 +211,51 @@ const SalesTable = () => {
     }
   };
 
+  // Handle user selection
+  const handleUserChange = (userId) => {
+    if (userId === "All") {
+      updateSelectedUsers(["All"]);
+    } else {
+      let updated;
+      if (selectedUsers.includes("All")) {
+        updated = [userId];
+      } else if (selectedUsers.includes(userId)) {
+        updated = selectedUsers.filter((u) => u !== userId);
+      } else {
+        updated = [...selectedUsers, userId];
+      }
+      updateSelectedUsers(updated);
+    }
+    setPage(1); // Reset to first page when user changes
+    
+    // Fetch sales with new user selection
+    if (dateRange[0] && dateRange[1]) {
+      const userToPass = userId === "All" ? null : userId;
+      const campaignToPass = selectedCampaigns.length === 0 || selectedCampaigns.includes("All") ? null : selectedCampaigns.join(",");
+      
+      fetchSales(1, perPage, dateRange[0].toISOString().split('T')[0], dateRange[1].toISOString().split('T')[0], sortField, sortOption, campaignToPass, userToPass);
+    }
+  };
+
+  // Get available campaigns based on selected users
+  const getAvailableCampaigns = () => {
+    // If no users selected or "All" selected, show all campaigns
+    if (selectedUsers.length === 0 || selectedUsers.includes("All")) {
+      return campaigns;
+    }
+    
+    // Get campaigns from selected users
+    const userCampaigns = new Set();
+    selectedUsers.forEach(userId => {
+      const user = users.find(u => u._id === userId);
+      if (user && user.campaignName && Array.isArray(user.campaignName)) {
+        user.campaignName.forEach(campaign => userCampaigns.add(campaign));
+      }
+    });
+    
+    return Array.from(userCampaigns);
+  };
+
   const handleSort = (field) => {
     if (sortField === field) {
       setSortOption((prev) => (prev === 1 ? -1 : 1));
@@ -191,6 +274,11 @@ const SalesTable = () => {
       if (selectedCampaigns.length > 0 && !selectedCampaigns.includes("All")) {
         currentCampaign = selectedCampaigns.join(",");
       }
+      // Get current user selection
+      let currentUser = null;
+      if (selectedUsers.length > 0 && !selectedUsers.includes("All")) {
+        currentUser = selectedUsers.join(",");
+      }
       fetchSales(
         page,
         perPage,
@@ -198,11 +286,12 @@ const SalesTable = () => {
         dateRange[1].toISOString().split('T')[0],
         sortField,
         sortOption,
-        currentCampaign
+        currentCampaign,
+        currentUser
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, perPage, searchTerm, sortField, sortOption, selectedCampaigns]); // Re-fetch when page, perPage, search term, or campaigns changes
+  }, [page, perPage, searchTerm, sortField, sortOption, selectedCampaigns, selectedUsers]); // Re-fetch when page, perPage, search term, or campaigns changes
 
   const toggleSelect = (id) => {
     setSelectedLeads((prev) =>
@@ -312,7 +401,7 @@ const SalesTable = () => {
                     className="w-full px-3 py-2 mb-2 border rounded focus:outline-none"
                   />
                   <div className="overflow-y-auto max-h-60">
-                    {campaigns
+                    {getAvailableCampaigns()
                       .filter(name => name.toLowerCase().includes(campaignSearch.toLowerCase()))
                       .map((name) => (
                         <label
@@ -339,6 +428,124 @@ const SalesTable = () => {
               </div>
             )}
           </div>
+
+          {/* User Dropdown - Only show for masteradmin */}
+          {isMasterAdmin() && (
+            <div
+              ref={userDropdownRef}
+              className="relative inline-flex w-48 max-[320px]:w-44"
+            >
+              <button
+                type="button"
+                onClick={() => {
+                  setIsUserOpen((prev) => !prev);
+                }}
+                className="py-2 px-3 inline-flex items-center lg:h-10 md:h-13 justify-between w-full text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50"
+                aria-haspopup="menu"
+                aria-expanded={isUserOpen}
+              >
+                {/* Scrollable Text Wrapper */}
+                <div className="flex gap-1 overflow-x-auto whitespace-nowrap scrollbar-hide">
+                  {(selectedUsers.length === 0 || selectedUsers.includes("All")) ? (
+                    "Select User"
+                  ) : (
+                    selectedUsers.map((userId) => {
+                      const user = users.find(u => u._id === userId);
+                      return (
+                        <span
+                          key={userId}
+                          className="inline-flex items-center bg-gray-200 rounded px-2 py-0.5 text-xs mr-1"
+                        >
+                          {user ? user.fullName : userId}
+                          <button
+                            type="button"
+                            className="ml-1 text-gray-500 hover:text-red-500"
+                            onClick={e => {
+                              e.stopPropagation();
+                              handleUserChange(userId);
+                            }}
+                          >
+                            &times;
+                          </button>
+                        </span>
+                      );
+                    })
+                  )}
+                </div>
+
+                <svg
+                  className={`size-5 transition-transform ${isUserOpen ? "rotate-180" : ""}`}
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="m6 9 6 6 6-6" />
+                </svg>
+              </button>
+
+              {isUserOpen && (
+                <div
+                  className="absolute z-10 mt-[3.5rem] w-full bg-white shadow-md rounded-lg"
+                  role="menu"
+                >
+                  <div className="p-1 space-y-0.5">
+                    {/* All Users option */}
+                    <label className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 font-medium cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={selectedUsers.includes("All")}
+                        onChange={() => {
+                          handleUserChange("All");
+                          setIsUserOpen(false);
+                        }}
+                        className="form-checkbox"
+                      />
+                      All Users
+                    </label>
+                    {/* Divider */}
+                    <div className="border-t border-gray-200"></div>
+                    <input
+                      type="text"
+                      placeholder="Search users..."
+                      value={userSearch}
+                      onChange={e => setUserSearch(e.target.value)}
+                      className="w-full px-3 py-2 mb-2 border rounded focus:outline-none"
+                    />
+                    <div className="overflow-y-auto max-h-60">
+                      {users
+                        .filter(user => user.fullName.toLowerCase().includes(userSearch.toLowerCase()))
+                        .map((user) => (
+                          <label
+                            key={user._id}
+                            className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 cursor-pointer"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={selectedUsers.includes(user._id)}
+                              onChange={() => {
+                                if (selectedUsers.includes("All")) {
+                                  updateSelectedUsers([user._id]);
+                                  const campaignParam = selectedCampaigns.length === 0 || selectedCampaigns.includes("All") ? null : selectedCampaigns.join(",");
+                                  fetchSales(1, perPage, dateRange[0].toISOString().split('T')[0], dateRange[1].toISOString().split('T')[0], sortField, sortOption, campaignParam, user._id);
+                                } else {
+                                  handleUserChange(user._id);
+                                }
+                              }}
+                              className="form-checkbox"
+                            />
+                            {user.fullName}
+                          </label>
+                        ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
           
           {/* Date Picker */}
           <DatePick onDateChange={handleDateRangeChange} />
