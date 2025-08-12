@@ -40,10 +40,6 @@ const StatCard = ({ icon: Icon, title, value, arrow, showArrow = true }) => (
 );
 
 const Dashboard = () => {
-    // Clear selectedCampaigns in localStorage on page refresh (mount)
-    useEffect(() => {
-      localStorage.setItem('selectedCampaigns', JSON.stringify([]));
-    }, []);
   const [dateRange, setDateRange] = useState([null, null]);
   const [startDate, endDate] = dateRange;
   const [isCampaignOpen, setIsCampaignOpen] = useState(false);
@@ -186,28 +182,6 @@ const Dashboard = () => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  // const handleTodayClick = async () => {
-  //   setLoadingToday(true);
-  //   try {
-  //     const response = await apiInstance.get(ENDPOINTS.DASHBOARD.TODAY_LEAD_COUNT);
-  //     if (response.data) {
-  //       setDashboardData((prev) => ({
-  //         ...prev,
-  //         totalLeadCount: response.data.todayLeadCount ?? prev.totalLeadCount,
-  //         callableLeads: response.data.callableLeadCount ?? prev.callableLeads,
-  //       }));
-  //     }
-  //   } catch (error) {
-  //     toast({
-  //       title: "Error",
-  //       description: "Failed to fetch today's lead count.",
-  //       variant: "destructive",
-  //     });
-  //   } finally {
-  //     setLoadingToday(false);
-  //   }
-  // };
 
   return (
     <div className="xl:px-[40px] xl:py-[20px] p-4 bg-gray-100 space-y-6  overflow-y-auto">

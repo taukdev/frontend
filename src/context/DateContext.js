@@ -34,19 +34,35 @@ export const DateProvider = ({ children }) => {
 
   // Load dates from localStorage on mount
   useEffect(() => {
-    const savedDates = localStorage.getItem('selectedDateRange');
-    if (savedDates) {
+    // Try to load dates from localStorage first
+    const savedDateRange = localStorage.getItem('selectedDateRange');
+    if (savedDateRange) {
       try {
-        const parsedDates = JSON.parse(savedDates);
-        // Convert string dates back to Date objects
-        const convertedDates = parsedDates.map(dateStr => new Date(dateStr));
-        if (convertedDates[0] && convertedDates[1] && !isNaN(convertedDates[0].getTime()) && !isNaN(convertedDates[1].getTime())) {
-          setDateRange(convertedDates);
+        const parsedDates = JSON.parse(savedDateRange);
+        if (Array.isArray(parsedDates) && parsedDates.length === 2) {
+          const startDate = new Date(parsedDates[0]);
+          const endDate = new Date(parsedDates[1]);
+          // Check if dates are valid
+          if (!isNaN(startDate.getTime()) && !isNaN(endDate.getTime())) {
+            setDateRange([startDate, endDate]);
+            return; // Exit early if we successfully loaded from localStorage
+          }
         }
       } catch (error) {
-        console.error('Error parsing saved dates:', error);
+        console.error('Error parsing saved date range:', error);
       }
     }
+    
+    // Fallback to default dates if localStorage is empty or invalid
+    setDateRange(getDefaultDates());
+    // Save default dates to localStorage
+    localStorage.setItem(
+      'selectedDateRange',
+      JSON.stringify([
+        getDefaultDates()[0].toISOString(),
+        getDefaultDates()[1].toISOString()
+      ])
+    );
 
     const savedCampaigns = localStorage.getItem('selectedCampaigns');
     if (savedCampaigns) {

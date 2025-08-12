@@ -59,11 +59,6 @@ const LeadsTable = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Clear selectedCampaigns in localStorage on page refresh (mount)
-  useEffect(() => {
-    localStorage.setItem('selectedCampaigns', JSON.stringify([]));
-  }, []);
-
   // Handle click outside campaign dropdown
   useEffect(() => {
     const handleClickOutside = (event) => {
