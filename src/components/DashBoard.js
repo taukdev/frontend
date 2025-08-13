@@ -1,11 +1,11 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { ReactComponent as TotalLead } from "../Assets/TotalLead.svg";
 import { ReactComponent as CollapsibleLeadWithBackground } from "../Assets/CallableLeadWithBackground.svg";
 import { ReactComponent as TotalSale } from "../Assets/TotalSale.svg";
 import { ReactComponent as SaleRevenue } from "../Assets/SaleRevenue.svg";
 import { ReactComponent as ConversionRate } from "../Assets/ConversionRate.svg";
 import { ReactComponent as AOV } from "../Assets/AOV.svg";
-import DatePick from "./DatePick";
+import FilterHeader from "./FilterHeader";
 import { apiInstance } from "../api/config/axios";
 import { ENDPOINTS } from "../api/constants";
 import { useToast } from "../hooks/use-toast";
@@ -13,8 +13,7 @@ import { ToastContainer } from "./ui/Toast";
 import { useNavigate } from "react-router-dom";
 import AOVOverTimeChart from "./AOVOverTimeChart";
 import CVROverTimeChart from './CVROverTimeChart';
-import { useDateContext } from "../context/DateContext";
-import { isMasterAdmin } from "../utils/auth";
+import { useFilter } from "../hooks/useFilter";
 
 const StatCard = ({ icon: Icon, title, value, arrow, showArrow = true }) => (
   <div className="flex items-center justify-between gap-4 p-[18px] bg-white shadow-[0px_3px_4px_0px_#00000008] border overflow-hidden border-[#F1F1F4] rounded-[18px]">
@@ -41,12 +40,9 @@ const StatCard = ({ icon: Icon, title, value, arrow, showArrow = true }) => (
 );
 
 const Dashboard = () => {
-  const [dateRange, setDateRange] = useState([null, null]);
+  const { dateRange, selectedCampaigns, selectedUsers } = useFilter();
   const [startDate, endDate] = dateRange;
-  const [isCampaignOpen, setIsCampaignOpen] = useState(false);
-  // reserved for future use - remove unused state to avoid lints
-  // const [isLeadListOpen, setIsLeadListOpen] = useState(false);
-  // const [openToDate, setOpenToDate] = useState(new Date());
+  
   const [dashboardData, setDashboardData] = useState({
     totalSales: 0,
     totalRevenue: 0,
@@ -55,74 +51,12 @@ const Dashboard = () => {
     callableLeads: 0,
     conversionRate: 0,
   });
-  console.log(dashboardData);
+  
   const [loading, setLoading] = useState(false);
   const { toast, toasts, removeToast } = useToast();
-  const [campaigns, setCampaigns] = useState([]);
-  // const [leadLists, setLeadLists] = useState([]);
-
-  const { selectedCampaigns, updateSelectedCampaigns, selectedUsers, updateSelectedUsers } = useDateContext();
-  // const [selectedLeadList, setSelectedLeadList] = useState(null);
-  const campaignDropdownRef = useRef();
-  const userDropdownRef = useRef();
-
   const navigate = useNavigate();
-  const [campaignSearch, setCampaignSearch] = useState("");
-  const [userSearch, setUserSearch] = useState("");
-  const [users, setUsers] = useState([]);
-  const [isUserOpen, setIsUserOpen] = useState(false);
 
-  useEffect(() => {
-    // Fetch campaigns
-    apiInstance
-      .get(ENDPOINTS.DASHBOARD.GET_CAMPAIGNS)
-      .then((res) => setCampaigns(res.data.campaignNames || []))
-      .catch(() => setCampaigns([]));
-
-    // Fetch users if user is masteradmin
-    const userRole = isMasterAdmin();
-    console.log("User role check:", userRole);
-    
-    if (userRole) {
-      console.log("Fetching users for masteradmin...");
-      apiInstance
-        .get(ENDPOINTS.AUTH.GET_USERS)
-        .then((res) => {
-          console.log("Users fetched successfully:", res.data);
-          setUsers(res.data.data?.users || []);
-        })
-        .catch((error) => {
-          console.error("Error fetching users:", error);
-          // Don't redirect on error, just set empty array
-          setUsers([]);
-          // Only show toast for non-auth errors
-          if (error.response?.status !== 401) {
-            toast({
-              title: "Warning",
-              description: "Could not load users. Some features may be limited.",
-              variant: "default",
-            });
-          }
-        });
-    } else {
-      console.log("User is not masteradmin, skipping users fetch");
-    }
-
-    // Fetch lead lists (disabled for now)
-    // apiInstance
-    //   .get(ENDPOINTS.DASHBOARD.GET_LEAD_LIST)
-    //   .then((res) => setLeadLists(res.data.leadList || []))
-    //   .catch(() => setLeadLists([]));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const fetchDashboardData = async (
-    startDate,
-    endDate,
-    campaignName,
-    listId,
-    userId
-  ) => {
+  const fetchDashboardData = async () => {
     try {
       setLoading(true);
 
@@ -139,10 +73,12 @@ const Dashboard = () => {
 
       // Build query string
       let url = `${ENDPOINTS.DASHBOARD.GET_STATS}?startDate=${formattedStartDate}&endDate=${formattedEndDate}`;
-      if (campaignName)
-        url += `&campaignName=${encodeURIComponent(campaignName)}`;
-      if (listId) url += `&listId=${listId}`;
-      if (userId) url += `&userId=${userId}`;
+      
+      const campaignParam = selectedCampaigns.length === 0 || selectedCampaigns.includes("All") ? null : selectedCampaigns.join(",");
+      const userParam = selectedUsers.length === 0 || selectedUsers.includes("All") ? null : selectedUsers.join(",");
+      
+      if (campaignParam) url += `&campaignName=${encodeURIComponent(campaignParam)}`;
+      if (userParam) url += `&userId=${encodeURIComponent(userParam)}`;
 
       const response = await apiInstance.get(url);
 
@@ -168,351 +104,19 @@ const Dashboard = () => {
     }
   };
 
-  const handleDateChange = (startDate, endDate) => {
-    setDateRange([startDate, endDate]);
-    const campaignParam = selectedCampaigns.length === 0 || selectedCampaigns.includes("All") ? null : selectedCampaigns.join(",");
-    const userParam = selectedUsers.length === 0 || selectedUsers.includes("All") ? null : selectedUsers.join(",");
-    fetchDashboardData(startDate, endDate, campaignParam, null, userParam);
-  };
-
-  // Update handleCampaignChange to handle multi-select logic
-  const handleCampaignChange = (name) => {
-    if (name === "All") {
-      updateSelectedCampaigns(["All"]);
-      const userParam = selectedUsers.length === 0 || selectedUsers.includes("All") ? null : selectedUsers.join(",");
-      fetchDashboardData(startDate, endDate, null, null, userParam);
-    } else {
-      let updated;
-      if (selectedCampaigns.includes("All")) {
-        updated = [name];
-      } else if (selectedCampaigns.includes(name)) {
-        updated = selectedCampaigns.filter((c) => c !== name);
-      } else {
-        updated = [...selectedCampaigns, name];
-      }
-      updateSelectedCampaigns(updated);
-      // If nothing selected, treat as 'All'
-      const campaignParam = updated.length === 0 ? null : updated.join(",");
-      const userParam = selectedUsers.length === 0 || selectedUsers.includes("All") ? null : selectedUsers.join(",");
-      fetchDashboardData(startDate, endDate, campaignParam, null, userParam);
-    }
-  };
-
-  // Handle user selection
-  const handleUserChange = (userId) => {
-    if (userId === "All") {
-      updateSelectedUsers(["All"]);
-      const campaignParam = selectedCampaigns.length === 0 || selectedCampaigns.includes("All") ? null : selectedCampaigns.join(",");
-      fetchDashboardData(startDate, endDate, campaignParam, null, null);
-    } else {
-      let updated;
-      if (selectedUsers.includes("All")) {
-        updated = [userId];
-      } else if (selectedUsers.includes(userId)) {
-        updated = selectedUsers.filter((u) => u !== userId);
-      } else {
-        updated = [...selectedUsers, userId];
-      }
-      updateSelectedUsers(updated);
-      
-      // If nothing selected, treat as 'All'
-      const campaignParam = selectedCampaigns.length === 0 || selectedCampaigns.includes("All") ? null : selectedCampaigns.join(",");
-      const userParam = updated.length === 0 ? null : updated.join(",");
-      fetchDashboardData(startDate, endDate, campaignParam, null, userParam);
-    }
-  };
-
-  // Get available campaigns based on selected users
-  const getAvailableCampaigns = () => {
-    // If no users selected or "All" selected, show all campaigns
-    if (selectedUsers.length === 0 || selectedUsers.includes("All")) {
-      return campaigns;
-    }
-    
-    // Get campaigns from selected users
-    const userCampaigns = new Set();
-    selectedUsers.forEach(userId => {
-      const user = users.find(u => u._id === userId);
-      if (user && user.campaignName && Array.isArray(user.campaignName)) {
-        user.campaignName.forEach(campaign => userCampaigns.add(campaign));
-      }
-    });
-    
-    return Array.from(userCampaigns);
-  };
-
-  // const handleLeadListChange = (list) => {
-  //   setSelectedLeadList(list);
-  //   fetchDashboardData(startDate, endDate, selectedCampaign, list.id);
-  // };
-
+  // Fetch dashboard data when filters change
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (campaignDropdownRef.current && !campaignDropdownRef.current.contains(event.target)) {
-        setIsCampaignOpen(false);
-      }
-      if (userDropdownRef.current && !userDropdownRef.current.contains(event.target)) {
-        setIsUserOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+    if (startDate && endDate) {
+      fetchDashboardData();
+    }
+  }, [startDate, endDate, selectedCampaigns, selectedUsers]);
 
   return (
-    <div className="xl:px-[40px] xl:py-[20px] p-4 bg-gray-100 space-y-6  overflow-y-auto">
-      <div className="flex flex-col lg:flex-row justify-between items-start xl:items-center mb-6 gap-2">
-        {/* Heading Section */}
-        <div className="flex items-start w-full gap-2">
-          <div>
-            <h2 className="text-md md:text-[20px] w-full leading-[20px] mb-[5px] font-medium text-[#071437]">
-              Tauk Client Dashboard
-            </h2>
-            <p className="text-[12px] md:text-[14px] leading-[14px] text-[#4B5675] font-normal"></p>
-          </div>
-        </div>
-
-        {/* Dropdowns and Date Picker */}
-        <div className="flex justify-end items-center lg:flex-row gap-2 w-full ">
-          {/* <div>
-            <button
-              type="button"
-              onClick={handleTodayClick}
-              className="py-2 px-3 inline-flex items-center md:w-28 lg:h-10  md:h-13 w-full text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50"
-            > {loadingToday ? "Loading..." : "Today Leads"}</button>
-          </div> */}
-          {/* Campaign Dropdown */}
-          <div
-            ref={campaignDropdownRef}
-            className="relative inline-flex w-48 max-[320px]:w-44 "
-          >
-            <button
-              type="button"
-              onClick={() => {
-                setIsCampaignOpen((prev) => !prev);
-              }}
-              className="py-2 px-3 inline-flex items-center lg:h-10 md:h-13  justify-between w-full text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50"
-              aria-haspopup="menu"
-              aria-expanded={isCampaignOpen}
-            >
-              {/* Scrollable Text Wrapper */}
-              <div className="flex gap-1 overflow-x-auto whitespace-nowrap scrollbar-hide">
-                {(selectedCampaigns.length === 0 || selectedCampaigns.includes("All")) ? (
-                  "Select Campaign"
-                ) : (
-                  selectedCampaigns.map((name) => (
-                    <span
-                      key={name}
-                      className="inline-flex items-center bg-gray-200 rounded px-2 py-0.5 text-xs mr-1"
-                    >
-                      {name}
-                      <button
-                        type="button"
-                        className="ml-1 text-gray-500 hover:text-red-500"
-                        onClick={e => {
-                          e.stopPropagation();
-                          handleCampaignChange(name);
-                        }}
-                      >
-                        &times;
-                      </button>
-                    </span>
-                  ))
-                )}
-              </div>
-
-              <svg
-                className={`size-5 transition-transform ${isCampaignOpen ? "rotate-180" : ""
-                  }`}
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="m6 9 6 6 6-6" />
-              </svg>
-            </button>
-
-            {isCampaignOpen && (
-              <div
-                className="absolute z-10 mt-[3.5rem] w-full bg-white shadow-md rounded-lg "
-                role="menu"
-              >
-                <div className="p-1 space-y-0.5">
-                  {/* All Campaigns option */}
-                  <label className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 font-medium cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={selectedCampaigns.includes("All")}
-                      onChange={() => {
-                        handleCampaignChange("All");
-                        setIsCampaignOpen(false);
-                      }}
-                      className="form-checkbox"
-                    />
-                    All Campaigns
-                  </label>
-                  {/* Divider */}
-                  <div className="border-t border-gray-200"></div>
-                  <input
-                    type="text"
-                    placeholder="Search campaigns..."
-                    value={campaignSearch}
-                    onChange={e => setCampaignSearch(e.target.value)}
-                    className="w-full px-3 py-2 mb-2 border rounded focus:outline-none"
-                  />
-                  <div className=" overflow-y-auto max-h-60">
-                  {getAvailableCampaigns()
-                    .filter(name => name.toLowerCase().includes(campaignSearch.toLowerCase()))
-                    .map((name) => (
-                    <label
-                      key={name}
-                      className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 cursor-pointer"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={selectedCampaigns.includes(name)}
-                        onChange={() => {
-                          handleCampaignChange(name);
-                        }}
-                        className="form-checkbox"
-                      />
-                      {name}
-                    </label>
-                  ))}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* User Dropdown - Only show for masteradmin */}
-          {isMasterAdmin() && (
-            <div
-              ref={userDropdownRef}
-              className="relative inline-flex w-48 max-[320px]:w-44"
-            >
-              <button
-                type="button"
-                onClick={() => {
-                  setIsUserOpen((prev) => !prev);
-                }}
-                className="py-2 px-3 inline-flex items-center lg:h-10 md:h-13 justify-between w-full text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50"
-                aria-haspopup="menu"
-                aria-expanded={isUserOpen}
-              >
-                {/* Scrollable Text Wrapper */}
-                <div className="flex gap-1 overflow-x-auto whitespace-nowrap scrollbar-hide">
-                  {(selectedUsers.length === 0 || selectedUsers.includes("All")) ? (
-                    "Select User"
-                  ) : (
-                    selectedUsers.map((userId) => {
-                      const user = users.find(u => u._id === userId);
-                      return (
-                        <span
-                          key={userId}
-                          className="inline-flex items-center bg-gray-200 rounded px-2 py-0.5 text-xs mr-1"
-                        >
-                          {user ? user.fullName : userId}
-                          <button
-                            type="button"
-                            className="ml-1 text-gray-500 hover:text-red-500"
-                            onClick={e => {
-                              e.stopPropagation();
-                              handleUserChange(userId);
-                            }}
-                          >
-                            &times;
-                          </button>
-                        </span>
-                      );
-                    })
-                  )}
-                </div>
-
-                <svg
-                  className={`size-5 transition-transform ${isUserOpen ? "rotate-180" : ""}`}
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="m6 9 6 6 6-6" />
-                </svg>
-              </button>
-
-              {isUserOpen && (
-                <div
-                  className="absolute z-10 mt-[3.5rem] w-full bg-white shadow-md rounded-lg"
-                  role="menu"
-                >
-                  <div className="p-1 space-y-0.5">
-                    {/* All Users option */}
-                    <label className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 font-medium cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={selectedUsers.includes("All")}
-                        onChange={() => {
-                          handleUserChange("All");
-                          setIsUserOpen(false);
-                        }}
-                        className="form-checkbox"
-                      />
-                      All Users
-                    </label>
-                    {/* Divider */}
-                    <div className="border-t border-gray-200"></div>
-                    <input
-                      type="text"
-                      placeholder="Search users..."
-                      value={userSearch}
-                      onChange={e => setUserSearch(e.target.value)}
-                      className="w-full px-3 py-2 mb-2 border rounded focus:outline-none"
-                    />
-                    <div className="overflow-y-auto max-h-60">
-                      {users
-                        .filter(user => user.fullName.toLowerCase().includes(userSearch.toLowerCase()))
-                        .map((user) => (
-                          <label
-                            key={user._id}
-                            className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 cursor-pointer"
-                          >
-                            <input
-                              type="checkbox"
-                              checked={selectedUsers.includes(user._id)}
-                              onChange={() => {
-                                if (selectedUsers.includes("All")) {
-                                  updateSelectedUsers([user._id]);
-                                  const campaignParam = selectedCampaigns.length === 0 || selectedCampaigns.includes("All") ? null : selectedCampaigns.join(",");
-                                  fetchDashboardData(startDate, endDate, campaignParam, null, user._id);
-                                } else {
-                                  handleUserChange(user._id);
-                                }
-                              }}
-                              className="form-checkbox"
-                            />
-                            {user.fullName}
-                          </label>
-                        ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Date Picker */}
-          <div className="max-sm:w-10 lg:h-10  md:h-13">
-            <DatePick onDateChange={handleDateChange} />
-          </div>
-        </div>
-      </div>
+    <div className="xl:px-[40px] xl:py-[20px] p-4 bg-gray-100 space-y-6 overflow-y-auto">
+      <FilterHeader 
+        title="Tauk Client Dashboard"
+        subtitle=""
+      />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4">
         <StatCard
@@ -551,7 +155,6 @@ const Dashboard = () => {
               ? "Loading..."
               : (dashboardData.callableLeads ?? 0).toLocaleString()
           }
-     
         />
         <StatCard
           icon={TotalSale}
@@ -577,13 +180,9 @@ const Dashboard = () => {
             </div>
           }
         />
-        {/* <h3 className="text-[15px] font-semibold text-[#181C32] md:hidden block">
-          Leads Statistics
-        </h3> */}
         <StatCard
           icon={SaleRevenue}
           title="Sales Revenue"
-          //  value="$72,450"
           value={
             loading
               ? "Loading..."
@@ -597,7 +196,6 @@ const Dashboard = () => {
         <StatCard
           icon={ConversionRate}
           title="Conversion Rate (CVR)"
-          // value={loading ? "Loading..." : `${dashboardData.conversionRate}%`}
           value={loading ? "Loading..." : `${dashboardData.conversionRate.toLocaleString(undefined, {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
@@ -607,7 +205,6 @@ const Dashboard = () => {
         <StatCard
           icon={AOV}
           title="Average Order Value (AOV)"
-          //  value="$1,725"
           value={
             loading
               ? "Loading..."

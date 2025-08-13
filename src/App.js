@@ -1,4 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { Provider } from 'react-redux';
+import store from './store';
 import Login from "./components/Login";
 import ResetPassWord from "./components/ResetPassWord";
 import DashBoard from "./components/DashBoard";
@@ -9,7 +11,6 @@ import Setting from "./components/Setting";
 import Screen2 from './components/ForgotPassWord/Screen2';
 import Layout from "./components/Layout";
 import PrivateRoute from "./components/PrivateRoute";
-import { DateProvider } from "./context/DateContext";
 
 // Public Routes Component
 const PublicRoute = ({ children }) => {
@@ -25,7 +26,7 @@ const PublicRoute = ({ children }) => {
 
 function App() {
   return (
-    <DateProvider>
+    <Provider store={store}>
       <Router>
         <Routes>
         {/* Public Routes */}
@@ -98,7 +99,7 @@ function App() {
         <Route path="*" element={<Navigate to="/Login" replace />} />
       </Routes>
         </Router>
-      </DateProvider>
+    </Provider>
   );
 }
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import { ReactComponent as Eye } from "../Assets/Eye.svg";
 import { ReactComponent as Search } from "../Assets/Search.svg";
@@ -6,12 +6,11 @@ import { ReactComponent as UpDown } from "../Assets/UpDown.svg";
 import { ReactComponent as Cross } from "../Assets/cross.svg";
 import { ReactComponent as BlackLeft } from "../Assets/black-left.svg";
 import { ReactComponent as BlackRight } from "../Assets/black-right.svg";
-import DatePick from "./DatePick";
 import { apiInstance } from "../api/config/axios";
 import { SALES, ENDPOINTS } from "../api/constants";
 import { useNavigate } from "react-router-dom";
-import { useDateContext } from "../context/DateContext";
-import { isMasterAdmin } from "../utils/auth";
+import FilterHeader from "./FilterHeader";
+import { useFilter } from "../hooks/useFilter";
 
 function formatDateDMY(dateString) {
   if (!dateString) return '-';
@@ -32,85 +31,16 @@ const SalesTable = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
-  const [dateRange, setDateRange] = useState([null, null]);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [sortField, setSortField] = useState("Timestamp");
   const [sortOption, setSortOption] = useState(1);
   const navigate = useNavigate();
-  // Clear selectedCampaigns in localStorage on page refresh (mount)
-  useEffect(() => {
-    localStorage.setItem('selectedCampaigns', JSON.stringify([]));
-  }, []);
-  // Campaign dropdown states
-  const [isCampaignOpen, setIsCampaignOpen] = useState(false);
-  const [campaigns, setCampaigns] = useState([]);
-  const { startDate: globalStartDate, endDate: globalEndDate, selectedCampaigns, updateSelectedCampaigns, selectedUsers, updateSelectedUsers } = useDateContext();
-  const [campaignSearch, setCampaignSearch] = useState("");
-  const campaignDropdownRef = useRef();
   
-  // User dropdown states
-  const [isUserOpen, setIsUserOpen] = useState(false);
-  const [users, setUsers] = useState([]);
-  const [userSearch, setUserSearch] = useState("");
-  const userDropdownRef = useRef();
+  const { dateRange, selectedCampaigns, selectedUsers } = useFilter();
+  const [startDate, endDate] = dateRange;
 
-  // Calculate default dates (last 5 days from today)
-  const getDefaultDates = () => {
-    const endDate = new Date();
-    const startDate = new Date();
-    startDate.setDate(endDate.getDate() - 4); // 4 days before today (to include today)
-    return [startDate, endDate];
-  };
-
-  // Set default date range when component mounts
-  useEffect(() => {
-    const defaultDates = getDefaultDates();
-    if (globalStartDate && globalEndDate) {
-      setDateRange([globalStartDate, globalEndDate]);
-      fetchSales(1, perPage, globalStartDate.toISOString().split('T')[0], globalEndDate.toISOString().split('T')[0], sortField, sortOption);
-    } else {
-      setDateRange(defaultDates);
-      fetchSales(1, perPage, defaultDates[0].toISOString().split('T')[0], defaultDates[1].toISOString().split('T')[0], sortField, sortOption);
-    }
-    
-    // Fetch campaigns
-    apiInstance
-      .get(ENDPOINTS.DASHBOARD.GET_CAMPAIGNS)
-      .then((res) => setCampaigns(res.data.campaignNames || []))
-      .catch(() => setCampaigns([]));
-
-    // Fetch users if user is masteradmin
-    if (isMasterAdmin()) {
-      apiInstance
-        .get(ENDPOINTS.AUTH.GET_USERS)
-        .then((res) => {
-          console.log("Users fetched successfully:", res.data);
-          setUsers(res.data.data?.users || []);
-        })
-        .catch((error) => {
-          console.error("Error fetching users:", error);
-          setUsers([]);
-        });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Handle click outside campaign dropdown
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (campaignDropdownRef.current && !campaignDropdownRef.current.contains(event.target)) {
-        setIsCampaignOpen(false);
-      }
-      if (userDropdownRef.current && !userDropdownRef.current.contains(event.target)) {
-        setIsUserOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  const fetchSales = async (page, limit, startDate, endDate, sortFieldParam, sortOptionParam, campaignParam, userParam) => {
+  const fetchSales = async () => {
     try {
       setLoading(true);
       const formatToDateString = (date) => {
@@ -120,34 +50,29 @@ const SalesTable = () => {
         return "";
       };
       
-      const startDateParam = formatToDateString(startDate || dateRange[0]);
-      const endDateParam = formatToDateString(endDate || dateRange[1]);
+      const startDateParam = formatToDateString(startDate);
+      const endDateParam = formatToDateString(endDate);
       
       // Prepare campaign parameter
       let campaignName = null;
-      if (campaignParam) {
-        campaignName = campaignParam;
-      } else if (selectedCampaigns.length > 0 && !selectedCampaigns.includes("All")) {
+      if (selectedCampaigns.length > 0 && !selectedCampaigns.includes("All")) {
         campaignName = selectedCampaigns.join(",");
       }
       
       // Prepare user parameter
       let userId = null;
-      if (userParam) {
-        userId = userParam;
-      } else if (selectedUsers.length > 0 && !selectedUsers.includes("All")) {
+      if (selectedUsers.length > 0 && !selectedUsers.includes("All")) {
         userId = selectedUsers.join(",");
       }
       
-      console.log(startDateParam, typeof startDateParam);
       // Build the URL with the function parameters
       const url = SALES.GET_SALES(
         startDateParam,
         endDateParam,
         page,
-        limit,
-        sortOptionParam || sortOption,
-        sortFieldParam || sortField
+        perPage,
+        sortOption,
+        sortField
       );
 
       // Add search parameter if needed
@@ -163,13 +88,8 @@ const SalesTable = () => {
         finalUrl += `&userId=${encodeURIComponent(userId)}`;
       }
 
-      console.log("API URL:", finalUrl);
-      console.log("Campaign Parameter:", campaignName);
-      console.log("User Parameter:", userId);
-
       const response = await apiInstance.get(finalUrl);
       const result = response.data;
-      console.log(result);
       setData(result?.sales || []);
       setTotalCount(result?.totalRecords || 0);
       setTotalPages(Math.ceil((result?.totalRecords || 0) / perPage));
@@ -178,82 +98,6 @@ const SalesTable = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleDateRangeChange = (startDate, endDate) => {
-    setDateRange([startDate, endDate]);
-    setPage(1); // Reset to first page when date range changes
-    fetchSales(1, perPage, startDate.toISOString().split('T')[0], endDate.toISOString().split('T')[0], sortField, sortOption);
-  };
-
-  // Handle campaign change
-  const handleCampaignChange = (campaignName) => {
-    if (campaignName === "All") {
-      updateSelectedCampaigns(["All"]);
-    } else {
-      let updated;
-      if (selectedCampaigns.includes("All")) {
-        updated = [campaignName];
-      } else if (selectedCampaigns.includes(campaignName)) {
-        updated = selectedCampaigns.filter((c) => c !== campaignName);
-      } else {
-        updated = [...selectedCampaigns, campaignName];
-      }
-      updateSelectedCampaigns(updated);
-    }
-    setPage(1); // Reset to first page when campaign changes
-    
-    // Fetch sales with new campaign selection
-    if (dateRange[0] && dateRange[1]) {
-      const campaignToPass = campaignName === "All" ? null : campaignName;
-      console.log("Campaign changed to:", campaignName, "Passing:", campaignToPass);
-      fetchSales(1, perPage, dateRange[0].toISOString().split('T')[0], dateRange[1].toISOString().split('T')[0], sortField, sortOption, campaignToPass);
-    }
-  };
-
-  // Handle user selection
-  const handleUserChange = (userId) => {
-    if (userId === "All") {
-      updateSelectedUsers(["All"]);
-    } else {
-      let updated;
-      if (selectedUsers.includes("All")) {
-        updated = [userId];
-      } else if (selectedUsers.includes(userId)) {
-        updated = selectedUsers.filter((u) => u !== userId);
-      } else {
-        updated = [...selectedUsers, userId];
-      }
-      updateSelectedUsers(updated);
-    }
-    setPage(1); // Reset to first page when user changes
-    
-    // Fetch sales with new user selection
-    if (dateRange[0] && dateRange[1]) {
-      const userToPass = userId === "All" ? null : userId;
-      const campaignToPass = selectedCampaigns.length === 0 || selectedCampaigns.includes("All") ? null : selectedCampaigns.join(",");
-      
-      fetchSales(1, perPage, dateRange[0].toISOString().split('T')[0], dateRange[1].toISOString().split('T')[0], sortField, sortOption, campaignToPass, userToPass);
-    }
-  };
-
-  // Get available campaigns based on selected users
-  const getAvailableCampaigns = () => {
-    // If no users selected or "All" selected, show all campaigns
-    if (selectedUsers.length === 0 || selectedUsers.includes("All")) {
-      return campaigns;
-    }
-    
-    // Get campaigns from selected users
-    const userCampaigns = new Set();
-    selectedUsers.forEach(userId => {
-      const user = users.find(u => u._id === userId);
-      if (user && user.campaignName && Array.isArray(user.campaignName)) {
-        user.campaignName.forEach(campaign => userCampaigns.add(campaign));
-      }
-    });
-    
-    return Array.from(userCampaigns);
   };
 
   const handleSort = (field) => {
@@ -266,32 +110,12 @@ const SalesTable = () => {
     setPage(1); // Reset to first page on sort
   };
 
-  // Add back pagination effect
+  // Fetch sales data when filters change
   useEffect(() => {
-    if (dateRange[0] && dateRange[1]) {
-      // Get current campaign selection
-      let currentCampaign = null;
-      if (selectedCampaigns.length > 0 && !selectedCampaigns.includes("All")) {
-        currentCampaign = selectedCampaigns.join(",");
-      }
-      // Get current user selection
-      let currentUser = null;
-      if (selectedUsers.length > 0 && !selectedUsers.includes("All")) {
-        currentUser = selectedUsers.join(",");
-      }
-      fetchSales(
-        page,
-        perPage,
-        dateRange[0].toISOString().split('T')[0],
-        dateRange[1].toISOString().split('T')[0],
-        sortField,
-        sortOption,
-        currentCampaign,
-        currentUser
-      );
+    if (startDate && endDate) {
+      fetchSales();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, perPage, searchTerm, sortField, sortOption, selectedCampaigns, selectedUsers]); // Re-fetch when page, perPage, search term, or campaigns changes
+  }, [page, perPage, searchTerm, sortField, sortOption, startDate, endDate, selectedCampaigns, selectedUsers]);
 
   const toggleSelect = (id) => {
     setSelectedLeads((prev) =>
@@ -301,256 +125,12 @@ const SalesTable = () => {
 
   return (
     <div className="xl:px-[40px] xl:py-[20px] p-5 bg-gray-100 min-h-screen">
-      <div className="flex justify-between items-center">
-        <div className="flex items-start gap-3">
-          <button
-            onClick={() => navigate("/CollapsibleLead")} // go back to previous page
-            className="text-[#071437] text-[20px] font-semibold leading-none"
-          >
-            &larr;
-          </button>
-          <div>
-            <h2 className="text-[#071437] text-[18px] font-semibold leading-[24px]">
-              Total Sales
-            </h2>
-            <p className="text-[#7E8299] text-[14px] font-normal leading-[20px]">
-
-            </p>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {/* Campaign Dropdown */}
-          <div
-            ref={campaignDropdownRef}
-            className="relative inline-flex w-48 max-[320px]:w-44"
-          >
-            <button
-              type="button"
-              onClick={() => setIsCampaignOpen((prev) => !prev)}
-              className="py-2 px-3 inline-flex items-center lg:h-10 md:h-13 justify-between w-full text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50"
-              aria-haspopup="menu"
-              aria-expanded={isCampaignOpen}
-            >
-              {/* Scrollable Text Wrapper */}
-              <div className="flex gap-1 overflow-x-auto whitespace-nowrap scrollbar-hide">
-                {(selectedCampaigns.length === 0 || selectedCampaigns.includes("All")) ? (
-                  "Select Campaign"
-                ) : (
-                  selectedCampaigns.map((name) => (
-                    <span
-                      key={name}
-                      className="inline-flex items-center bg-gray-200 rounded px-2 py-0.5 text-xs mr-1"
-                    >
-                      {name}
-                      <button
-                        type="button"
-                        className="ml-1 text-gray-500 hover:text-red-500"
-                        onClick={e => {
-                          e.stopPropagation();
-                          handleCampaignChange(name);
-                        }}
-                      >
-                        &times;
-                      </button>
-                    </span>
-                  ))
-                )}
-              </div>
-
-              <svg
-                className={`size-5 transition-transform ${isCampaignOpen ? "rotate-180" : ""
-                  }`}
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="m6 9 6 6 6-6" />
-              </svg>
-            </button>
-
-            {isCampaignOpen && (
-              <div
-                className="absolute z-10 mt-[3.5rem] w-full bg-white shadow-md rounded-lg"
-                role="menu"
-              >
-                <div className="p-1 space-y-0.5">
-                  {/* All Campaigns option */}
-                  <label className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 font-medium cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={selectedCampaigns.includes("All")}
-                      onChange={() => {
-                        handleCampaignChange("All");
-                        setIsCampaignOpen(false);
-                      }}
-                      className="form-checkbox"
-                    />
-                    All Campaigns
-                  </label>
-                  {/* Divider */}
-                  <div className="border-t border-gray-200"></div>
-                  <input
-                    type="text"
-                    placeholder="Search campaigns..."
-                    value={campaignSearch}
-                    onChange={e => setCampaignSearch(e.target.value)}
-                    className="w-full px-3 py-2 mb-2 border rounded focus:outline-none"
-                  />
-                  <div className="overflow-y-auto max-h-60">
-                    {getAvailableCampaigns()
-                      .filter(name => name.toLowerCase().includes(campaignSearch.toLowerCase()))
-                      .map((name) => (
-                        <label
-                          key={name}
-                          className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 cursor-pointer"
-                        >
-                          <input
-                            type="checkbox"
-                            checked={selectedCampaigns.includes(name)}
-                            onChange={() => {
-                              if (selectedCampaigns.includes("All")) {
-                                updateSelectedCampaigns([name]);
-                              } else {
-                                handleCampaignChange(name);
-                              }
-                            }}
-                            className="form-checkbox"
-                          />
-                          {name}
-                        </label>
-                      ))}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* User Dropdown - Only show for masteradmin */}
-          {isMasterAdmin() && (
-            <div
-              ref={userDropdownRef}
-              className="relative inline-flex w-48 max-[320px]:w-44"
-            >
-              <button
-                type="button"
-                onClick={() => {
-                  setIsUserOpen((prev) => !prev);
-                }}
-                className="py-2 px-3 inline-flex items-center lg:h-10 md:h-13 justify-between w-full text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50"
-                aria-haspopup="menu"
-                aria-expanded={isUserOpen}
-              >
-                {/* Scrollable Text Wrapper */}
-                <div className="flex gap-1 overflow-x-auto whitespace-nowrap scrollbar-hide">
-                  {(selectedUsers.length === 0 || selectedUsers.includes("All")) ? (
-                    "Select User"
-                  ) : (
-                    selectedUsers.map((userId) => {
-                      const user = users.find(u => u._id === userId);
-                      return (
-                        <span
-                          key={userId}
-                          className="inline-flex items-center bg-gray-200 rounded px-2 py-0.5 text-xs mr-1"
-                        >
-                          {user ? user.fullName : userId}
-                          <button
-                            type="button"
-                            className="ml-1 text-gray-500 hover:text-red-500"
-                            onClick={e => {
-                              e.stopPropagation();
-                              handleUserChange(userId);
-                            }}
-                          >
-                            &times;
-                          </button>
-                        </span>
-                      );
-                    })
-                  )}
-                </div>
-
-                <svg
-                  className={`size-5 transition-transform ${isUserOpen ? "rotate-180" : ""}`}
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="m6 9 6 6 6-6" />
-                </svg>
-              </button>
-
-              {isUserOpen && (
-                <div
-                  className="absolute z-10 mt-[3.5rem] w-full bg-white shadow-md rounded-lg"
-                  role="menu"
-                >
-                  <div className="p-1 space-y-0.5">
-                    {/* All Users option */}
-                    <label className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 font-medium cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={selectedUsers.includes("All")}
-                        onChange={() => {
-                          handleUserChange("All");
-                          setIsUserOpen(false);
-                        }}
-                        className="form-checkbox"
-                      />
-                      All Users
-                    </label>
-                    {/* Divider */}
-                    <div className="border-t border-gray-200"></div>
-                    <input
-                      type="text"
-                      placeholder="Search users..."
-                      value={userSearch}
-                      onChange={e => setUserSearch(e.target.value)}
-                      className="w-full px-3 py-2 mb-2 border rounded focus:outline-none"
-                    />
-                    <div className="overflow-y-auto max-h-60">
-                      {users
-                        .filter(user => user.fullName.toLowerCase().includes(userSearch.toLowerCase()))
-                        .map((user) => (
-                          <label
-                            key={user._id}
-                            className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 cursor-pointer"
-                          >
-                            <input
-                              type="checkbox"
-                              checked={selectedUsers.includes(user._id)}
-                              onChange={() => {
-                                if (selectedUsers.includes("All")) {
-                                  updateSelectedUsers([user._id]);
-                                  const campaignParam = selectedCampaigns.length === 0 || selectedCampaigns.includes("All") ? null : selectedCampaigns.join(",");
-                                  fetchSales(1, perPage, dateRange[0].toISOString().split('T')[0], dateRange[1].toISOString().split('T')[0], sortField, sortOption, campaignParam, user._id);
-                                } else {
-                                  handleUserChange(user._id);
-                                }
-                              }}
-                              className="form-checkbox"
-                            />
-                            {user.fullName}
-                          </label>
-                        ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-          
-          {/* Date Picker */}
-          <DatePick onDateChange={handleDateRangeChange} />
-        </div>
-      </div>
+      <FilterHeader 
+        title="Total Sales"
+        subtitle=""
+        showBackButton={true}
+        onBackClick={() => navigate("/CollapsibleLead")}
+      />
 
       <div className="bg-white flex items-center justify-center rounded-2xl mt-5 relative">
         <div className="w-full border border-[#F1F1F4] ">

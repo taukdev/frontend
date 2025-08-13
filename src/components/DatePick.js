@@ -2,10 +2,10 @@ import { CalendarIcon } from 'lucide-react';
 import React, { useEffect, useState, useRef } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { useDateContext } from '../context/DateContext';
+import { useFilter } from '../hooks/useFilter';
 
 function DatePick({ onDateChange }) {
-  const { dateRange: globalDateRange, updateDateRange } = useDateContext();
+  const { dateRange: globalDateRange, updateDateRange } = useFilter();
   const [isOpen, setIsOpen] = useState(false);
   const [openToDate, setOpenToDate] = useState(new Date());
   const dropdownRef = useRef(null);
