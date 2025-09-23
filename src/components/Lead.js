@@ -55,7 +55,6 @@ const LeadsTable = () => {
       if (selectedUsers.length > 0 && !selectedUsers.includes("All")) {
         userId = selectedUsers.join(",");
       }
-
       const url = LEAD.GET_LEAD(
         startDateParam,
         endDateParam,
