@@ -13,11 +13,11 @@ import FilterHeader from "./FilterHeader";
 import { useFilter } from "../hooks/useFilter";
 
 function formatDateDMY(dateString) {
-  if (!dateString) return '-';
+  if (!dateString) return "-";
   const date = new Date(dateString);
-  if (isNaN(date)) return '-';
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0');
+  if (isNaN(date)) return "-";
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
   const year = String(date.getFullYear()).slice(-2);
   return `${day}/${month}/${year}`;
 }
@@ -36,7 +36,7 @@ const SalesTable = () => {
   const [sortField, setSortField] = useState("Timestamp");
   const [sortOption, setSortOption] = useState(1);
   const navigate = useNavigate();
-  
+
   const { dateRange, selectedCampaigns, selectedUsers } = useFilter();
   const [startDate, endDate] = dateRange;
 
@@ -49,22 +49,22 @@ const SalesTable = () => {
         if (date instanceof Date) return date.toISOString().split("T")[0];
         return "";
       };
-      
+
       const startDateParam = formatToDateString(startDate);
       const endDateParam = formatToDateString(endDate);
-      
+
       // Prepare campaign parameter
       let campaignName = null;
       if (selectedCampaigns.length > 0 && !selectedCampaigns.includes("All")) {
         campaignName = selectedCampaigns.join(",");
       }
-      
+
       // Prepare user parameter
       let userId = null;
       if (selectedUsers.length > 0 && !selectedUsers.includes("All")) {
         userId = selectedUsers.join(",");
       }
-      
+
       // Build the URL with the function parameters
       const url = SALES.GET_SALES(
         startDateParam,
@@ -77,7 +77,7 @@ const SalesTable = () => {
 
       // Add search parameter if needed
       let finalUrl = searchTerm ? `${url}&search=${searchTerm}` : url;
-      
+
       // Add campaign parameter if needed
       if (campaignName) {
         finalUrl += `&campaignName=${encodeURIComponent(campaignName)}`;
@@ -115,7 +115,17 @@ const SalesTable = () => {
     if (startDate && endDate) {
       fetchSales();
     }
-  }, [page, perPage, searchTerm, sortField, sortOption, startDate, endDate, selectedCampaigns, selectedUsers]);
+  }, [
+    page,
+    perPage,
+    searchTerm,
+    sortField,
+    sortOption,
+    startDate,
+    endDate,
+    selectedCampaigns,
+    selectedUsers,
+  ]);
 
   const toggleSelect = (id) => {
     setSelectedLeads((prev) =>
@@ -125,7 +135,7 @@ const SalesTable = () => {
 
   return (
     <div className="xl:px-[40px] xl:py-[20px] p-5 bg-gray-100 min-h-screen">
-      <FilterHeader 
+      <FilterHeader
         title="Total Sales"
         subtitle=""
         showBackButton={true}
@@ -155,7 +165,12 @@ const SalesTable = () => {
                   <th className="px-4 py-3 text-center border border-[#F1F1F4] bg-[#FCFCFC]">
                     <input
                       type="checkbox"
-                      checked={data.length > 0 && data.every((lead) => selectedLeads.includes(lead.salesNo))}
+                      checked={
+                        data.length > 0 &&
+                        data.every((lead) =>
+                          selectedLeads.includes(lead.salesNo)
+                        )
+                      }
                       onChange={(e) => {
                         const ids = data.map((lead) => lead.salesNo);
                         setSelectedLeads((prev) =>
@@ -166,25 +181,35 @@ const SalesTable = () => {
                       }}
                     />
                   </th>
-                  {["Order ID", "First Name", "Last Name", "Date", "Action"].map((h) => {
+                  {[
+                    "Order ID",
+                    "First Name",
+                    "Last Name",
+                    "Date",
+                    "Action",
+                  ].map((h) => {
                     const fieldMap = {
                       "Order ID": "OrderID",
                       "First Name": "FirstName",
                       "Last Name": "LastName",
-                      "Date": "Timestamp",
+                      Date: "Timestamp",
                     };
                     const field = fieldMap[h];
                     return (
                       <th
                         key={h}
                         className="px-[20px] text-left bg-[#FCFCFC] font-normal text-[#4B5675] border border-[#F1F1F4] text-[13px] leading-[14px] cursor-pointer"
-                        onClick={h !== "Action" ? () => handleSort(field) : undefined}
+                        onClick={
+                          h !== "Action" ? () => handleSort(field) : undefined
+                        }
                       >
                         <div className="flex items-center gap-1">
                           {h}
                           {h !== "Action" && (
                             <UpDown
-                              className={`h-[14px] w-[14px] ${sortField === field ? "text-blue-500" : ""}`}
+                              className={`h-[14px] w-[14px] ${
+                                sortField === field ? "text-blue-500" : ""
+                              }`}
                             />
                           )}
                         </div>
@@ -196,11 +221,15 @@ const SalesTable = () => {
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan="6" className="text-center py-4">Loading...</td>
+                    <td colSpan="6" className="text-center py-4">
+                      Loading...
+                    </td>
                   </tr>
                 ) : data.length === 0 ? (
                   <tr>
-                    <td colSpan="6" className="text-center py-4">No data found</td>
+                    <td colSpan="6" className="text-center py-4">
+                      No data found
+                    </td>
                   </tr>
                 ) : (
                   data.map((row) => {
@@ -211,26 +240,38 @@ const SalesTable = () => {
 
                     return (
                       <tr key={row.salesNo}>
-                        <td className={`p-3 text-black text-center ${cellStyle}`}>
+                        <td
+                          className={`p-3 text-black text-center ${cellStyle}`}
+                        >
                           <input
                             type="checkbox"
                             checked={isSelected}
                             onChange={() => toggleSelect(row.salesNo)}
                           />
                         </td>
-                        <td className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}>
+                        <td
+                          className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}
+                        >
                           {row.OrderID}
                         </td>
-                        <td className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}>
+                        <td
+                          className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}
+                        >
                           {row.FirstName}
                         </td>
-                        <td className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}>
+                        <td
+                          className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}
+                        >
                           {row.LastName}
                         </td>
-                        <td className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}>
+                        <td
+                          className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}
+                        >
                           {formatDateDMY(row.Timestamp)}
                         </td>
-                        <td className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}>
+                        <td
+                          className={`px-[20px] font-medium text-[14px] leading-[14px] text-[#071437] text-left ${cellStyle}`}
+                        >
                           <button
                             onClick={() => {
                               setSelectedLead({
@@ -238,7 +279,8 @@ const SalesTable = () => {
                                 FirstName: row.FirstName,
                                 LastName: row.LastName,
                                 Timestamp: row.Timestamp,
-                                OrderID: row.OrderID
+                                OrderID: row.OrderID,
+                                Campaign: row.Campaign, // 👈 Added this line
                               });
                               setIsModalOpen(true);
                             }}
@@ -256,7 +298,9 @@ const SalesTable = () => {
           {/* Pagination */}
           <div className="flex md:flex-row flex-col  items-center justify-between gap-4 py-4 px-6 w-full">
             <div className="flex items-center gap-2">
-              <label className="text-[13px] leading-[14px] font-normal text-[#4B5675]">Show</label>
+              <label className="text-[13px] leading-[14px] font-normal text-[#4B5675]">
+                Show
+              </label>
               <div className="relative border border-[#F1F1F4] rounded-[6px]">
                 <select
                   value={perPage}
@@ -268,21 +312,32 @@ const SalesTable = () => {
                   style={{ minWidth: "40px" }}
                 >
                   {[10, 25, 50, 100].map((n) => (
-                    <option key={n} value={n}>{n}</option>
+                    <option key={n} value={n}>
+                      {n}
+                    </option>
                   ))}
                 </select>
                 <span className="pointer-events-none absolute right-1 top-1/2 -translate-y-1/2">
                   <svg width="16" height="16" fill="none" viewBox="0 0 20 20">
-                    <path d="M6 8l4 4 4-4" stroke="#4B5675" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    <path
+                      d="M6 8l4 4 4-4"
+                      stroke="#4B5675"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
                   </svg>
                 </span>
               </div>
-              <span className="text-[13px] leading-[14px] font-normal text-[#4B5675]">per page</span>
+              <span className="text-[13px] leading-[14px] font-normal text-[#4B5675]">
+                per page
+              </span>
             </div>
 
             <div className="flex justify-center items-center gap-1 w-full md:w-auto">
               <span className="text-[#4B5675] text-[13px] mr-1 leading-[14px] font-normal">
-                {(page - 1) * perPage + 1}-{Math.min(page * perPage, totalCount)} of {totalCount}
+                {(page - 1) * perPage + 1}-
+                {Math.min(page * perPage, totalCount)} of {totalCount}
               </span>
 
               <BlackLeft
@@ -306,10 +361,11 @@ const SalesTable = () => {
                     <button
                       key={pageNum}
                       onClick={() => setPage(pageNum)}
-                      className={`px-[12px] py-[8px] rounded-[6px] text-[14px] leading-[14px] ${page === pageNum
-                        ? "bg-[#F1F1F4] text-[#252F4A] font-semibold"
-                        : "text-[#4B5675] hover:bg-[#F1F1F4]"
-                        }`}
+                      className={`px-[12px] py-[8px] rounded-[6px] text-[14px] leading-[14px] ${
+                        page === pageNum
+                          ? "bg-[#F1F1F4] text-[#252F4A] font-semibold"
+                          : "text-[#4B5675] hover:bg-[#F1F1F4]"
+                      }`}
                     >
                       {pageNum}
                     </button>
@@ -332,7 +388,10 @@ const SalesTable = () => {
               <h2 className="text-[18px] leading-[20px] font-medium text-[#071437]">
                 Total Sales ({selectedLead.OrderID})
               </h2>
-              <Cross onClick={() => setIsModalOpen(false)} className="cursor-pointer" />
+              <Cross
+                onClick={() => setIsModalOpen(false)}
+                className="cursor-pointer"
+              />
             </div>
             <div className="divide-y divide-gray-200 px-[20px]">
               {[
@@ -340,6 +399,7 @@ const SalesTable = () => {
                 ["First Name", selectedLead.FirstName],
                 ["Last Name", selectedLead.LastName],
                 ["Date", formatDateDMY(selectedLead.Timestamp)],
+                ["Offer", selectedLead.Campaign], // 👈 Added this line
               ].map(([label, value]) => (
                 <div key={label} className="flex align-center py-[15px]">
                   <div className="w-1/3 text-gray-500 pr-4">{label}</div>
